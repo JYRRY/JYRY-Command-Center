@@ -10,8 +10,8 @@ const PARSER_PAIRINGS = {
       { key: 'manifesto', pathKey: 'manifestoPath', metadataKey: 'manifesto_source', optional: true },
     ],
   },
-  'talkstore-markdown': {
-    parserProfile: 'talkstore',
+  'jyry-markdown': {
+    parserProfile: 'jyry',
     sourceFields: [
       { key: 'tasks', pathKey: 'tasksPath', metadataKey: 'tasks_source' },
       { key: 'checklist', pathKey: 'checklistPath', metadataKey: 'checklist_source' },
@@ -41,16 +41,16 @@ function allowsLegacyPublicGenericMigration({ parserId, projectPaths, existingPr
   if (projectPaths.consumerProfile !== 'generic') return false
   if (!existingProject) return false
 
-  const legacyParserId = existingProject.parser_id || 'talkstore-markdown'
-  const legacyParserProfile = existingProject.parser_profile || 'talkstore'
+  const legacyParserId = existingProject.parser_id || 'jyry-markdown'
+  const legacyParserProfile = existingProject.parser_profile || 'jyry'
   const legacyPairing =
     existingProject.parser_source_pairing ||
     `${legacyParserId}:${legacyParserProfile}`
 
   return (
-    legacyParserId === 'talkstore-markdown' &&
-    legacyParserProfile === 'talkstore' &&
-    legacyPairing === 'talkstore-markdown:talkstore'
+    legacyParserId === 'jyry-markdown' &&
+    legacyParserProfile === 'jyry' &&
+    legacyPairing === 'jyry-markdown:jyry'
   )
 }
 

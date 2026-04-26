@@ -142,7 +142,7 @@ export function isExternalRefreshSuppressed(): boolean {
 
 function getInitialTheme(): Theme {
   try {
-    const stored = localStorage.getItem('talkstore-theme')
+    const stored = localStorage.getItem('jyry-theme')
     if (stored === 'light' || stored === 'dark') return stored
   } catch { /* ignore */ }
   return 'dark'
@@ -168,7 +168,7 @@ export const useStore = create<AppState>()((set, get) => ({
   setSynced: (v) => set({ synced: v }),
   toggleTheme: () => {
     const next = get().theme === 'dark' ? 'light' : 'dark'
-    try { localStorage.setItem('talkstore-theme', next) } catch { /* ignore */ }
+    try { localStorage.setItem('jyry-theme', next) } catch { /* ignore */ }
     set({ theme: next })
   },
 

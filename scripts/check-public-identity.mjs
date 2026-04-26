@@ -71,10 +71,10 @@ function requireCliHelp() {
 
   const output = result.stdout || ''
   const requiredSnippets = [
-    'Sha8al Command Center CLI',
-    'Compatibility alias: talkstore',
-    'sha8al-command-center <command> [args...]',
-    'talkstore <command> [args...]   # compatibility alias',
+    'JYRY Command Center CLI',
+    'Compatibility alias: jyry',
+    'jyry-command-center <command> [args...]',
+    'jyry <command> [args...]   # compatibility alias',
   ]
 
   for (const snippet of requiredSnippets) {
@@ -86,51 +86,51 @@ function requireCliHelp() {
 
 function main() {
   requireIncludes('README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
-    'TalkStore is a compatibility profile',
+    'JYRY Command Center',
+    'jyry-command-center',
+    'JYRY is a compatibility profile',
   ])
 
   requireIncludes('.env.example', [
-    'sha8al-command-center',
+    'jyry-command-center',
     'COMMAND_CENTER_PROFILE=generic',
   ])
 
   requireIncludes('docs/public-naming.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
-    'talkstore',
+    'JYRY Command Center',
+    'jyry-command-center',
+    'jyry',
   ])
 
   requireIncludes('examples/README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
+    'JYRY Command Center',
+    'jyry-command-center',
   ])
 
   requireIncludes('examples/minimal-command-center-project/README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
-    'TalkStore remains the compatibility profile',
+    'JYRY Command Center',
+    'jyry-command-center',
+    'JYRY remains the compatibility profile',
   ])
 
   requireIncludes('src/renderer/index.html', [
-    '<title>Sha8al Command Center</title>',
+    '<title>JYRY Command Center</title>',
   ])
 
   requirePackageKeywords('package.json', [
-    'sha8al-command-center',
-    'talkstore-compatibility',
+    'jyry-command-center',
+    'jyry-compatibility',
   ])
   requirePackageKeywords('mcp-server/package.json', [
-    'sha8al-command-center',
-    'talkstore-compatibility',
+    'jyry-command-center',
+    'jyry-compatibility',
   ])
 
   requireCompatiblePackageName('package.json', [
-    'sha8al-command-center',
+    'jyry-command-center',
   ])
   requireCompatiblePackageName('mcp-server/package.json', [
-    'sha8al-command-center-mcp',
+    'jyry-command-center-mcp',
   ])
 
   requireCliHelp()

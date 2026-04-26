@@ -13,7 +13,7 @@ Describe the change in 2-5 sentences.
 ## Profiles Affected
 
 - [ ] generic
-- [ ] talkstore compatibility
+- [ ] jyry compatibility
 - [ ] aci
 - [ ] other or mixed profile path
 

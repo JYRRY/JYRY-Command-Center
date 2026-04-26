@@ -16,10 +16,10 @@ Briefly describe the release in 2-4 sentences.
 
 - Describe any change that affects setup, packaging metadata, release artifacts, or onboarding docs.
 
-## TalkStore-Specific Notes
+## JYRY-Specific Notes
 
-- Describe whether the TalkStore compatibility profile changed.
-- If there was no TalkStore-specific impact, say `None`.
+- Describe whether the JYRY compatibility profile changed.
+- If there was no JYRY-specific impact, say `None`.
 
 ## Rollback Notes
 

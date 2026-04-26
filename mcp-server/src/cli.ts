@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Sha8al Command Center — CLI Interface
+ * JYRY Command Center — CLI Interface
  *
  * Provides the same 17 tools as the MCP server but via shell commands.
  * Works with any agent that can execute bash (Codex, GPT, Gemini, etc.)
- * Public alias: sha8al-command-center
- * Compatibility alias: talkstore
+ * Public alias: jyry-command-center
+ * Compatibility alias: jyry
  *
  * Usage:
- *   sha8al-command-center <command> [args...]
- *   talkstore <command> [args...]   # compatibility alias
+ *   jyry-command-center <command> [args...]
+ *   jyry <command> [args...]   # compatibility alias
  */
 
 import { readFileSync } from 'fs'
@@ -39,20 +39,20 @@ function parseArgs(args: string[]): { command: string; positional: string[]; fla
 
 function resolveCliName() {
   const invoked = basename(process.argv[1] || '').replace(/\.[^.]+$/, '')
-  if (invoked === 'talkstore' || invoked === 'sha8al-command-center') return invoked
-  return 'sha8al-command-center'
+  if (invoked === 'jyry' || invoked === 'jyry-command-center') return invoked
+  return 'jyry-command-center'
 }
 
 function printHelp() {
   const cliName = resolveCliName()
 
-  console.log(`Sha8al Command Center CLI (sha8al-command-center)
-Compatibility alias: talkstore
+  console.log(`JYRY Command Center CLI (jyry-command-center)
+Compatibility alias: jyry
 
 USAGE:
   ${cliName} <command> [args...]
-  sha8al-command-center <command> [args...]
-  talkstore <command> [args...]   # compatibility alias
+  jyry-command-center <command> [args...]
+  jyry <command> [args...]   # compatibility alias
 
 READ COMMANDS:
   get-task-context <task_id>              Full context for a task (milestone, deps, conventions)
@@ -415,7 +415,7 @@ async function run() {
     }
 
     default:
-      console.error(`Unknown command: ${command}\nRun "sha8al-command-center help" or "talkstore help" for usage.`)
+      console.error(`Unknown command: ${command}\nRun "jyry-command-center help" or "jyry help" for usage.`)
       process.exit(1)
   }
 

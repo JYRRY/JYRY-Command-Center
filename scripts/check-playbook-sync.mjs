@@ -7,9 +7,9 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = resolve(__filename, '..', '..')
 const COMMAND_CENTER_ROOT = __dirname
-const MIRROR_ROOT = join(COMMAND_CENTER_ROOT, 'playbooks', 'talkstore')
+const MIRROR_ROOT = join(COMMAND_CENTER_ROOT, 'playbooks', 'jyry')
 const SOURCE_ROOT = resolve(
-  process.env.TALKSTORE_PLAYBOOK_SOURCE_ROOT || join(COMMAND_CENTER_ROOT, '..', 'talkstore')
+  process.env.JYRY_PLAYBOOK_SOURCE_ROOT || join(COMMAND_CENTER_ROOT, '..', 'jyry')
 )
 
 const MIRROR_GROUPS = [
@@ -86,7 +86,7 @@ function compareGroup(group) {
 if (!existsSync(SOURCE_ROOT)) {
   console.error(`Source repo not found: ${SOURCE_ROOT}`)
   console.error(
-    'Set TALKSTORE_PLAYBOOK_SOURCE_ROOT=/absolute/path/to/talkstore to compare against a live TalkStore checkout.'
+    'Set JYRY_PLAYBOOK_SOURCE_ROOT=/absolute/path/to/jyry to compare against a live JYRY checkout.'
   )
   process.exit(1)
 }

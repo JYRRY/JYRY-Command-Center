@@ -1,5 +1,5 @@
 /**
- * Sha8al Command Center — Markdown Parser + State File Generator
+ * JYRY Command Center — Markdown Parser + State File Generator
  * Phase 1, Part 1.2
  *
  * Importable module for the Electron main process.
@@ -92,7 +92,7 @@ export interface Milestone {
   dependencies: string[]
   notes: string[]
 
-  // Set by mcp__talkstore__submit_milestone_audit when the milestone-auditor
+  // Set by mcp__jyry__submit_milestone_audit when the milestone-auditor
   // subsystem completes a cycle. Drives the outer audit-verdict ring on the
   // swim lane node + the audit summary in MilestoneDetailPanel.
   audit?: MilestoneAudit
@@ -522,13 +522,15 @@ export function parseRoadmap(content: string): Milestone[] {
     }
 
     // Exit criteria → notes
-    if (currentMilestone && /^\*\*Exit Criteria/.test(trimmed)) {
+    const exitMilestone = currentMilestone as Milestone | null
+    if (exitMilestone && /^\*\*Exit Criteria/.test(trimmed)) {
       const exitText = trimmed.replace(/^\*\*Exit Criteria[^*]*\*\*\s*/, '')
-      if (exitText) currentMilestone.notes.push(exitText)
+      if (exitText) exitMilestone.notes.push(exitText)
     }
 
     // Parse subtasks
-    if (currentMilestone) {
+    const subtaskMilestone = currentMilestone as Milestone | null
+    if (subtaskMilestone) {
       const checkboxMatch = line.match(/^\s*- \[ \] (.+)/)
       if (checkboxMatch) {
         const rawLabel = checkboxMatch[1]
@@ -537,9 +539,9 @@ export function parseRoadmap(content: string): Milestone[] {
           .replace(/\s+/g, ' ')
           .trim()
         const label = rawLabel.endsWith(':') ? rawLabel.slice(0, -1) : rawLabel
-        const idx = currentMilestone.subtasks.length + 1
-        currentMilestone.subtasks.push({
-          id: `${currentMilestone.id}_${String(idx).padStart(3, '0')}`,
+        const idx = subtaskMilestone.subtasks.length + 1
+        subtaskMilestone.subtasks.push({
+          id: `${subtaskMilestone.id}_${String(idx).padStart(3, '0')}`,
           label,
           status: 'todo',
           done: false,
@@ -643,7 +645,7 @@ export function generateTrackerState(
 
   return {
     project: {
-      name: 'Talkstore',
+      name: 'JYRY',
       start_date: '2026-03-15',
       target_submit_date: '2026-05-24',
       current_week: calculateCurrentWeek(),

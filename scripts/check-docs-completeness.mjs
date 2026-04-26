@@ -54,9 +54,9 @@ function main() {
   }
 
   requireIncludes('README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
-    'TalkStore is a compatibility profile',
+    'JYRY Command Center',
+    'jyry-command-center',
+    'JYRY is a compatibility profile',
     'docs/roadmap.md',
     'npm run bootstrap -- --project',
     'examples/minimal-command-center-project',
@@ -66,7 +66,7 @@ function main() {
   ])
 
   requireIncludes('.env.example', [
-    'sha8al-command-center',
+    'jyry-command-center',
     'COMMAND_CENTER_PROFILE=generic',
     'COMMAND_CENTER_PROJECT_ROOT=/path/to/project',
     'tracker:parse:project-tasks:dry-run',
@@ -101,11 +101,11 @@ function main() {
   ])
 
   requireIncludes('examples/minimal-command-center-project/README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
+    'JYRY Command Center',
+    'jyry-command-center',
     'tracker:parse:project-tasks:dry-run',
-    'TalkStore remains the compatibility profile',
-    'should not require `TALKSTORE_PROJECT_ROOT`',
+    'JYRY remains the compatibility profile',
+    'should not require `JYRY_PROJECT_ROOT`',
   ])
 
   if (issues.length > 0) {

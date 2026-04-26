@@ -19,11 +19,11 @@ When you report a vulnerability, include:
 
 - affected release, commit, or branch
 - affected surface, such as Electron app, MCP server, bootstrap scripts, or packaging
-- active profile, such as `generic`, `talkstore`, or `aci`
+- active profile, such as `generic`, `jyry`, or `aci`
 - operating system and runtime details
 - a clear reproduction path or proof of concept
 - the expected safe behavior and the actual unsafe behavior
-- whether the issue depends on TalkStore compatibility wiring
+- whether the issue depends on JYRY compatibility wiring
 - any known mitigation or rollback option
 
 ## Sensitive Areas For This Repository
@@ -32,7 +32,7 @@ Please call out issues that involve any of the following:
 
 - project-root discovery and filesystem path resolution
 - tracker/checklist/manifesto source resolution
-- implicit fallback to sibling TalkStore paths
+- implicit fallback to sibling JYRY paths
 - tracker write guards and any bypass or override behavior
 - Electron preload or IPC boundaries that could expose filesystem access to the renderer
 - accidental disclosure of tracker content, absolute paths, local tokens, or operator-only docs

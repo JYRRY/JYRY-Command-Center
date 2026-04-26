@@ -2,11 +2,11 @@
 
 **Date:** 2026-04-16
 **Status:** Approved
-**Location:** Talkstore Command Center (Electron app)
+**Location:** JYRY Command Center (Electron app)
 
 ## Problem
 
-Talkstore has 28 distinct EXECUTE use cases across 11 groups. The app is built, but there's no structured way to verify that every use case works end-to-end. The operator tests manually in the browser and has no record of what's been tested, what passed, and what failed. The diagnostic agent can test via the API but has nowhere to record results. There is no readiness gate before Shopify submission.
+JYRY has 28 distinct EXECUTE use cases across 11 groups. The app is built, but there's no structured way to verify that every use case works end-to-end. The operator tests manually in the browser and has no record of what's been tested, what passed, and what failed. The diagnostic agent can test via the API but has nowhere to record results. There is no readiness gate before Shopify submission.
 
 ## Solution
 
@@ -16,7 +16,7 @@ A new **QA tab** in the command center that lists all 28 use cases, supports dua
 
 ## Data Model
 
-New `qa` key in `talkstore-tracker.json`:
+New `qa` key in `jyry-tracker.json`:
 
 ```json
 {

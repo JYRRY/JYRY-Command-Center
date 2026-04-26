@@ -23,7 +23,7 @@ Submission checklist bullets should not live inside the build plan. The audit pr
 
 “Navigation menu management” is out of scope. It is not in the manifesto’s scope boundaries, MVP scope, or V1.2 workflow set.
 
-“Page-level SEO meta title/meta description generation” is not core to the manifesto. The manifesto explicitly says Talkstore is not an SEO tool. JSON-LD/schema support is defensible; full SEO-copy expansion is not core.
+“Page-level SEO meta title/meta description generation” is not core to the manifesto. The manifesto explicitly says JYRY is not an SEO tool. JSON-LD/schema support is defensible; full SEO-copy expansion is not core.
 
 Timeline visual, cost projection, decision log, and rejection-reasons prose are planning/support docs, not canonical tasks.
 
@@ -239,7 +239,7 @@ Goal: The app can score products, propose enrichment, and execute approved batch
 
  Build an enrichment planner that labels values as certain, inferred, or unresolved.
 
- Implement the metafield write pipeline using Shopify-native category fields first and talkstore.* only when needed.
+ Implement the metafield write pipeline using Shopify-native category fields first and jyry.* only when needed.
 
  Implement the description-rewrite prompt and productUpdate mutation flow.
 
@@ -410,7 +410,7 @@ Goal: Storefront generation works beyond Dawn and the next-platform wedge is doc
 
  Implement JSON-LD/schema markup generation for supported product and collection templates.
 
- Document Sidekick App Extension requirements and map which Talkstore capabilities should be exposed in V2.
+ Document Sidekick App Extension requirements and map which JYRY capabilities should be exposed in V2.
 
 PART 3 - SUMMARY
 1) Total task count
@@ -433,7 +433,7 @@ Safe mode - stop and ask for guidance on unexpected execution state. - Manifesto
 
 Usage-cap warning support - APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT. - Manifesto Section 14.
 
-Cumulative impact summary - merchant-visible “what Talkstore has done” view. - Manifesto Section 8 measurable impact tracking.
+Cumulative impact summary - merchant-visible “what JYRY has done” view. - Manifesto Section 8 measurable impact tracking.
 
 Extra confirmation for large product batches - Manifesto Section 8 merchant control.
 

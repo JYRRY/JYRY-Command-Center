@@ -1,6 +1,6 @@
 # Phase 0 + Phase 1 Implementation Brief
 
-This brief is the durable source of truth for the script-side parser and CLI safety rollout in Talkstore Command Center. It applies only to `package.json`, `scripts/*`, `scripts/lib/*`, `README.md`, `.env.example`, and operator-facing docs that describe those entrypoints.
+This brief is the durable source of truth for the script-side parser and CLI safety rollout in JYRY Command Center. It applies only to `package.json`, `scripts/*`, `scripts/lib/*`, `README.md`, `.env.example`, and operator-facing docs that describe those entrypoints.
 
 ## Hard Scope Boundary
 
@@ -16,12 +16,12 @@ This brief is the durable source of truth for the script-side parser and CLI saf
 
 ## Live Repo Safety Rules
 
-- The live TalkStore repo is `/Users/luqman/Desktop/Projects/talkstore`.
-- The live tracker file is `/Users/luqman/Desktop/Projects/talkstore/talkstore-tracker.json`.
-- Against the live TalkStore repo: dry-run only.
+- The live JYRY repo is `/Users/luqman/Desktop/Projects/jyry`.
+- The live tracker file is `/Users/luqman/Desktop/Projects/jyry/jyry-tracker.json`.
+- Against the live JYRY repo: dry-run only.
 - No real write is allowed to the live tracker during Phase 0 validation.
 - Any real write-path validation must happen only in a temp sandbox under `/tmp`.
-- Before any change or command, ask: "Will this break the live TalkStore Command Center right now?"
+- Before any change or command, ask: "Will this break the live JYRY Command Center right now?"
   - If no, proceed.
   - If maybe, hard stop and report.
 
@@ -29,12 +29,12 @@ This brief is the durable source of truth for the script-side parser and CLI saf
 
 - Guard inspection:
   - `npm run tracker:guard:status`
-- TalkStore parser using `docs/tasks.md`:
-  - `npm run tracker:parse:talkstore-tasks`
-  - `npm run tracker:parse:talkstore-tasks:dry-run`
-- TalkStore parser using legacy `docs/roadmap.md` inputs:
-  - `npm run tracker:parse:talkstore-roadmap`
-  - `npm run tracker:parse:talkstore-roadmap:dry-run`
+- JYRY parser using `docs/tasks.md`:
+  - `npm run tracker:parse:jyry-tasks`
+  - `npm run tracker:parse:jyry-tasks:dry-run`
+- JYRY parser using legacy `docs/roadmap.md` inputs:
+  - `npm run tracker:parse:jyry-roadmap`
+  - `npm run tracker:parse:jyry-roadmap:dry-run`
 - ACI parser using `Brainstorming & Pivot/ROADMAP.md`:
   - `npm run tracker:parse:aci-roadmap`
   - `npm run tracker:parse:aci-roadmap:dry-run`
@@ -63,7 +63,7 @@ Phase 0 locks down operator-visible behavior and the script-side safety model be
 - An operator can determine the tracker target before any write attempt.
 - An operator must choose an explicit parser/source combination.
 - Dry-run and real-write code paths share the same parser logic.
-- Live TalkStore dry-runs do not mutate the live tracker.
+- Live JYRY dry-runs do not mutate the live tracker.
 - Real write-path validation can be proven safely in `/tmp`.
 
 ## Phase 1
@@ -73,22 +73,22 @@ Phase 1 is the future implementation work that builds on the explicit safety mod
 ### Current Phase 1 Goals
 
 - create the public boundary doc
-- create the TalkStore coupling audit
+- create the JYRY coupling audit
 - create the cutover checklist
-- define TalkStore as a consumer profile, not the platform identity
-- keep live TalkStore wiring unchanged while the boundary and cutover docs are written
+- define JYRY as a consumer profile, not the platform identity
+- keep live JYRY wiring unchanged while the boundary and cutover docs are written
 
 ### Current Deliverables
 
 - `docs/public-boundary.md`
-- `docs/talkstore-coupling-audit.md`
+- `docs/jyry-coupling-audit.md`
 - `docs/cutover-checklist.md`
-- docs updates that frame TalkStore as a compatibility profile instead of the platform identity
+- docs updates that frame JYRY as a compatibility profile instead of the platform identity
 - carry-forward cleanup: `scripts/apply-dependency-analysis.mjs` adopts the same backup-before-write and profile-aware script safety model as the other tracker-writing scripts
 
 ### Required Behavior
 
-- `scripts/parse-markdown.mjs` supports explicit TalkStore source selection only through `docs/tasks.md` or `docs/roadmap.md`.
+- `scripts/parse-markdown.mjs` supports explicit JYRY source selection only through `docs/tasks.md` or `docs/roadmap.md`.
 - `scripts/parse-aci-roadmap.mjs` requires `Brainstorming & Pivot/ROADMAP.md` explicitly and never falls back to `docs/roadmap.md`.
 - `scripts/lib/profile-validators.mjs` stamps parser metadata into `project` and rejects mismatched parser/profile/source combinations before write.
 - `scripts/lib/tracker-backup.mjs` creates a backup in `.command-center-backups/` before a real tracker write.
@@ -100,11 +100,11 @@ Phase 1 is the future implementation work that builds on the explicit safety mod
 
 - `npm run build`
 - `cd mcp-server && npm run build`
-- Every parser command in dry-run mode against the live TalkStore repo
+- Every parser command in dry-run mode against the live JYRY repo
 - One intentional parser/profile mismatch that fails non-zero
 - One temp-sandbox real write test under `/tmp` that proves backup-before-write works
-- Proof that the live TalkStore repo was not modified
-- Proof that `/Users/luqman/Desktop/Projects/talkstore/talkstore-tracker.json` was not written
+- Proof that the live JYRY repo was not modified
+- Proof that `/Users/luqman/Desktop/Projects/jyry/jyry-tracker.json` was not written
 
 ## Non-Goals
 
@@ -119,8 +119,8 @@ Phase 2 is the implementation-ready planning pass for the public repo transition
 ### Current Phase 2 Goals
 
 - define the target profile system shape
-- define the runtime, MCP, and config cutover plan from TalkStore-first compatibility to explicit profile resolution
-- define the public naming transition to `sha8al-command-center`
+- define the runtime, MCP, and config cutover plan from JYRY-first compatibility to explicit profile resolution
+- define the public naming transition to `jyry-command-center`
 - define the OSS packaging checklist
 - define the validation matrix for fresh external installs getting the same command center experience
 
@@ -137,5 +137,5 @@ Phase 2 is the implementation-ready planning pass for the public repo transition
 
 - do not execute the cutover yet
 - do not rename runtime packages yet
-- do not change live TalkStore wiring yet
+- do not change live JYRY wiring yet
 - produce the Phase 2 plan as docs only first

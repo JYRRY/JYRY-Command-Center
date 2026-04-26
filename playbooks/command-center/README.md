@@ -1,4 +1,4 @@
-# Sha8al Command Center Playbook
+# JYRY Command Center Playbook
 
 This directory is the public entrypoint for the native command-center workflow.
 
@@ -44,4 +44,4 @@ The repo seeds and displays a shared roster:
 
 ## Compatibility
 
-`playbooks/talkstore/` remains as the TalkStore compatibility mirror. The root `.claude` layer is now the primary workflow surface for this repo.
+`playbooks/jyry/` remains as the JYRY compatibility mirror. The root `.claude` layer is now the primary workflow surface for this repo.

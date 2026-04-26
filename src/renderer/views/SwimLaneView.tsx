@@ -22,12 +22,12 @@ const TOTAL_W = TOTAL_WEEKS * WEEK_W
 const NODE_R = 22
 const KEY_NODE_R = 28
 const PANEL_W = 480
-const OFFSETS_STORAGE_KEY = 'talkstore-swimlane-offsets-v4-aci'
+const OFFSETS_STORAGE_KEY = 'jyry-swimlane-offsets-v4-aci'
 
 const LANES = DOMAIN_LANES
 
 // AI Commerce Index Platform — 8 phase bands across 12 weeks. Mirrors the
-// schedule.phases in talkstore-tracker.json. Phase 2 (Backend Core) holds 4
+// schedule.phases in jyry-tracker.json. Phase 2 (Backend Core) holds 4
 // milestones (M3-M6) and gets 4 weeks; Phase 3 (Frontend) holds M7 and gets
 // 2 weeks; every other phase is a single week.
 const DISPLAY_PHASES = [

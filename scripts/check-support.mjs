@@ -12,7 +12,7 @@ export function assert(condition, message) {
   if (!condition) throw new Error(message)
 }
 
-export function tempDir(prefix = 'sha8al-command-center-check-') {
+export function tempDir(prefix = 'jyry-command-center-check-') {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 

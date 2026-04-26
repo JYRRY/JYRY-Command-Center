@@ -1,6 +1,6 @@
-# Sha8al Command Center OSS Packaging Checklist
+# JYRY Command Center OSS Packaging Checklist
 
-This checklist defines the public OSS packaging requirements for Sha8al Command Center (`sha8al-command-center`).
+This checklist defines the public OSS packaging requirements for JYRY Command Center (`jyry-command-center`).
 
 It is implementation-ready planning only.
 Nothing in this document should trigger packaging changes by itself.
@@ -11,19 +11,19 @@ As of Phase 2 planning:
 - there is no visible `.github/` metadata layer in the repo
 - there is now a minimal `examples/minimal-command-center-project/` scaffold, but it still needs to stay aligned with the public onboarding docs
 - the current README is platform-shifted but not yet a full OSS onboarding document
-- TalkStore compatibility still appears in package metadata and CLI naming
+- JYRY compatibility still appears in package metadata and CLI naming
 
 ## README Requirements
 
 The public README must include:
-- platform identity first: `sha8al-command-center`
+- platform identity first: `jyry-command-center`
 - one-sentence description of what the platform is
-- explicit statement that TalkStore is a compatibility profile
+- explicit statement that JYRY is a compatibility profile
 - install steps for app and MCP package
 - bootstrap steps for a fresh external project
 - profile selection explanation
 - supported tracker/doc defaults
-- compatibility section for TalkStore users
+- compatibility section for JYRY users
 - troubleshooting links
 - architecture doc links
 
@@ -46,7 +46,7 @@ Required sections:
 - how to run app and MCP builds
 - how to test profile-resolution changes safely
 - docs standards
-- compatibility rules for TalkStore
+- compatibility rules for JYRY
 
 ## CODE_OF_CONDUCT.md
 
@@ -81,7 +81,7 @@ Required fields:
 - target profile
 - OS/runtime environment
 - expected vs actual behavior
-- whether TalkStore compatibility is involved
+- whether JYRY compatibility is involved
 
 ## PR Template
 
@@ -103,7 +103,7 @@ Each release should include:
 - breaking changes
 - compatibility changes
 - new public install or packaging changes
-- TalkStore-specific notes
+- JYRY-specific notes
 - rollback notes if applicable
 
 Recommended authoring location:
@@ -114,7 +114,7 @@ Recommended authoring location:
 The public repo should ship one minimal external example project.
 
 Required properties:
-- no dependency on the live TalkStore repo
+- no dependency on the live JYRY repo
 - demonstrates bootstrap, parser, tracker, and dashboard workflow
 - small enough to understand quickly
 - documented in a dedicated example plan
@@ -130,7 +130,7 @@ Required docs:
 - MCP build
 - fresh external project bootstrap
 - profile selection guide
-- compatibility bootstrap for TalkStore users
+- compatibility bootstrap for JYRY users
 
 ## Troubleshooting Docs
 
@@ -140,7 +140,7 @@ Required troubleshooting coverage:
 - missing tasks/checklist/manifesto docs
 - parser/profile mismatch failure
 - backup behavior expectations
-- TalkStore compatibility path confusion
+- JYRY compatibility path confusion
 
 ## Architecture Docs
 
@@ -154,9 +154,9 @@ Required docs:
 
 ## Packaging Safety Requirements
 
-- publish flows must not require a sibling TalkStore checkout
-- publish flows must not write to a live TalkStore tracker
-- install docs must not instruct users to modify TalkStore wiring for a generic install
+- publish flows must not require a sibling JYRY checkout
+- publish flows must not write to a live JYRY tracker
+- install docs must not instruct users to modify JYRY wiring for a generic install
 - compatibility aliases must be clearly labeled and bounded
 
 ## Minimum OSS Release Gate

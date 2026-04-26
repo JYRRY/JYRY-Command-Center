@@ -1,0 +1,94 @@
+{
+  "id": "jyry",
+  "display_name": "JYRY Compatibility",
+  "kind": "compatibility",
+  "resolution_priority": 200,
+  "aliases": {
+    "profile_names": ["jyry"],
+    "cli_names": ["jyry"]
+  },
+  "project_root": {
+    "env_keys": ["COMMAND_CENTER_PROJECT_ROOT", "PROJECT_ROOT", "JYRY_PROJECT_ROOT"],
+    "compatibility_inference": [
+      {
+        "type": "sibling_path",
+        "value": "../jyry"
+      }
+    ]
+  },
+  "tracker": {
+    "primary_filename": "jyry-tracker.json",
+    "compatibility_filenames": ["command-center-tracker.json"],
+    "default_creation_filename": "command-center-tracker.json"
+  },
+  "docs": {
+    "tasks": {
+      "default_path": "docs/tasks.md",
+      "compatibility_paths": ["docs/roadmap.md"],
+      "env_keys": ["COMMAND_CENTER_TASKS_DOC", "TASKS_DOC"],
+      "cli_keys": ["tasks-source", "tasks-doc"],
+      "required": true
+    },
+    "checklist": {
+      "default_path": "docs/submission-checklist.md",
+      "compatibility_paths": [],
+      "env_keys": ["COMMAND_CENTER_CHECKLIST_DOC", "CHECKLIST_DOC"],
+      "cli_keys": ["checklist-source", "checklist-doc"],
+      "required": true
+    },
+    "manifesto": {
+      "default_path": "docs/manifesto.md",
+      "compatibility_paths": [],
+      "env_keys": ["COMMAND_CENTER_MANIFESTO_DOC", "MANIFESTO_DOC"],
+      "cli_keys": ["manifesto-source", "manifesto-doc"],
+      "required": false
+    },
+    "roadmap_optional": {
+      "default_path": "docs/roadmap.md",
+      "required": false
+    }
+  },
+  "parser_defaults": {
+    "jyry-markdown": {
+      "parser_profile": "jyry",
+      "parser_ids": ["jyry-markdown"],
+      "source_fields": {
+        "tasks": {
+          "default_path": "docs/tasks.md",
+          "compatibility_paths": ["docs/roadmap.md"],
+          "env_keys": ["COMMAND_CENTER_TASKS_DOC", "TASKS_DOC"],
+          "cli_keys": ["tasks-source", "tasks-doc"],
+          "required": true,
+          "require_explicit": true
+        },
+        "checklist": {
+          "default_path": "docs/submission-checklist.md",
+          "compatibility_paths": [],
+          "env_keys": ["COMMAND_CENTER_CHECKLIST_DOC", "CHECKLIST_DOC"],
+          "cli_keys": ["checklist-source", "checklist-doc"],
+          "required": true,
+          "require_explicit": false
+        },
+        "manifesto": {
+          "default_path": "docs/manifesto.md",
+          "compatibility_paths": [],
+          "env_keys": ["COMMAND_CENTER_MANIFESTO_DOC", "MANIFESTO_DOC"],
+          "cli_keys": ["manifesto-source", "manifesto-doc"],
+          "required": false,
+          "require_explicit": false
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "default_env_keys": [
+      "COMMAND_CENTER_PROFILE",
+      "COMMAND_CENTER_PROJECT_ROOT",
+      "COMMAND_CENTER_TRACKER_FILE",
+      "COMMAND_CENTER_TASKS_DOC",
+      "COMMAND_CENTER_CHECKLIST_DOC",
+      "COMMAND_CENTER_MANIFESTO_DOC"
+    ],
+    "compatibility_env_keys": ["JYRY_PROJECT_ROOT"]
+  }
+}

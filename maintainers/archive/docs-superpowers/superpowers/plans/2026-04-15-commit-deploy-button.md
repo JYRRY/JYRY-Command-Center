@@ -32,12 +32,12 @@
 
 - [ ] **Step 1: Create the git helper module**
 
-This module wraps all git CLI calls using `execFile` (not `exec` -- no shell, no injection risk). It runs commands in `TALKSTORE_ROOT` and returns structured results.
+This module wraps all git CLI calls using `execFile` (not `exec` -- no shell, no injection risk). It runs commands in `JYRY_ROOT` and returns structured results.
 
 ```typescript
 // src/main/git.ts
 import { execFile } from 'child_process'
-import { TALKSTORE_ROOT } from './config'
+import { JYRY_ROOT } from './config'
 
 export type GitResult =
   | { status: 'success'; message: string; branch: string; filesChanged: number }
@@ -46,7 +46,7 @@ export type GitResult =
 
 function git(args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile('git', args, { cwd: TALKSTORE_ROOT, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+    execFile('git', args, { cwd: JYRY_ROOT, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
       if (err) reject(new Error(stderr || err.message))
       else resolve(stdout)
     })
@@ -440,11 +440,11 @@ Check the header bar. The "Commit" button should be visible between the sync ind
 
 - [ ] **Step 3: Test with no changes**
 
-If the talkstore repo has no uncommitted changes, click the button. Expected: yellow "No changes" for 3 seconds, then back to "Commit".
+If the jyry repo has no uncommitted changes, click the button. Expected: yellow "No changes" for 3 seconds, then back to "Commit".
 
 - [ ] **Step 4: Test with changes**
 
-Make a small change in the talkstore repo, then click "Commit". Expected:
+Make a small change in the jyry repo, then click "Commit". Expected:
 1. Spinner + "Pushing..."
 2. Green checkmark + "Deployed" on success
 3. Revert to "Commit" after 3 seconds

@@ -5,7 +5,7 @@ This document converts the accepted Phase 2 planning docs into an execution sequ
 It does not authorize immediate cutover by itself.
 Use it together with:
 - [Public Boundary](public-boundary.md)
-- [TalkStore Coupling Audit](talkstore-coupling-audit.md)
+- [JYRY Coupling Audit](jyry-coupling-audit.md)
 - [Cutover Checklist](cutover-checklist.md)
 - [Profile System Design](profile-system-design.md)
 - [Naming Transition Plan](naming-transition-plan.md)
@@ -16,7 +16,7 @@ Use it together with:
 ## Purpose
 
 Phase 2 established the target platform model and the cutover constraints. This document defines:
-- the target end state for `sha8al-command-center`
+- the target end state for `jyry-command-center`
 - the implementation phases after Phase 2
 - the safest execution order
 - hard stop conditions between phases
@@ -25,21 +25,21 @@ Phase 2 established the target platform model and the cutover constraints. This 
 
 ## Target End State
 
-The target end state is a public platform named `sha8al-command-center` with TalkStore preserved as a compatibility consumer profile rather than the platform identity.
+The target end state is a public platform named `jyry-command-center` with JYRY preserved as a compatibility consumer profile rather than the platform identity.
 
 At completion:
-- the repo, app, MCP package, and primary CLI identity are `sha8al-command-center`
+- the repo, app, MCP package, and primary CLI identity are `jyry-command-center`
 - runtime, MCP, scripts, and bootstrap all resolve the active consumer profile through the same explicit contract
 - `generic` is the public default profile for fresh external installs
-- `talkstore` remains supported as a compatibility profile during the compatibility window
-- fresh installs do not depend on `TALKSTORE_PROJECT_ROOT`, `talkstore-tracker.json`, or sibling `../talkstore` inference
-- TalkStore-specific names, paths, playbooks, and aliases are documented as compatibility surfaces only
-- external users can install and run the platform without access to the TalkStore repo
-- legacy TalkStore heuristics are removed only after the compatibility window, validation, and rollback preparation are complete
+- `jyry` remains supported as a compatibility profile during the compatibility window
+- fresh installs do not depend on `JYRY_PROJECT_ROOT`, `jyry-tracker.json`, or sibling `../jyry` inference
+- JYRY-specific names, paths, playbooks, and aliases are documented as compatibility surfaces only
+- external users can install and run the platform without access to the JYRY repo
+- legacy JYRY heuristics are removed only after the compatibility window, validation, and rollback preparation are complete
 
 ## Execution Principles
 
-- Keep the public boundary stable while moving TalkStore-specific behavior behind the `talkstore` profile.
+- Keep the public boundary stable while moving JYRY-specific behavior behind the `jyry` profile.
 - Prefer additive introduction of new public surfaces before switching defaults or removing legacy ones.
 - Treat runtime resolution, MCP resolution, and script/bootstrap resolution as one coupled system.
 - Do not perform naming cutover, runtime cutover, or legacy cleanup in the same step.
@@ -51,8 +51,8 @@ At completion:
 
 Objective:
 - introduce the shared consumer-profile contract across runtime, MCP, scripts, and bootstrap
-- encode `generic` and `talkstore` as explicit profiles
-- preserve all current TalkStore behavior behind the `talkstore` compatibility profile
+- encode `generic` and `jyry` as explicit profiles
+- preserve all current JYRY behavior behind the `jyry` compatibility profile
 
 Primary outputs:
 - one shared profile-resolution model
@@ -67,19 +67,19 @@ Depends on:
 
 Phase exit gate:
 - the same project resolves to the same profile across runtime, MCP, and scripts
-- `generic` can exist without TalkStore heuristics
-- existing TalkStore installs still resolve through `talkstore`
+- `generic` can exist without JYRY heuristics
+- existing JYRY installs still resolve through `jyry`
 
 ### Phase 4: Public Bootstrap and External Install Path
 
 Objective:
-- make fresh setup profile-first instead of TalkStore-first
+- make fresh setup profile-first instead of JYRY-first
 - establish the public external install path without requiring naming cutover yet
 
 Primary outputs:
 - bootstrap writes explicit profile configuration
 - `.env.example` and setup docs lead with `COMMAND_CENTER_*` and profile selection
-- fresh external installs succeed with the `generic` profile and no hidden TalkStore assumptions
+- fresh external installs succeed with the `generic` profile and no hidden JYRY assumptions
 
 Classification:
 - additive
@@ -88,20 +88,20 @@ Depends on:
 - Phase 3 shared profile resolution
 
 Phase exit gate:
-- a new external project can boot the platform without `TALKSTORE_PROJECT_ROOT`
-- setup does not require `talkstore-tracker.json`
-- operator docs no longer present TalkStore as the default product identity
+- a new external project can boot the platform without `JYRY_PROJECT_ROOT`
+- setup does not require `jyry-tracker.json`
+- operator docs no longer present JYRY as the default product identity
 
 ### Phase 5: Public Naming Introduction and Compatibility Window
 
 Objective:
-- introduce the public `sha8al-command-center` identity while retaining TalkStore compatibility entrypoints
+- introduce the public `jyry-command-center` identity while retaining JYRY compatibility entrypoints
 - begin the compatibility window for package, CLI, and operator naming
 
 Primary outputs:
-- public-facing docs lead with `sha8al-command-center`
+- public-facing docs lead with `jyry-command-center`
 - CLI help, bootstrap output, and package metadata expose the public names
-- TalkStore names remain available as compatibility aliases where required
+- JYRY names remain available as compatibility aliases where required
 
 Classification:
 - mixed
@@ -117,20 +117,20 @@ Depends on:
 - rollback notes for naming changes
 
 Phase exit gate:
-- new users see `sha8al-command-center` first
-- existing TalkStore operators still have a documented working path
+- new users see `jyry-command-center` first
+- existing JYRY operators still have a documented working path
 - both naming paths are validated before any legacy naming is removed
 
 ### Phase 6: Runtime and MCP Default Cutover
 
 Objective:
 - make explicit profile resolution the default operating model
-- demote TalkStore inference to compatibility fallback only during the remaining compatibility window
+- demote JYRY inference to compatibility fallback only during the remaining compatibility window
 
 Primary outputs:
 - runtime and MCP prefer explicit profile selection
 - compatibility inference is isolated, documented, and measurable
-- validation covers both fresh external installs and live TalkStore flows
+- validation covers both fresh external installs and live JYRY flows
 
 Classification:
 - requires cutover
@@ -142,19 +142,19 @@ Depends on:
 - rollback steps documented and reviewed
 
 Phase exit gate:
-- fresh installs work without TalkStore heuristics
-- TalkStore still works through the compatibility profile
-- no surface still treats TalkStore-first inference as the primary default
+- fresh installs work without JYRY heuristics
+- JYRY still works through the compatibility profile
+- no surface still treats JYRY-first inference as the primary default
 
 ### Phase 7: Legacy Inference Removal and Cleanup
 
 Objective:
 - remove temporary compatibility inference after the compatibility window closes
-- leave TalkStore support only where intentionally retained as a documented compatibility surface
+- leave JYRY support only where intentionally retained as a documented compatibility surface
 
 Primary outputs:
-- sibling `../talkstore` inference removed
-- `TALKSTORE_PROJECT_ROOT` demoted to compatibility alias only or removed if explicitly approved
+- sibling `../jyry` inference removed
+- `JYRY_PROJECT_ROOT` demoted to compatibility alias only or removed if explicitly approved
 - legacy tracker filename preference removed unless intentionally preserved as a compatibility alias
 - docs and release notes reflect the final public platform posture
 
@@ -163,11 +163,11 @@ Classification:
 
 Depends on:
 - Phase 6 cutover stability over the agreed compatibility window
-- explicit decision on which TalkStore aliases remain supported
+- explicit decision on which JYRY aliases remain supported
 - migration and rollback guidance already published
 
 Phase exit gate:
-- no hidden TalkStore-only heuristics remain in the platform default path
+- no hidden JYRY-only heuristics remain in the platform default path
 - retained compatibility aliases are intentional and documented
 - final validation passes for the supported profile set
 
@@ -181,7 +181,7 @@ Execute the work in this order and do not collapse adjacent phases into one PR u
 4. switch runtime and MCP defaults to explicit profile resolution
 5. remove compatibility inference only after the compatibility window and validation are complete
 
-The key safety rule is that additive work comes before behavioral cutover. Public names must exist before they become primary. Explicit profiles must work before TalkStore-first inference stops being the default. Rollback notes must exist before any switch in default behavior or package identity lands.
+The key safety rule is that additive work comes before behavioral cutover. Public names must exist before they become primary. Explicit profiles must work before JYRY-first inference stops being the default. Rollback notes must exist before any switch in default behavior or package identity lands.
 
 ## Phase Dependencies
 
@@ -198,12 +198,12 @@ The key safety rule is that additive work comes before behavioral cutover. Publi
 Stop the rollout and do not advance to the next phase if any of the following are true:
 
 - runtime, MCP, and script/bootstrap surfaces resolve different profiles for the same project
-- `generic` still depends on TalkStore-only heuristics such as sibling `../talkstore` discovery
-- a fresh external install still requires `TALKSTORE_PROJECT_ROOT`, `talkstore-tracker.json`, or TalkStore repo structure
-- a package rename or primary CLI rename would remove the current TalkStore path before dual-path validation is complete
-- the live TalkStore compatibility path fails during transition-window validation
+- `generic` still depends on JYRY-only heuristics such as sibling `../jyry` discovery
+- a fresh external install still requires `JYRY_PROJECT_ROOT`, `jyry-tracker.json`, or JYRY repo structure
+- a package rename or primary CLI rename would remove the current JYRY path before dual-path validation is complete
+- the live JYRY compatibility path fails during transition-window validation
 - rollback steps are missing for a naming change, default-resolution switch, or legacy heuristic removal
-- docs, help text, or bootstrap output still present TalkStore as the platform identity after the naming-introduction phase begins
+- docs, help text, or bootstrap output still present JYRY as the platform identity after the naming-introduction phase begins
 - a proposed change combines additive setup, default switch, and legacy removal into one unreviewable cutover step
 
 ## Additive Work vs Cutover Work
@@ -213,7 +213,7 @@ Stop the rollout and do not advance to the next phase if any of the following ar
 The following work should land before cutover because it adds capability without removing current behavior:
 - defining shared profile objects and explicit resolution rules
 - adding the `generic` public profile
-- keeping TalkStore behavior behind the `talkstore` profile
+- keeping JYRY behavior behind the `jyry` profile
 - updating bootstrap to write explicit profile config
 - updating docs and examples to lead with public profile-first setup
 - adding public CLI names or docs aliases while old names still work
@@ -224,11 +224,11 @@ The following work should land before cutover because it adds capability without
 The following work changes defaults, identity, or compatibility posture and should only happen after earlier gates pass:
 - changing package names or published install identities
 - changing the primary CLI name or package `bin` contract
-- switching runtime and MCP surfaces away from TalkStore-first default inference
-- removing sibling `../talkstore` discovery
-- removing or demoting `TALKSTORE_PROJECT_ROOT` beyond the documented compatibility window
-- removing preference for `talkstore-tracker.json` when that affects existing installs
-- deleting legacy docs, aliases, or examples that existing TalkStore operators still depend on
+- switching runtime and MCP surfaces away from JYRY-first default inference
+- removing sibling `../jyry` discovery
+- removing or demoting `JYRY_PROJECT_ROOT` beyond the documented compatibility window
+- removing preference for `jyry-tracker.json` when that affects existing installs
+- deleting legacy docs, aliases, or examples that existing JYRY operators still depend on
 
 ## Recommended PR Boundaries
 
@@ -249,4 +249,4 @@ This execution plan is complete when it is used as the sequencing document for i
 - its hard stop conditions
 - its rollback expectation
 
-The implementation is complete only when the target end state is true and the platform no longer depends on hidden TalkStore-first defaults for fresh installs.
+The implementation is complete only when the target end state is true and the platform no longer depends on hidden JYRY-first defaults for fresh installs.

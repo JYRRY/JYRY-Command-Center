@@ -1,6 +1,6 @@
 # Codex Entrypoint
 
-This file is the Codex-side entrypoint for Sha8al Command Center. Shared repo behavior and project context live in `CLAUDE.md`. Codex and Claude Code should follow the same operator command surface from this repo's native `.claude` layer.
+This file is the Codex-side entrypoint for JYRY Command Center. Shared repo behavior and project context live in `CLAUDE.md`. Codex and Claude Code should follow the same operator command surface from this repo's native `.claude` layer.
 
 ## Read first
 
@@ -15,7 +15,7 @@ When the operator's message starts with one of these first tokens, treat it as a
 
 | First token | What to do | Full spec |
 | --- | --- | --- |
-| `next` | Call `mcp__talkstore__get_next_actionable_tasks` and format the result by tier. Read-only. | `.claude/commands/next.md` |
+| `next` | Call `mcp__jyry__get_next_actionable_tasks` and format the result by tier. Read-only. | `.claude/commands/next.md` |
 | `sweep` | Run the wave-driven execution loop for a milestone tier. | `.claude/commands/sweep.md` |
 | `prepare` | Run the prep phase for `M<N> <tier>`, `M<N> all`, or `T<id>` using Explorer + Researcher. | `.claude/commands/prepare.md` |
 | `build` | Execute prepared work from `builder_prompt` when present, then hand off to the Auditor. | `.claude/commands/build.md` |
@@ -42,6 +42,6 @@ Codex orchestration should identify itself as `codex`. Claude orchestration shou
 
 ## MCP/tooling notes
 
-- The current MCP tool namespace remains `mcp__talkstore__*` for compatibility.
+- The current MCP tool namespace remains `mcp__jyry__*` for compatibility.
 - Use the MCP server and tracker tools rather than editing tracker JSON directly.
 - Respect the active profile and project root resolution rules in `CLAUDE.md`.

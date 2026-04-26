@@ -19,15 +19,15 @@ body:
       label: Target profile
       options:
         - generic
-        - talkstore
+        - jyry
         - aci
         - other / mixed
     validations:
       required: true
   - type: dropdown
-    id: talkstore_compatibility
+    id: jyry_compatibility
     attributes:
-      label: Is TalkStore compatibility involved?
+      label: Is JYRY compatibility involved?
       options:
         - "No"
         - "Yes"

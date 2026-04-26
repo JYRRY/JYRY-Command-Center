@@ -1,13 +1,13 @@
 {
-  "name": "sha8al-command-center-mcp",
+  "name": "jyry-command-center-mcp",
   "version": "1.0.0",
-  "description": "Sha8al Command Center (sha8al-command-center) MCP server and CLI, with TalkStore compatibility aliases",
+  "description": "JYRY Command Center (jyry-command-center) MCP server and CLI, with JYRY compatibility aliases",
   "type": "module",
   "main": "dist/index.js",
   "license": "ISC",
   "bin": {
-    "sha8al-command-center": "dist/cli.js",
-    "talkstore": "dist/cli.js"
+    "jyry-command-center": "dist/cli.js",
+    "jyry": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -19,13 +19,13 @@
     "dev": "tsc --watch"
   },
   "keywords": [
-    "sha8al-command-center",
-    "sha8al",
+    "jyry-command-center",
+    "jyry",
     "command-center",
     "mcp",
     "cli",
     "tracker",
-    "talkstore-compatibility"
+    "jyry-compatibility"
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1"

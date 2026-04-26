@@ -52,7 +52,7 @@ function main() {
   assert(envText.includes('COMMAND_CENTER_TRACKER_FILE=command-center-tracker.json'), 'bootstrap should write the explicit tracker filename')
   assert(envText.includes('COMMAND_CENTER_TASKS_DOC=docs/roadmap.md'), 'bootstrap should write the roadmap doc path')
   assert(envText.includes('COMMAND_CENTER_MANIFESTO_DOC=docs/manifesto.md'), 'bootstrap should write the manifesto doc path')
-  assert(!envText.includes('TALKSTORE_PROJECT_ROOT='), 'bootstrap should not require TalkStore-specific env on the external example path')
+  assert(!envText.includes('JYRY_PROJECT_ROOT='), 'bootstrap should not require JYRY-specific env on the external example path')
 
   const bootstrapEnv = parseEnvText(envText)
   const guardResult = runNode(

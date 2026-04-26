@@ -6,7 +6,7 @@
 
 **Architecture:** Delete `ReviewView.tsx`, port its `FixesSection` and session card logic into `QAView.tsx`, update tab bar and app router to remove the Review tab, and clean up dead sessions from the tracker JSON via a one-time script.
 
-**Tech Stack:** React + Zustand (renderer), Node.js MCP server (tools), JSON file storage (talkstore-tracker.json), Tailwind CSS.
+**Tech Stack:** React + Zustand (renderer), Node.js MCP server (tools), JSON file storage (jyry-tracker.json), Tailwind CSS.
 
 ---
 
@@ -18,10 +18,10 @@
 - [ ] **Step 1: Run deletion script**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 node -e "
 const fs = require('fs');
-const path = '/Users/luqman/Desktop/Projects/talkstore/talkstore-tracker.json';
+const path = '/Users/luqman/Desktop/Projects/jyry/jyry-tracker.json';
 const data = JSON.parse(fs.readFileSync(path, 'utf8'));
 const deleteIds = [
   'review-backend-1775940982125',
@@ -47,7 +47,7 @@ Expected: `Deleted 7 sessions. Remaining: 11`
 ```bash
 node -e "
 const fs = require('fs');
-const data = JSON.parse(fs.readFileSync('/Users/luqman/Desktop/Projects/talkstore/talkstore-tracker.json', 'utf8'));
+const data = JSON.parse(fs.readFileSync('/Users/luqman/Desktop/Projects/jyry/jyry-tracker.json', 'utf8'));
 data.review_sessions.forEach(s => console.log(s.id + ' | ' + s.title));
 "
 ```
@@ -56,7 +56,7 @@ Expected: 11 sessions listed, none of the 7 deleted IDs present.
 
 - [ ] **Step 3: Commit tracker change**
 
-This is a data file in the talkstore repo, not the command center repo. No git commit needed for the tracker JSON (it's gitignored / runtime data). Move on.
+This is a data file in the jyry repo, not the command center repo. No git commit needed for the tracker JSON (it's gitignored / runtime data). Move on.
 
 ---
 
@@ -129,7 +129,7 @@ Remove the route:
 - [ ] **Step 4: Verify build passes**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 npm run build
 ```
 
@@ -715,7 +715,7 @@ git commit -m "feat(qa): add Open Sessions and Fixes Inbox to merged QA view"
 - [ ] **Step 1: Delete the file**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 rm src/renderer/views/ReviewView.tsx
 ```
 
@@ -793,7 +793,7 @@ case 'create_review_session':
 - [ ] **Step 3: Verify MCP server compiles**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center/mcp-server
+cd /Users/luqman/Desktop/Projects/jyry-command-center/mcp-server
 npx tsc
 ```
 
@@ -802,7 +802,7 @@ Expected: No errors.
 - [ ] **Step 4: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add mcp-server/src/tools.ts
 git commit -m "feat(qa): make lane optional in create_review_session MCP tool"
 ```
@@ -814,7 +814,7 @@ git commit -m "feat(qa): make lane optional in create_review_session MCP tool"
 - [ ] **Step 1: Full build check**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 npm run build
 ```
 

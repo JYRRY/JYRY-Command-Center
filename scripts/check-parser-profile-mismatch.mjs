@@ -3,16 +3,16 @@
 import { join } from 'path'
 import { REPO_ROOT, assert, ensureDir, tempDir, writeJson, writeText, runNode } from './check-support.mjs'
 
-function makeTalkstoreFixture(root) {
+function makeJYRYFixture(root) {
   ensureDir(join(root, 'docs'))
   writeText(join(root, 'docs/tasks.md'), '# THE BUILD ROADMAP\n\n## WEEK 1 - Example\n- [ ] Example task\n')
   writeText(join(root, 'docs/submission-checklist.md'), '## 1. OAuth + Auth\n- ⬜ Example checklist item\n')
   writeText(join(root, 'docs/manifesto.md'), '# Example manifesto\n')
-  writeJson(join(root, 'talkstore-tracker.json'), {
+  writeJson(join(root, 'jyry-tracker.json'), {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
     },
     milestones: [],
     submission_checklist: { categories: [] },
@@ -27,9 +27,9 @@ function makeGenericFixture(root) {
   writeText(join(root, 'docs/manifesto.md'), '# Example manifesto\n')
   writeJson(join(root, 'command-center-tracker.json'), {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
       tasks_source: 'docs/roadmap.md',
       checklist_source: 'docs/submission-checklist.md',
       manifesto_source: 'docs/manifesto.md',
@@ -64,11 +64,11 @@ function makeAciFixture(root) {
       '',
     ].join('\n')
   )
-  writeJson(join(root, 'talkstore-tracker.json'), {
+  writeJson(join(root, 'jyry-tracker.json'), {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
     },
     milestones: [],
     submission_checklist: { categories: [] },
@@ -84,17 +84,17 @@ function assertFailure(result, expectedMessagePart) {
 
 async function main() {
   const workspace = tempDir()
-  const talkstoreRoot = join(workspace, 'talkstore-project')
+  const jyryRoot = join(workspace, 'jyry-project')
   const genericRoot = join(workspace, 'generic-project')
   const aciRoot = join(workspace, 'aci-project')
-  ensureDir(talkstoreRoot)
+  ensureDir(jyryRoot)
   ensureDir(genericRoot)
   ensureDir(aciRoot)
-  makeTalkstoreFixture(talkstoreRoot)
+  makeJYRYFixture(jyryRoot)
   makeGenericFixture(genericRoot)
   makeAciFixture(aciRoot)
 
-  const mismatchTalkstore = runNode(
+  const mismatchJYRY = runNode(
     [
       'scripts/parse-markdown.mjs',
       '--profile=aci',
@@ -105,8 +105,8 @@ async function main() {
     {
       cwd: REPO_ROOT,
       env: {
-        COMMAND_CENTER_PROJECT_ROOT: talkstoreRoot,
-        COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+        COMMAND_CENTER_PROJECT_ROOT: jyryRoot,
+        COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
         COMMAND_CENTER_TASKS_DOC: 'docs/tasks.md',
         COMMAND_CENTER_CHECKLIST_DOC: 'docs/submission-checklist.md',
         COMMAND_CENTER_MANIFESTO_DOC: 'docs/manifesto.md',
@@ -116,14 +116,14 @@ async function main() {
     }
   )
   assertFailure(
-    mismatchTalkstore,
-    'No markdown parser is registered for profile "aci". Supported markdown parser profiles: generic, talkstore.'
+    mismatchJYRY,
+    'No markdown parser is registered for profile "aci". Supported markdown parser profiles: generic, jyry.'
   )
 
-  const sourceMismatchTalkstore = runNode(
+  const sourceMismatchJYRY = runNode(
     [
       'scripts/parse-markdown.mjs',
-      '--profile=talkstore',
+      '--profile=jyry',
       '--tasks-source=docs/not-a-source.md',
       '--checklist-source=docs/submission-checklist.md',
       '--dry-run',
@@ -131,14 +131,14 @@ async function main() {
     {
       cwd: REPO_ROOT,
       env: {
-        COMMAND_CENTER_PROJECT_ROOT: talkstoreRoot,
-        COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+        COMMAND_CENTER_PROJECT_ROOT: jyryRoot,
+        COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
       },
       expectStatus: 1,
       label: 'parse-markdown source mismatch',
     }
   )
-  assertFailure(sourceMismatchTalkstore, 'TalkStore task source document for parser "talkstore-markdown" with profile "talkstore" must resolve')
+  assertFailure(sourceMismatchJYRY, 'JYRY task source document for parser "jyry-markdown" with profile "jyry" must resolve')
 
   const sourceMismatchGeneric = runNode(
     [
@@ -200,7 +200,7 @@ async function main() {
   )
   assert(
     (legacyGenericMigration.stdout || '').includes('Parser/source pairing: generic-markdown:generic'),
-    'generic parser should allow legacy public trackers stamped with TalkStore metadata to restamp to the generic pairing'
+    'generic parser should allow legacy public trackers stamped with JYRY metadata to restamp to the generic pairing'
   )
 
   const existingTrackerMismatch = runNode(
@@ -212,19 +212,19 @@ async function main() {
     {
       cwd: REPO_ROOT,
       env: {
-        COMMAND_CENTER_PROJECT_ROOT: talkstoreRoot,
-        COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+        COMMAND_CENTER_PROJECT_ROOT: jyryRoot,
+        COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
       },
       expectStatus: 1,
       label: 'seed-aci-checklist tracker mismatch',
     }
   )
-  assertFailure(existingTrackerMismatch, 'seed-aci-checklist requires parser_profile="aci". Found "talkstore".')
+  assertFailure(existingTrackerMismatch, 'seed-aci-checklist requires parser_profile="aci". Found "jyry".')
 
   const mismatchAci = runNode(
     [
       'scripts/parse-aci-roadmap.mjs',
-      '--profile=talkstore',
+      '--profile=jyry',
       '--aci-roadmap-source=Brainstorming & Pivot/ROADMAP.md',
       '--dry-run',
     ],
@@ -232,13 +232,13 @@ async function main() {
       cwd: REPO_ROOT,
       env: {
         COMMAND_CENTER_PROJECT_ROOT: aciRoot,
-        COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+        COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
       },
       expectStatus: 1,
       label: 'parse-aci-roadmap profile mismatch',
     }
   )
-  assertFailure(mismatchAci, 'Parser "aci-roadmap" cannot run with profile "talkstore".')
+  assertFailure(mismatchAci, 'Parser "aci-roadmap" cannot run with profile "jyry".')
 
   const sourceMismatchAci = runNode(
     [
@@ -251,7 +251,7 @@ async function main() {
       cwd: REPO_ROOT,
       env: {
         COMMAND_CENTER_PROJECT_ROOT: aciRoot,
-        COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+        COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
       },
       expectStatus: 1,
       label: 'parse-aci-roadmap source mismatch',

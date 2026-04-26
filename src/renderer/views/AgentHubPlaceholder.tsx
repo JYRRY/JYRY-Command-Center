@@ -359,7 +359,7 @@ function ContextInjectionPreview({ week, phase, progress, done, total, status, b
 }) {
   const [copied, setCopied] = useState(false)
 
-  const contextText = `TALKSTORE STATUS — WEEK ${week}
+  const contextText = `JYRY STATUS — WEEK ${week}
 Phase: ${phase}
 Progress: ${Math.round(progress * 100)}% (${done}/${total})
 Schedule: ${status.replace(/_/g, ' ').toUpperCase()}

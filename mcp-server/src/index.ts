@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Sha8al Command Center — MCP Server
+ * JYRY Command Center — MCP Server
  *
  * Provides live project context and tracker updates to any Claude Code session.
  * Runs as a stdio MCP server that Claude Code spawns automatically.
@@ -28,7 +28,7 @@ import { TOOL_DEFINITIONS, handleTool } from './tools.js'
 
 const server = new Server(
   {
-    name: 'talkstore-command-center',
+    name: 'jyry-command-center',
     version: '1.0.0',
   },
   {
@@ -53,7 +53,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  console.error('Sha8al Command Center MCP server running on stdio')
+  console.error('JYRY Command Center MCP server running on stdio')
 }
 
 main().catch((err) => {

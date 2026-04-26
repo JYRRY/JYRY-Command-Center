@@ -1,7 +1,7 @@
-# Sha8al Command Center — Project Context
+# JYRY Command Center — Project Context
 
 ## What This Is
-An Electron desktop app that visualizes and manages a tracker-driven build timeline. It supports TalkStore as a compatibility profile and can read a `talkstore-tracker.json` state file from the main TalkStore project, displaying it as a swimlane view, task board, and agent hub.
+An Electron desktop app by JYRY Group that visualizes and manages a tracker-driven build timeline. It reads a `jyry-tracker.json` state file produced from `docs/roadmap.md` and displays it as a swimlane view, task board, and agent hub.
 
 ## Stack
 - **Electron** + **electron-vite** (build tool)
@@ -14,7 +14,7 @@ An Electron desktop app that visualizes and manages a tracker-driven build timel
 ```
 Main Process (Node.js)
 ├── index.ts — IPC handlers, file watcher
-├── config.ts — Path resolution (TALKSTORE_ROOT from .env)
+├── config.ts — Path resolution (JYRY_ROOT from .env)
 └── parser.ts — Markdown → tracker JSON generator
 
 Preload Bridge
@@ -39,7 +39,7 @@ MCP Server (mcp-server/ — separate package)
 ### Task Execution (MCP)
 All task execution is handled via the MCP server (`mcp-server/`).
 Agents call tools like `start_task`, `complete_task`, `block_task` directly.
-The Electron app is a read-only dashboard — it watches `talkstore-tracker.json`
+The Electron app is a read-only dashboard — it watches `jyry-tracker.json`
 for changes and updates the UI in real-time via the file watcher.
 
 ### IPC Channel Pattern
@@ -62,11 +62,11 @@ updateTracker((draft) => {
 The store auto-writes back to disk with 500ms debounce.
 
 ### Cross-Project References
-This app can read from the main TalkStore project at `TALKSTORE_ROOT` (configured in `.env`) when the compatibility profile is in use:
+This app can read from the main JYRY project at `JYRY_ROOT` (configured in `.env`) when the compatibility profile is in use:
 - `docs/tasks.md` — Canonical task list (parsed into milestones)
 - `docs/submission-checklist.md` — Compliance checklist (parsed separately)
 - `docs/manifesto.md` — Product vision (loaded into task context by MCP server)
-- `talkstore-tracker.json` — Runtime state file (read/written by app)
+- `jyry-tracker.json` — Runtime state file (read/written by app)
 
 ## Native Command Layer
 
@@ -77,7 +77,7 @@ This repo now ships its own command-center-native operator playbook under:
 - `.claude/commands/*.md`
 - `.claude/agents/*.md`
 
-Those files are the repo-local convention layer that lets Codex and Claude Code execute the same milestone-driven workflow here without relying on the mirrored TalkStore playbook as the primary source.
+Those files are the repo-local convention layer that lets Codex and Claude Code execute the same milestone-driven workflow here without relying on the mirrored JYRY playbook as the primary source.
 
 ## Operator Commands
 
@@ -119,4 +119,4 @@ The tracker and Agent Hub now seed and normalize a canonical roster so the repo 
 ### Do NOT
 - Access `fs` from the renderer — use IPC via `window.api`
 - Write to tracker without JSON validation
-- Modify `roadmap.md` — it's been replaced by `tasks.md`
+- Hand-edit the tracker JSON when an MCP tool can do it

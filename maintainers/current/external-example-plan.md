@@ -1,6 +1,6 @@
-# Sha8al Command Center External Example Plan
+# JYRY Command Center External Example Plan
 
-This document defines the minimal example project that should ship with the public repo for Sha8al Command Center (`sha8al-command-center`).
+This document defines the minimal example project that should ship with the public repo for JYRY Command Center (`jyry-command-center`).
 
 It is implementation-ready planning only.
 
@@ -9,7 +9,7 @@ The checked-in scaffold lives at `examples/minimal-command-center-project/` and 
 ## Goal
 
 The example project must prove:
-- someone outside the TalkStore environment can install the platform
+- someone outside the JYRY environment can install the platform
 - bootstrap a project explicitly
 - parse docs into a tracker
 - open the command center
@@ -73,7 +73,7 @@ Recommended bootstrap order for the public walkthrough:
 - external services
 - live deployment
 - private playbooks
-- TalkStore-specific operator conventions
+- JYRY-specific operator conventions
 
 ## Success Criteria
 
@@ -89,12 +89,12 @@ The example is successful when a new user can:
 ## Why This Proves The Platform Model
 
 This example proves the public platform model because it removes:
-- the sibling TalkStore repo dependency
-- the `talkstore-tracker.json` assumption
-- the `TALKSTORE_PROJECT_ROOT` assumption
-- the TalkStore CLI naming dependency
+- the sibling JYRY repo dependency
+- the `jyry-tracker.json` assumption
+- the `JYRY_PROJECT_ROOT` assumption
+- the JYRY CLI naming dependency
 
-If the same command center model works here, the platform is no longer implicitly private to TalkStore.
+If the same command center model works here, the platform is no longer implicitly private to JYRY.
 
 ## Required Implementation Notes For Phase 3
 

@@ -22,7 +22,7 @@ The 4 domain-specific tabs (Product Ops, Content Ops, Commerce Intel, Conversati
 
 Top to bottom, no scrolling required for the core content:
 
-1. **Header** — title ("Talkstore Execute Surface") + two counter badges: "7 Execute CTAs" and "4 Domains"
+1. **Header** — title ("JYRY Execute Surface") + two counter badges: "7 Execute CTAs" and "4 Domains"
 2. **Funnel Diagram** — static SVG, 3 tiers, hover interaction
 3. **CTA Strip** — 7 minimal cards in a single row
 4. **Missing Bridge Callout** — single-line warning bar (conditional, only shown when gaps exist)

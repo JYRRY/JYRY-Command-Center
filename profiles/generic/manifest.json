@@ -4,8 +4,8 @@
   "kind": "public",
   "resolution_priority": 100,
   "aliases": {
-    "profile_names": ["generic", "command-center", "sha8al-command-center"],
-    "cli_names": ["sha8al-command-center"]
+    "profile_names": ["generic", "command-center", "jyry-command-center"],
+    "cli_names": ["jyry-command-center"]
   },
   "project_root": {
     "env_keys": ["COMMAND_CENTER_PROJECT_ROOT", "PROJECT_ROOT"],

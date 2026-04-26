@@ -12,7 +12,7 @@ const DEFAULT_ANALYSIS_DIR = '/tmp/analysis'
 
 const PARSER_PROFILE_BY_ID = {
   'generic-markdown': 'generic',
-  'talkstore-markdown': 'talkstore',
+  'jyry-markdown': 'jyry',
   'aci-roadmap': 'aci',
   'aci-checklist-seed': 'aci',
 }
@@ -21,15 +21,15 @@ const PARSER_PROFILES = {
   generic: {
     parserIds: ['generic-markdown'],
   },
-  talkstore: {
-    parserIds: ['talkstore-markdown'],
+  jyry: {
+    parserIds: ['jyry-markdown'],
   },
   aci: {
     parserIds: ['aci-roadmap', 'aci-checklist-seed'],
   },
 }
 
-const DEFAULT_TALKSTORE_MARKDOWN_SOURCE_FIELDS = {
+const DEFAULT_JYRY_MARKDOWN_SOURCE_FIELDS = {
   tasks: {
     env_keys: ['COMMAND_CENTER_TASKS_DOC', 'TASKS_DOC'],
     cli_keys: ['tasks-source', 'tasks-doc'],
@@ -292,23 +292,23 @@ function resolveProfileByCompatibilitySignals(options = {}) {
   const trackerProfile = resolveProfileNameFromTrackerFile(trackerFile)
   if (trackerProfile) return trackerProfile
 
-  if (readSetting(['TALKSTORE_PROJECT_ROOT'])) {
-    return 'talkstore'
+  if (readSetting(['JYRY_PROJECT_ROOT'])) {
+    return 'jyry'
   }
 
   const configuredProjectRoot =
     options.projectRoot || readSetting(['COMMAND_CENTER_PROJECT_ROOT', 'PROJECT_ROOT'])
   if (configuredProjectRoot) {
     const resolvedProjectRoot = resolve(configuredProjectRoot)
-    if (existsSync(join(resolvedProjectRoot, 'talkstore-tracker.json'))) {
-      return 'talkstore'
+    if (existsSync(join(resolvedProjectRoot, 'jyry-tracker.json'))) {
+      return 'jyry'
     }
     return 'generic'
   }
 
-  const siblingTalkstore = resolve(COMMAND_CENTER_ROOT, '..', 'talkstore')
-  if (existsSync(siblingTalkstore)) {
-    return 'talkstore'
+  const siblingJYRY = resolve(COMMAND_CENTER_ROOT, '..', 'jyry')
+  if (existsSync(siblingJYRY)) {
+    return 'jyry'
   }
 
   return null
@@ -323,7 +323,7 @@ export function resolveConsumerProfile(options = {}) {
 
   throw new Error(
     'Unable to resolve a consumer profile. Set COMMAND_CENTER_PROFILE explicitly or configure ' +
-    'COMMAND_CENTER_PROJECT_ROOT / TALKSTORE_PROJECT_ROOT for compatibility resolution.'
+    'COMMAND_CENTER_PROJECT_ROOT / JYRY_PROJECT_ROOT for compatibility resolution.'
   )
 }
 
@@ -335,9 +335,9 @@ export function resolveProjectRoot(options = {}) {
   if (configured) return resolve(configured)
   if (options.projectRoot) return resolve(options.projectRoot)
 
-  if (profileName === 'talkstore') {
-    const siblingTalkstore = resolve(COMMAND_CENTER_ROOT, '..', 'talkstore')
-    if (existsSync(siblingTalkstore)) return siblingTalkstore
+  if (profileName === 'jyry') {
+    const siblingJYRY = resolve(COMMAND_CENTER_ROOT, '..', 'jyry')
+    if (existsSync(siblingJYRY)) return siblingJYRY
   }
 
   if (options.optional) return null
@@ -577,11 +577,11 @@ export function resolveParserProjectPaths(options = {}) {
     parserProfile: profileName,
   }
 
-  if (parserId === 'talkstore-markdown' || parserId === 'generic-markdown') {
+  if (parserId === 'jyry-markdown' || parserId === 'generic-markdown') {
     const sourceFields = profileManifest.parser_defaults?.[parserId]?.source_fields ||
       (parserId === 'generic-markdown'
         ? DEFAULT_GENERIC_MARKDOWN_SOURCE_FIELDS
-        : DEFAULT_TALKSTORE_MARKDOWN_SOURCE_FIELDS)
+        : DEFAULT_JYRY_MARKDOWN_SOURCE_FIELDS)
 
     const labels = parserId === 'generic-markdown'
       ? {
@@ -590,9 +590,9 @@ export function resolveParserProjectPaths(options = {}) {
           manifesto: 'Project manifesto document',
         }
       : {
-          tasks: 'TalkStore task source document',
-          checklist: 'Talkstore submission checklist document',
-          manifesto: 'Talkstore manifesto document',
+          tasks: 'JYRY task source document',
+          checklist: 'JYRY submission checklist document',
+          manifesto: 'JYRY manifesto document',
         }
 
     paths.tasksPath = resolveParserSourceFile(trackerPaths.projectRoot, cliArgs, sourceFields.tasks, {

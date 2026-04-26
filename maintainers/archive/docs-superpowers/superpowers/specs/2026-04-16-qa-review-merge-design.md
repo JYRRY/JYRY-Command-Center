@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-16
 **Status:** Approved
-**Location:** Talkstore Command Center (Electron app)
+**Location:** JYRY Command Center (Electron app)
 
 ## Problem
 
@@ -38,7 +38,7 @@ All remaining sessions keep their existing data structure. The `lane` field stay
 
 ### No Schema Changes
 
-`review_sessions` and `qa` stay as separate top-level keys in `talkstore-tracker.json`. The merge is purely a UI change — one view renders both data sources.
+`review_sessions` and `qa` stay as separate top-level keys in `jyry-tracker.json`. The merge is purely a UI change — one view renders both data sources.
 
 ---
 

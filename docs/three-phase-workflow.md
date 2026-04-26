@@ -1,6 +1,6 @@
 # Three-Phase Task Workflow
 
-This document describes the current milestone-driven autonomous flow used by Sha8al Command Center. The workflow is organized around milestones, waves, tiers, preparation, build, and audit. It replaces the older task-by-task model that centered the operator around single-task state transitions.
+This document describes the current milestone-driven autonomous flow used by JYRY Command Center. The workflow is organized around milestones, waves, tiers, preparation, build, and audit. It replaces the older task-by-task model that centered the operator around single-task state transitions.
 
 ## Overview
 

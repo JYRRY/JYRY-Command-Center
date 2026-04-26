@@ -1,6 +1,6 @@
-# Sha8al Command Center
+# JYRY Command Center
 
-Sha8al Command Center (`sha8al-command-center`) is a tracker-driven desktop app plus MCP/CLI command center for milestone-based project execution. The Electron app shows live project state, the command surface drives autonomous progress, and the tracker keeps operators and agents synchronized.
+JYRY Command Center (`jyry-command-center`) is a tracker-driven desktop app plus MCP/CLI command center for milestone-based project execution. The Electron app shows live project state, the command surface drives autonomous progress, and the tracker keeps operators and agents synchronized.
 
 ## Why It's Powerful
 
@@ -139,9 +139,9 @@ node dist/cli.js help
 
 - `generic` is the default public path for fresh external projects.
 - The public generic path requires `docs/roadmap.md`; that file drives the swim lane and task board.
-- `talkstore` is the compatibility path for existing installs that still use older wiring and aliases.
+- `jyry` is the compatibility path for existing installs that still use older wiring and aliases.
 
-TalkStore is a compatibility profile.
+JYRY is a compatibility profile.
 
 New users should start with `generic`.
 
@@ -168,7 +168,7 @@ The minimal example is the fastest way to see the public flow end to end: bootst
 
 ## Compatibility
 
-TalkStore remains a supported compatibility profile.
+JYRY remains a supported compatibility profile.
 
 - existing installs still work
 - current compatibility aliases remain available

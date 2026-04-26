@@ -1,4 +1,4 @@
-# Talkstore Task Synthesis Prompt
+# JYRY Task Synthesis Prompt
 
 **Instructions:** Upload the manifesto + all three audit files into one LLM (Claude recommended for context window). Copy everything below the line.
 
@@ -6,7 +6,7 @@
 
 ## PROMPT START
 
-I'm building a Shopify app called Talkstore. I ran a task audit across three LLMs (Claude, GPT, and Gemini) to validate my roadmap against my product manifesto. I now have three separate opinions on what the canonical task list should look like.
+I'm building a Shopify app called JYRY. I ran a task audit across three LLMs (Claude, GPT, and Gemini) to validate my roadmap against my product manifesto. I now have three separate opinions on what the canonical task list should look like.
 
 **Attached files:**
 1. **manifesto.md** — The product constitution. This is the ultimate authority.

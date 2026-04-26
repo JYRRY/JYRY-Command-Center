@@ -4,7 +4,7 @@
  * AI Commerce Index Platform — Roadmap to Tracker parser.
  *
  * Reads `Brainstorming & Pivot/ROADMAP.md` and emits a seeded
- * `talkstore-tracker.json` matching the shape consumed by
+ * `jyry-tracker.json` matching the shape consumed by
  * `src/main/parser.ts` in this Command Center.
  *
  * Usage:

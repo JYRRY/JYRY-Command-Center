@@ -30,7 +30,7 @@ export function OnboardingView() {
       <div className="w-full max-w-3xl rounded-2xl border border-border bg-panel/80 p-8">
         <div className="mb-8">
           <p className="text-xs font-mono tracking-[0.2em] text-accent uppercase mb-3">
-            Sha8al Command Center
+            JYRY Command Center
           </p>
           <h1 className="text-3xl font-semibold mb-3">Activate this workspace with a roadmap</h1>
           <p className="text-sm text-muted leading-6 max-w-2xl">
