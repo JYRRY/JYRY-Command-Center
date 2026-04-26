@@ -1,10 +1,17 @@
 import { execFile } from 'child_process'
-import { getWorkspaceStatus } from './workspace'
+import { existsSync, mkdirSync, readdirSync } from 'fs'
+import { dirname } from 'path'
 
 export type GitResult =
   | { status: 'success'; message: string; branch: string; filesChanged: number }
   | { status: 'nothing' }
   | { status: 'error'; error: string }
+
+export interface CloneOptions {
+  cloneUrl: string
+  destDir: string
+  token?: string | null
+}
 
 function git(args: string[], cwd: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -13,6 +20,48 @@ function git(args: string[], cwd: string): Promise<string> {
       else resolve(stdout)
     })
   })
+}
+
+function gitNoCwd(args: string[]): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile('git', args, { maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+      if (err) reject(new Error(stderr || err.message))
+      else resolve(stdout)
+    })
+  })
+}
+
+function buildAuthenticatedUrl(cloneUrl: string, token: string): string {
+  if (!cloneUrl.startsWith('https://')) return cloneUrl
+  return cloneUrl.replace(
+    'https://',
+    `https://x-access-token:${encodeURIComponent(token)}@`
+  )
+}
+
+export async function cloneRepo({ cloneUrl, destDir, token }: CloneOptions): Promise<{ path: string }> {
+  if (existsSync(destDir)) {
+    const entries = readdirSync(destDir)
+    if (entries.length > 0) {
+      throw new Error(`Destination is not empty: ${destDir}`)
+    }
+  } else {
+    mkdirSync(dirname(destDir), { recursive: true })
+  }
+
+  const fetchUrl = token ? buildAuthenticatedUrl(cloneUrl, token) : cloneUrl
+
+  await gitNoCwd(['clone', fetchUrl, destDir])
+
+  if (token) {
+    try {
+      await git(['remote', 'set-url', 'origin', cloneUrl], destDir)
+    } catch {
+      // best-effort cleanup; if it fails the user can fix the remote manually
+    }
+  }
+
+  return { path: destDir }
 }
 
 function detectDomains(files: string[]): string[] {
@@ -78,6 +127,7 @@ function generateCommitMessage(statusOutput: string): string {
 
 export async function commitAndPush(): Promise<GitResult> {
   try {
+    const { getWorkspaceStatus } = await import('./workspace')
     const ws = await getWorkspaceStatus()
     if (!ws.projectRoot) {
       return { status: 'error', error: 'No project root configured.' }

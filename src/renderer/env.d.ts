@@ -36,6 +36,34 @@ interface WorkspaceAPI {
     counts: { milestones: number; subtasks: number; categories: number; checklistItems: number }
     status: WorkspaceStatus
   }>
+  cloneFromGitHub(payload: { fullName: string; cloneUrl: string }): Promise<
+    | { canceled: false; status: WorkspaceStatus; cloned: string }
+    | { canceled: true; status: WorkspaceStatus }
+    | { canceled: false; error: string; status: WorkspaceStatus }
+  >
+}
+
+interface GitHubRepoSummary {
+  id: number
+  fullName: string
+  name: string
+  owner: string
+  private: boolean
+  description: string | null
+  defaultBranch: string
+  cloneUrl: string
+  updatedAt: string | null
+}
+
+interface GitHubAPI {
+  hasToken(): Promise<boolean>
+  setToken(
+    token: string
+  ): Promise<{ ok: boolean; login?: string; scopes?: string[]; error?: string }>
+  clearToken(): Promise<void>
+  listRepos(): Promise<
+    { ok: true; repos: GitHubRepoSummary[] } | { ok: false; error: string }
+  >
 }
 
 type GitResult =
@@ -53,5 +81,6 @@ interface Window {
     tracker: TrackerAPI
     workspace: WorkspaceAPI
     git: GitAPI
+    github: GitHubAPI
   }
 }

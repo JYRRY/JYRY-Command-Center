@@ -2,9 +2,12 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import path from 'path'
 import fs from 'fs'
 
+import { clearToken, getStoredToken, hasToken, setToken } from './auth'
 import { mergeCanonicalAgentRoster } from './canonical-agents'
 import { commitAndPush } from './git'
+import { listRepos, validateToken, type GitHubRepoSummary } from './github'
 import {
+  cloneAndConfigureWorkspace,
   configureWorkspace,
   createStarterRoadmap,
   generateTrackerForWorkspace,
@@ -204,6 +207,90 @@ ipcMain.handle('workspace:generateTracker', async () => {
 ipcMain.handle('git:commit-and-push', async () => {
   return commitAndPush()
 })
+
+// ─── GitHub IPC ──────────────────────────────────────────────────────────────
+
+ipcMain.handle('github:hasToken', async () => {
+  return hasToken()
+})
+
+ipcMain.handle(
+  'github:setToken',
+  async (
+    _event,
+    token: string
+  ): Promise<{ ok: boolean; login?: string; scopes?: string[]; error?: string }> => {
+    const validation = await validateToken(token)
+    if (!validation.ok) {
+      return { ok: false, error: validation.error, scopes: validation.scopes }
+    }
+
+    try {
+      setToken(token)
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) }
+    }
+
+    return { ok: true, login: validation.login, scopes: validation.scopes }
+  }
+)
+
+ipcMain.handle('github:clearToken', async () => {
+  clearToken()
+})
+
+ipcMain.handle(
+  'github:listRepos',
+  async (): Promise<{ ok: true; repos: GitHubRepoSummary[] } | { ok: false; error: string }> => {
+    const token = getStoredToken()
+    if (!token) {
+      return { ok: false, error: 'No GitHub token configured.' }
+    }
+
+    try {
+      const repos = await listRepos(token)
+      return { ok: true, repos }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : String(err) }
+    }
+  }
+)
+
+ipcMain.handle(
+  'workspace:cloneFromGitHub',
+  async (_event, payload: { fullName: string; cloneUrl: string }) => {
+    if (!mainWindow) {
+      return { canceled: true, status: await getWorkspaceStatus() }
+    }
+
+    const dialogResult = await dialog.showOpenDialog(mainWindow, {
+      title: `Choose where to clone ${payload.fullName}`,
+      properties: ['openDirectory', 'createDirectory'],
+    })
+
+    if (dialogResult.canceled || dialogResult.filePaths.length === 0) {
+      return { canceled: true, status: await getWorkspaceStatus() }
+    }
+
+    const token = getStoredToken()
+    try {
+      const result = await cloneAndConfigureWorkspace({
+        fullName: payload.fullName,
+        cloneUrl: payload.cloneUrl,
+        destParentDir: dialogResult.filePaths[0],
+        token,
+      })
+      await restartFileWatcher()
+      return { canceled: false, status: result.status, cloned: result.cloned }
+    } catch (err) {
+      return {
+        canceled: false,
+        error: err instanceof Error ? err.message : String(err),
+        status: await getWorkspaceStatus(),
+      }
+    }
+  }
+)
 
 // ─── App Lifecycle ───────────────────────────────────────────────────────────
 
