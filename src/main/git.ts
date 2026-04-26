@@ -1,14 +1,14 @@
 import { execFile } from 'child_process'
-import { JYRY_ROOT } from './config'
+import { getWorkspaceStatus } from './workspace'
 
 export type GitResult =
   | { status: 'success'; message: string; branch: string; filesChanged: number }
   | { status: 'nothing' }
   | { status: 'error'; error: string }
 
-function git(args: string[]): Promise<string> {
+function git(args: string[], cwd: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile('git', args, { cwd: JYRY_ROOT, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+    execFile('git', args, { cwd, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
       if (err) reject(new Error(stderr || err.message))
       else resolve(stdout)
     })
@@ -78,17 +78,23 @@ function generateCommitMessage(statusOutput: string): string {
 
 export async function commitAndPush(): Promise<GitResult> {
   try {
-    const status = await git(['status', '--porcelain'])
+    const ws = await getWorkspaceStatus()
+    if (!ws.projectRoot) {
+      return { status: 'error', error: 'No project root configured.' }
+    }
+    const root = ws.projectRoot
+
+    const status = await git(['status', '--porcelain'], root)
     if (!status.trim()) {
       return { status: 'nothing' }
     }
 
     const message = generateCommitMessage(status)
-    await git(['add', '-A'])
-    await git(['commit', '-m', message])
+    await git(['add', '-A'], root)
+    await git(['commit', '-m', message], root)
 
-    const branch = (await git(['rev-parse', '--abbrev-ref', 'HEAD'])).trim()
-    await git(['push', 'origin', branch])
+    const branch = (await git(['rev-parse', '--abbrev-ref', 'HEAD'], root)).trim()
+    await git(['push', 'origin', branch], root)
 
     const filesChanged = status.split('\n').filter(Boolean).length
     return { status: 'success', message, branch, filesChanged }
