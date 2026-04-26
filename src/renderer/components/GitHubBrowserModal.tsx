@@ -162,7 +162,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
             </h2>
           </div>
           <button
-            className="rounded-md border border-border px-3 py-1 text-xs font-semibold disabled:opacity-50"
+            className="rounded-md border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
             onClick={onClose}
             disabled={busy && stage === 'cloning'}
           >
@@ -182,7 +182,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
                 href={TOKEN_HELP_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm text-accent underline"
+                className="text-sm text-accent underline cursor-pointer hover:opacity-80"
               >
                 Generate a token on GitHub →
               </a>
@@ -200,7 +200,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
               />
               <div className="flex gap-3">
                 <button
-                  className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
+                  className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-black cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={submitToken}
                   disabled={busy}
                 >
@@ -218,7 +218,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
                   loaded.
                 </p>
                 <button
-                  className="text-xs text-muted hover:text-white underline disabled:opacity-50"
+                  className="text-xs text-muted hover:text-white underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={disconnect}
                   disabled={busy}
                 >
@@ -250,7 +250,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
                 {filteredRepos.map((repo) => (
                   <button
                     key={repo.id}
-                    className="w-full text-left px-4 py-3 hover:bg-dark/60 transition-colors disabled:opacity-50"
+                    className="w-full text-left px-4 py-3 hover:bg-dark/60 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => pickRepo(repo)}
                     disabled={busy}
                   >
