@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { GitHubRepoSummary } from '../main/github'
 import type { WorkspaceStatus } from '../main/workspace'
 
 contextBridge.exposeInMainWorld('api', {
@@ -38,6 +39,25 @@ contextBridge.exposeInMainWorld('api', {
       counts: { milestones: number; subtasks: number; categories: number; checklistItems: number }
       status: WorkspaceStatus
     }> => ipcRenderer.invoke('workspace:generateTracker'),
+    cloneFromGitHub: (
+      payload: { fullName: string; cloneUrl: string }
+    ): Promise<
+      | { canceled: false; status: WorkspaceStatus; cloned: string }
+      | { canceled: true; status: WorkspaceStatus }
+      | { canceled: false; error: string; status: WorkspaceStatus }
+    > => ipcRenderer.invoke('workspace:cloneFromGitHub', payload),
+  },
+
+  github: {
+    hasToken: (): Promise<boolean> => ipcRenderer.invoke('github:hasToken'),
+    setToken: (
+      token: string
+    ): Promise<{ ok: boolean; login?: string; scopes?: string[]; error?: string }> =>
+      ipcRenderer.invoke('github:setToken', token),
+    clearToken: (): Promise<void> => ipcRenderer.invoke('github:clearToken'),
+    listRepos: (): Promise<
+      { ok: true; repos: GitHubRepoSummary[] } | { ok: false; error: string }
+    > => ipcRenderer.invoke('github:listRepos'),
   },
 
   // Git operations

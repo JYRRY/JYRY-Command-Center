@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname, join, resolve } from 'path'
 
+import { cloneRepo } from './git'
 import { parseAndGenerate } from './parser'
 
 const COMMAND_CENTER_ROOT = resolve(__dirname, '../..')
@@ -12,6 +13,7 @@ export interface WorkspaceConfig {
   trackerFile?: string
   roadmapPath?: string
   manifestoPath?: string
+  sourceRepo?: { fullName: string; cloneUrl: string }
 }
 
 export interface WorkspaceStatus {
@@ -85,12 +87,23 @@ export function loadWorkspaceConfig(): WorkspaceConfig | null {
       return null
     }
 
+    let sourceRepo: WorkspaceConfig['sourceRepo']
+    if (
+      parsed.sourceRepo &&
+      typeof parsed.sourceRepo === 'object' &&
+      typeof parsed.sourceRepo.fullName === 'string' &&
+      typeof parsed.sourceRepo.cloneUrl === 'string'
+    ) {
+      sourceRepo = { fullName: parsed.sourceRepo.fullName, cloneUrl: parsed.sourceRepo.cloneUrl }
+    }
+
     return {
       projectRoot: parsed.projectRoot,
       profile: 'generic',
       trackerFile: typeof parsed.trackerFile === 'string' ? parsed.trackerFile : undefined,
       roadmapPath: typeof parsed.roadmapPath === 'string' ? parsed.roadmapPath : undefined,
       manifestoPath: typeof parsed.manifestoPath === 'string' ? parsed.manifestoPath : undefined,
+      sourceRepo,
     }
   } catch {
     return null
@@ -170,6 +183,35 @@ export function createStarterRoadmap(projectRoot: string) {
   }
 
   return { created, status: configureWorkspace(projectRoot) }
+}
+
+export interface CloneAndConfigureOptions {
+  fullName: string
+  cloneUrl: string
+  destParentDir: string
+  token?: string | null
+}
+
+export async function cloneAndConfigureWorkspace(
+  options: CloneAndConfigureOptions
+): Promise<{ status: WorkspaceStatus; cloned: string }> {
+  const { fullName, cloneUrl, destParentDir, token } = options
+  const repoName = fullName.split('/').pop() || fullName
+  const destPath = join(resolve(destParentDir), repoName)
+
+  await cloneRepo({ cloneUrl, destDir: destPath, token: token ?? null })
+
+  const config: WorkspaceConfig = {
+    projectRoot: destPath,
+    profile: 'generic',
+    trackerFile: 'command-center-tracker.json',
+    roadmapPath: 'docs/roadmap.md',
+    manifestoPath: 'docs/manifesto.md',
+    sourceRepo: { fullName, cloneUrl },
+  }
+
+  saveWorkspaceConfig(config)
+  return { status: resolveConfigPaths(config), cloned: destPath }
 }
 
 export function importRoadmap(projectRoot: string, sourcePath: string) {
