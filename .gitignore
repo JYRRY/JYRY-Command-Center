@@ -5,3 +5,7 @@ dist/
 *.log
 .env
 .command-center-workspace.json
+
+# Runtime tracker state — generated from docs/roadmap.md, not source-controlled
+command-center-tracker.json
+jyry-tracker.json
