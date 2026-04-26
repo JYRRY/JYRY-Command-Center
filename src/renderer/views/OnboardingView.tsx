@@ -29,8 +29,8 @@ export function OnboardingView() {
   const trackerExists = Boolean(workspaceStatus?.trackerExists)
 
   return (
-    <div className="h-screen bg-dark text-white flex items-center justify-center px-6 overflow-y-auto py-10">
-      <div className="w-full max-w-3xl rounded-2xl border border-border bg-panel/80 p-8">
+    <div className="min-h-screen bg-dark text-white flex items-center justify-center px-6 overflow-y-auto py-10">
+      <div className="w-full max-w-6xl rounded-2xl border border-border bg-panel/80 p-8">
         <div className="mb-8">
           <p className="text-xs font-mono tracking-[0.2em] text-accent uppercase mb-3">
             JYRY Command Center
@@ -51,7 +51,7 @@ export function OnboardingView() {
             </p>
             <div>
               <button
-                className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
+                className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-black cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
                 onClick={() => withAction(async () => {
                   const result = await window.api.workspace.chooseProjectFolder()
@@ -81,7 +81,7 @@ export function OnboardingView() {
             </p>
             <div>
               <button
-                className="rounded-md border border-accent/60 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent disabled:opacity-50"
+                className="rounded-md border border-accent/60 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent cursor-pointer transition-colors hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
                 onClick={() => setGithubOpen(true)}
               >
@@ -98,7 +98,7 @@ export function OnboardingView() {
           </p>
           <div className="flex flex-wrap gap-3">
             <button
-              className="rounded-md border border-border px-4 py-2 text-sm font-semibold disabled:opacity-50"
+              className="rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
               disabled={!projectRoot || loading}
               onClick={() => withAction(async () => {
                 const result = await window.api.workspace.importRoadmap()
@@ -111,7 +111,7 @@ export function OnboardingView() {
               Import roadmap.md
             </button>
             <button
-              className="rounded-md border border-border px-4 py-2 text-sm font-semibold disabled:opacity-50"
+              className="rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
               disabled={!projectRoot || loading}
               onClick={() => withAction(async () => {
                 const result = await window.api.workspace.createStarterRoadmap()
@@ -122,7 +122,7 @@ export function OnboardingView() {
               Create roadmap.md
             </button>
             <button
-              className="rounded-md border border-accent/40 px-4 py-2 text-sm font-semibold text-accent disabled:opacity-50"
+              className="rounded-md border border-accent/60 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent cursor-pointer transition-colors hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent/10"
               disabled={!projectRoot || !roadmapExists || trackerExists || loading}
               onClick={() => withAction(async () => {
                 await activateWorkspace()
