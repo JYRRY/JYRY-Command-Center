@@ -16,7 +16,7 @@ interface TrackerAPI {
 interface WorkspaceStatus {
   configured: boolean
   source: 'workspace-config' | 'env' | null
-  profile: 'generic' | 'talkstore' | null
+  profile: 'generic' | 'jyry' | null
   projectRoot: string | null
   trackerPath: string | null
   trackerExists: boolean

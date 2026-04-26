@@ -21,7 +21,7 @@ Week 4 duplicated the theme duplication and asset API tasks. "Theme duplication 
 
 "Edge cases handled gracefully" (Week 5): Replaced with specific error-handling tasks (e.g., API rate limit catches, missing schema blocks).
 
-"Handling: conflicting metafields from other apps" (Week 7): Rewritten to specifically query existing namespaces, filter out talkstore, and prompt the merchant if an overwrite is detected.
+"Handling: conflicting metafields from other apps" (Week 7): Rewritten to specifically query existing namespaces, filter out jyry, and prompt the merchant if an overwrite is detected.
 
 "Improve: classification accuracy based on real conversation data" (Week 13): Rewritten to "Implement few-shot examples in the intent classification system prompt based on beta logs."
 
@@ -41,7 +41,7 @@ WEEK 1 — Scaffold + Auth + Base Infrastructure
 Domain: foundation
 Goal: The embedded app loads in Shopify, authenticates via OAuth, persists sessions, and connects to the database.
 
-[ ] Deploy waitlist landing page with email capture and Talkstore brand palette.
+[ ] Deploy waitlist landing page with email capture and JYRY brand palette.
 
 [ ] Scaffold Shopify Remix app with App Bridge 4.x and clean up default template boilerplate.
 
@@ -86,7 +86,7 @@ Goal: The agent can parse a request, match theme styles, and generate a valid, n
 
 [ ] Build Context Assembly utility to inject theme brand tokens (colors, fonts) into the LLM prompt.
 
-[ ] Build the Generation Pipeline (Opus) to output customized .liquid files with talkstore- namespaced CSS.
+[ ] Build the Generation Pipeline (Opus) to output customized .liquid files with jyry- namespaced CSS.
 
 [ ] Write regex/AST validators for Liquid syntax, JSON schema integrity, and CSS parsing.
 
@@ -133,7 +133,7 @@ Goal: The agent scores catalog health and automatically populates metafields and
 
 [ ] Build the Enrichment Plan generator (Sonnet) to map missing attributes and flag uncertain inferences.
 
-[ ] Build the GraphQL execution pipeline to mutate productUpdate (descriptions) and metafieldsSet (talkstore.* namespace).
+[ ] Build the GraphQL execution pipeline to mutate productUpdate (descriptions) and metafieldsSet (jyry.* namespace).
 
 [ ] Implement before/after snapshot storage in the audit_log table for rollback capability.
 
@@ -147,7 +147,7 @@ Goal: The agent manages collections, links actions across domains, and safely ha
 
 [ ] Implement Domain Chaining logic (e.g., creating a collection and generating a storefront section properly communicates a 2-task cost).
 
-[ ] Build existing metafield conflict detection: query namespaces, filter out talkstore, prompt user if an overwrite is requested.
+[ ] Build existing metafield conflict detection: query namespaces, filter out jyry, prompt user if an overwrite is requested.
 
 [ ] Implement product data rollback logic (restore specific fields from audit_log.before_state).
 
@@ -241,7 +241,7 @@ Goal: The agent pushes high-leverage recommendations without waiting to be asked
 
 [ ] Implement PRODUCTS_CREATE and PRODUCTS_UPDATE webhooks to trigger asynchronous auto-scoring.
 
-[ ] Build Data Drift detection logic to flag if Talkstore metafields are overwritten by third-party apps.
+[ ] Build Data Drift detection logic to flag if JYRY metafields are overwritten by third-party apps.
 
 [ ] Build the Weekly Digest aggregator to compile anomalies and data drift into an in-app notification.
 
@@ -290,7 +290,7 @@ Before: "PostgreSQL database provisioned + Prisma ORM configured"
 After: Split into Provisioning, Schema definition, and Initial migration execution to allow AI coding agents to handle them linearly.
 
 Before: "Handling: conflicting metafields from other apps"
-After: "Build existing metafield conflict detection: query namespaces, filter out talkstore, prompt user..." (Actionable for Cursor/Claude).
+After: "Build existing metafield conflict detection: query namespaces, filter out jyry, prompt user..." (Actionable for Cursor/Claude).
 
 5. Structural Changes
 
@@ -302,6 +302,6 @@ Moved the "Teaser Video" marketing task directly into Week 3, aligning exactly w
 
 Token Window vs. Opus Cost: Sending a full theme's file tree to Claude Opus for generation (Week 3) will be expensive and slow. Trade-off: You may need to severely truncate the read-context to just base.css and settings_data.json to maintain the ~86% gross margin and keep latency under 15 seconds.
 
-Duplicate Theme Bloat: Your safety mechanism (Week 4) creates an unpublished theme for every test. Shopify limits stores to 20 themes. If a merchant generates 5 sections in an hour without publishing, Talkstore will hit the API ceiling and break. You need aggressive garbage collection logic on abandoned duplicate themes.
+Duplicate Theme Bloat: Your safety mechanism (Week 4) creates an unpublished theme for every test. Shopify limits stores to 20 themes. If a merchant generates 5 sections in an hour without publishing, JYRY will hit the API ceiling and break. You need aggressive garbage collection logic on abandoned duplicate themes.
 
 Bulk API Complexity: In Week 15, moving from GraphQL synchronous calls (first 25 products) to the Bulk Operations API introduces asynchronous webhooks and JSONL file parsing. It is a completely different architectural pattern. Budget more time here; it often breaks lean apps.

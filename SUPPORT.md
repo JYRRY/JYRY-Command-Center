@@ -14,11 +14,11 @@ Use the public docs and templates to route the issue to the right surface.
 ## Where To File What
 
 - Product bug or broken behavior: use the bug report issue template.
-- Compatibility regression for TalkStore: use the profile compatibility issue template.
+- Compatibility regression for JYRY: use the profile compatibility issue template.
 - Missing or confusing docs: use the documentation issue template.
 - Security issue: do not open a public issue. Follow [SECURITY.md](SECURITY.md).
 
 ## Compatibility Note
 
-`sha8al-command-center` is the public platform identity.
-TalkStore remains a supported compatibility profile, so compatibility bugs should say whether the problem only affects the `talkstore` path or also affects the public `generic` path.
+`jyry-command-center` is the public platform identity.
+JYRY remains a supported compatibility profile, so compatibility bugs should say whether the problem only affects the `jyry` path or also affects the public `generic` path.

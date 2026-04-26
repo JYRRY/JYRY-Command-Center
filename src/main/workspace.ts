@@ -17,7 +17,7 @@ export interface WorkspaceConfig {
 export interface WorkspaceStatus {
   configured: boolean
   source: 'workspace-config' | 'env' | null
-  profile: 'generic' | 'talkstore' | null
+  profile: 'generic' | 'jyry' | null
   projectRoot: string | null
   trackerPath: string | null
   trackerExists: boolean
@@ -45,7 +45,7 @@ function starterRoadmapContent() {
 function starterManifestoContent() {
   return `# Project Manifesto
 
-This project uses Sha8al Command Center as a local tracker-driven workflow.
+This project uses JYRY Command Center as a local tracker-driven workflow.
 
 ## Principles
 

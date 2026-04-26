@@ -565,7 +565,7 @@ Replace the architecture diagram to remove references to promptAssembler's dispa
 ```
 Main Process (Node.js)
   index.ts — IPC handlers, file watcher
-  config.ts — Path resolution (TALKSTORE_ROOT from .env)
+  config.ts — Path resolution (JYRY_ROOT from .env)
   parser.ts — Markdown -> tracker JSON generator
   promptAssembler.ts — Prompt preview assembly (read-only)
 
@@ -600,7 +600,7 @@ Remove the note about `dispatch` namespace. The IPC channels are now:
 ### Task Execution (MCP)
 All task execution is handled via the MCP server (`mcp-server/`).
 Agents call tools like `start_task`, `complete_task`, `block_task` directly.
-The Electron app is a read-only dashboard — it watches `talkstore-tracker.json`
+The Electron app is a read-only dashboard — it watches `jyry-tracker.json`
 for changes and updates the UI in real-time via the file watcher.
 ```
 

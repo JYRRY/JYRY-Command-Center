@@ -4,7 +4,7 @@
 
 **Goal:** Build 8 agent profiles, a per-task prompt file system, an `enrich_task` MCP tool, `get_task_context` prompt file injection, and a filtered History tab — so the prepare/start/review/complete lifecycle works end-to-end with rich prompts.
 
-**Architecture:** Agent profiles live as markdown files in `docs/agents/` in the Talkstore project. Per-task prompt files are generated during the prepare phase to `docs/prompts/`. The MCP server gets an `enrich_task` tool to write enrichment fields (including `builder_prompt` path) and `get_task_context` is updated to read and inject the prompt file. The History tab in the Electron app is filtered to only show review cycle events.
+**Architecture:** Agent profiles live as markdown files in `docs/agents/` in the JYRY project. Per-task prompt files are generated during the prepare phase to `docs/prompts/`. The MCP server gets an `enrich_task` tool to write enrichment fields (including `builder_prompt` path) and `get_task_context` is updated to read and inject the prompt file. The History tab in the Electron app is filtered to only show review cycle events.
 
 **Tech Stack:** TypeScript, MCP SDK, React, Tailwind CSS
 
@@ -12,10 +12,10 @@
 
 ## File Map
 
-### Talkstore Project (`/Users/luqman/Desktop/Projects/talkstore/`)
+### JYRY Project (`/Users/luqman/Desktop/Projects/jyry/`)
 
 **Create:**
-- `docs/agents/talkstore-pm.md` — Project manager umbrella profile
+- `docs/agents/jyry-pm.md` — Project manager umbrella profile
 - `docs/agents/explorer.md` — Codebase investigation profile
 - `docs/agents/researcher.md` — External research + plugin evaluation profile
 - `docs/agents/builder.md` — Implementation profile
@@ -83,7 +83,7 @@ Expected: PASS (new optional field doesn't break existing code)
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add mcp-server/src/tracker.ts
 git commit -m "feat: add builder_prompt field to Subtask type
 
@@ -276,7 +276,7 @@ Expected: PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add mcp-server/src/tools.ts mcp-server/src/cli.ts
 git commit -m "feat: add enrich_task MCP tool
 
@@ -301,7 +301,7 @@ Add this block after the revision history section:
 ```typescript
   // ── Builder prompt file ──
   if (subtask.builder_prompt) {
-    const promptContent = readFileSafe(join(TALKSTORE_ROOT, subtask.builder_prompt))
+    const promptContent = readFileSafe(join(JYRY_ROOT, subtask.builder_prompt))
     if (promptContent) {
       sections.push('\n# Task Prompt')
       sections.push(promptContent)
@@ -320,7 +320,7 @@ Expected: PASS
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add mcp-server/src/context.ts
 git commit -m "feat: inject builder_prompt file into get_task_context output
 
@@ -360,7 +360,7 @@ Expected: Pre-existing errors only (parser.ts, AgentHubPlaceholder.tsx)
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add src/renderer/components/taskboard/TaskDetailModal.tsx
 git commit -m "refactor: filter History tab to review cycle events only
 
@@ -370,28 +370,28 @@ Detailed log entries are still in agent_log for debugging."
 
 ---
 
-### Task 5: Create Agent Profiles — Talkstore PM
+### Task 5: Create Agent Profiles — JYRY PM
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/talkstore-pm.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/jyry-pm.md`
 
 - [ ] **Step 1: Create the agent profile**
 
 ```markdown
-# Talkstore Project Manager
+# JYRY Project Manager
 
 ## Role
-Umbrella identity for all agent work on the Talkstore project. Provides project awareness, timeline context, and priority guidance to all other agent roles.
+Umbrella identity for all agent work on the JYRY project. Provides project awareness, timeline context, and priority guidance to all other agent roles.
 
 ## Model
 Claude Opus 4.6
 
 ## When You Run
-Every session. Load this profile at the start of any Claude Code session working on Talkstore. Stay silent until asked — do not proactively brief the operator.
+Every session. Load this profile at the start of any Claude Code session working on JYRY. Stay silent until asked — do not proactively brief the operator.
 
 ## Instructions
 
-You are the Talkstore project agent. You have full awareness of the project state through MCP tools.
+You are the JYRY project agent. You have full awareness of the project state through MCP tools.
 
 **At session start:**
 - Call `get_project_status()` silently to orient yourself
@@ -430,9 +430,9 @@ Project awareness context that informs all other agent roles. No direct output u
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
-git add docs/agents/talkstore-pm.md
-git commit -m "feat: add Talkstore PM agent profile
+cd /Users/luqman/Desktop/Projects/jyry
+git add docs/agents/jyry-pm.md
+git commit -m "feat: add JYRY PM agent profile
 
 Umbrella identity for all agent work. Loads at session start,
 provides timeline-aware guidance, enforces task lifecycle."
@@ -443,7 +443,7 @@ provides timeline-aware guidance, enforces task lifecycle."
 ### Task 6: Create Agent Profiles — Explorer
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/explorer.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/explorer.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -496,7 +496,7 @@ A structured findings report written to the "Codebase Findings" section of the t
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/explorer.md
 git commit -m "feat: add Explorer agent profile
 
@@ -509,7 +509,7 @@ Scans files, traces data flows, maps architecture."
 ### Task 7: Create Agent Profiles — Researcher
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/researcher.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/researcher.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -565,7 +565,7 @@ A structured research report written to the "Research Findings" and "Your Decisi
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/researcher.md
 git commit -m "feat: add Researcher agent profile
 
@@ -578,7 +578,7 @@ for the prepare phase."
 ### Task 8: Create Agent Profiles — Builder
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/builder.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/builder.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -606,7 +606,7 @@ You implement the task based on the enriched prompt file produced by the prepare
 5. Review "Acceptance Criteria" and "Constraints"
 
 **While writing code:**
-- Follow all rules in CLAUDE.md — especially: never edit published theme, `talkstore-` CSS prefix, section naming conventions, session token validation in middleware
+- Follow all rules in CLAUDE.md — especially: never edit published theme, `jyry-` CSS prefix, section naming conventions, session token validation in middleware
 - Follow existing codebase patterns discovered by the explorer
 - Write TypeScript strict mode, ES modules, functional React components
 - Use Polaris components for all admin UI
@@ -639,7 +639,7 @@ Working code that satisfies the acceptance criteria and passes all post-build ch
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/builder.md
 git commit -m "feat: add Builder agent profile
 
@@ -652,7 +652,7 @@ chain orchestration (reviewer → security → validator → compliance)."
 ### Task 9: Create Agent Profiles — Reviewer
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/reviewer.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/reviewer.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -708,7 +708,7 @@ Log entry via `log_action` describing what was reviewed and any fixes made. No i
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/reviewer.md
 git commit -m "feat: add Reviewer agent profile
 
@@ -721,7 +721,7 @@ conventions, and review criteria from the task prompt file."
 ### Task 10: Create Agent Profiles — Security
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/security.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/security.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -777,7 +777,7 @@ Log entry via `log_action`. Clean = "Security passed: no vulnerabilities found."
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/security.md
 git commit -m "feat: add Security agent profile
 
@@ -790,7 +790,7 @@ for session tokens, HMAC, OAuth, and data exposure."
 ### Task 11: Create Agent Profiles — Validator
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/validator.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/validator.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -839,7 +839,7 @@ Log entry via `log_action`. Pass = "Validation passed: build, typecheck, lint al
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/validator.md
 git commit -m "feat: add Validator agent profile
 
@@ -852,7 +852,7 @@ task-specific test commands."
 ### Task 12: Create Agent Profiles — Compliance
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/agents/compliance.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/agents/compliance.md`
 
 - [ ] **Step 1: Create the agent profile**
 
@@ -907,7 +907,7 @@ Log entry via `log_action`. No items affected = "Compliance: no checklist items 
 - [ ] **Step 2: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/agents/compliance.md
 git commit -m "feat: add Compliance agent profile
 
@@ -917,22 +917,22 @@ on every task, skips gracefully when none are relevant."
 
 ---
 
-### Task 13: Create Prompts Directory and Update Talkstore CLAUDE.md
+### Task 13: Create Prompts Directory and Update JYRY CLAUDE.md
 
 **Files:**
-- Create: `/Users/luqman/Desktop/Projects/talkstore/docs/prompts/.gitkeep`
-- Modify: `/Users/luqman/Desktop/Projects/talkstore/CLAUDE.md`
+- Create: `/Users/luqman/Desktop/Projects/jyry/docs/prompts/.gitkeep`
+- Modify: `/Users/luqman/Desktop/Projects/jyry/CLAUDE.md`
 
 - [ ] **Step 1: Create the prompts directory**
 
 ```bash
-mkdir -p /Users/luqman/Desktop/Projects/talkstore/docs/prompts
-touch /Users/luqman/Desktop/Projects/talkstore/docs/prompts/.gitkeep
+mkdir -p /Users/luqman/Desktop/Projects/jyry/docs/prompts
+touch /Users/luqman/Desktop/Projects/jyry/docs/prompts/.gitkeep
 ```
 
 - [ ] **Step 2: Update CLAUDE.md references**
 
-In `/Users/luqman/Desktop/Projects/talkstore/CLAUDE.md`, update the References section to include the new directories:
+In `/Users/luqman/Desktop/Projects/jyry/CLAUDE.md`, update the References section to include the new directories:
 
 Replace:
 ```markdown
@@ -948,14 +948,14 @@ With:
 - Full manifesto: docs/manifesto.md
 - Build roadmap: docs/roadmap.md
 - Submission checklist: docs/submission-checklist.md
-- Agent profiles: docs/agents/ (talkstore-pm, explorer, researcher, builder, reviewer, security, validator, compliance)
+- Agent profiles: docs/agents/ (jyry-pm, explorer, researcher, builder, reviewer, security, validator, compliance)
 - Task prompts: docs/prompts/ (per-task prompt files generated during prepare phase)
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore
+cd /Users/luqman/Desktop/Projects/jyry
 git add docs/prompts/.gitkeep CLAUDE.md
 git commit -m "feat: add prompts directory and update CLAUDE.md references
 
@@ -970,25 +970,25 @@ and prompts directories."
 
 - [ ] **Step 1: Build MCP server**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center/mcp-server && npm run build`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center/mcp-server && npm run build`
 Expected: PASS
 
 - [ ] **Step 2: Verify CLI shows new tool**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center/mcp-server && node dist/cli.js help`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center/mcp-server && node dist/cli.js help`
 Expected: Should show `enrich-task` in the WRITE COMMANDS section
 
 - [ ] **Step 3: Type-check Electron app**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center && npx tsc --noEmit`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center && npx tsc --noEmit`
 Expected: Pre-existing errors only
 
 - [ ] **Step 4: Verify agent profiles exist**
 
-Run: `ls -la /Users/luqman/Desktop/Projects/talkstore/docs/agents/`
-Expected: 8 files — talkstore-pm.md, explorer.md, researcher.md, builder.md, reviewer.md, security.md, validator.md, compliance.md
+Run: `ls -la /Users/luqman/Desktop/Projects/jyry/docs/agents/`
+Expected: 8 files — jyry-pm.md, explorer.md, researcher.md, builder.md, reviewer.md, security.md, validator.md, compliance.md
 
 - [ ] **Step 5: Verify prompts directory exists**
 
-Run: `ls -la /Users/luqman/Desktop/Projects/talkstore/docs/prompts/`
+Run: `ls -la /Users/luqman/Desktop/Projects/jyry/docs/prompts/`
 Expected: `.gitkeep` file

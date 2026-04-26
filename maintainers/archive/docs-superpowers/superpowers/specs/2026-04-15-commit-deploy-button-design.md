@@ -1,7 +1,7 @@
 # Commit & Deploy Button — Design Spec
 
 **Date:** 2026-04-15
-**Scope:** Talkstore Command Center (Electron app)
+**Scope:** JYRY Command Center (Electron app)
 **Goal:** One-click commit + push from the dashboard header. Railway auto-deploys from the push.
 
 ---
@@ -16,7 +16,7 @@ Renderer (CommitButton)
 Preload (IPC bridge)
     ↓ ipcRenderer.invoke('git:commit-and-push')
 Main Process (git handler)
-    ↓ execFile('git', [...], { cwd: TALKSTORE_ROOT })
+    ↓ execFile('git', [...], { cwd: JYRY_ROOT })
 Git CLI → GitHub → Railway (async)
 ```
 
@@ -24,7 +24,7 @@ Git CLI → GitHub → Railway (async)
 
 Location: `src/main/index.ts` (add to existing IPC section)
 
-Uses `child_process.execFile` (not exec — avoids shell injection) to run git commands sequentially in `TALKSTORE_ROOT`:
+Uses `child_process.execFile` (not exec — avoids shell injection) to run git commands sequentially in `JYRY_ROOT`:
 
 1. `git status --porcelain` — if empty, return `{ status: 'nothing' }`
 2. `git diff --cached --stat` + `git diff --stat` — get changed file summary for message generation
@@ -34,7 +34,7 @@ Uses `child_process.execFile` (not exec — avoids shell injection) to run git c
 6. `git push` — push to origin (current branch)
 7. Return `{ status: 'success', message, branch, filesChanged }` or `{ status: 'error', error }`
 
-All git commands use `execFile` with the `cwd` option set to `TALKSTORE_ROOT`.
+All git commands use `execFile` with the `cwd` option set to `JYRY_ROOT`.
 
 ### Commit Message Heuristic
 

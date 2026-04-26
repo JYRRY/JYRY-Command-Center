@@ -1,14 +1,14 @@
-# Sha8al Command Center MCP Server
+# JYRY Command Center MCP Server
 
-This package contains the MCP server and CLI for Sha8al Command Center (`sha8al-command-center`).
+This package contains the MCP server and CLI for JYRY Command Center (`jyry-command-center`).
 
 ## Current Status
 
-- Public platform name: `sha8al-command-center`
-- Compatibility profile: TalkStore
-- Compatibility CLI alias: `talkstore`
-- Public CLI alias: `sha8al-command-center`
-- Package name: `sha8al-command-center-mcp`
+- Public platform name: `jyry-command-center`
+- Compatibility profile: JYRY
+- Compatibility CLI alias: `jyry`
+- Public CLI alias: `jyry-command-center`
+- Package name: `jyry-command-center-mcp`
 
 ## Build
 
@@ -28,12 +28,12 @@ node dist/cli.js help
 When the package is linked or installed, both of these aliases resolve to the same CLI:
 
 ```bash
-sha8al-command-center help
-talkstore help
+jyry-command-center help
+jyry help
 ```
 
 ## Compatibility Notes
 
-- The live TalkStore MCP wiring is intentionally left unchanged in Phase 4.
+- The live JYRY MCP wiring is intentionally left unchanged in Phase 4.
 - The public alias is additive only.
-- Removing the `talkstore` alias is a later cutover step, not part of this phase.
+- Removing the `jyry` alias is a later cutover step, not part of this phase.

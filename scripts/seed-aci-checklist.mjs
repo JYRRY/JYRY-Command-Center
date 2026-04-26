@@ -2,7 +2,7 @@
 
 /**
  * AI Commerce Index Platform — Submission Checklist seeder.
- * Reseeds `submission_checklist.categories` in talkstore-tracker.json
+ * Reseeds `submission_checklist.categories` in jyry-tracker.json
  * from scratch, based on MASTER-MANIFESTO §14.
  *
  * Run AFTER parse-aci-roadmap.mjs (which preserves existing checklist state
@@ -77,7 +77,7 @@ const CATEGORIES = [
     risk_level: 'critical',
     linked_milestone: 'm10_launch_and_post_launch',
     items: [
-      'Privacy policy dedicated to new product (NOT reused from TalkStore)',
+      'Privacy policy dedicated to new product (NOT reused from JYRY)',
       'All sub-processors enumerated with linked DPAs',
       'Terms of Service drafted',
       'Counsel review complete ($1.5–3K budget allocation)',

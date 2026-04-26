@@ -46,17 +46,17 @@ function main() {
 
   if (!rootPackage.description || typeof rootPackage.description !== 'string') {
     issues.push('root package.json is missing a description')
-  } else if (!/sha8al-command-center/i.test(rootPackage.description)) {
+  } else if (!/jyry-command-center/i.test(rootPackage.description)) {
     issues.push(`root package description must lead with the public platform identity: ${rootPackage.description}`)
   }
 
-  if (rootPackage.name !== 'sha8al-command-center') {
+  if (rootPackage.name !== 'jyry-command-center') {
     issues.push(`root package name must use the public package id: ${rootPackage.name}`)
   }
 
   const rootKeywords = Array.isArray(rootPackage.keywords) ? rootPackage.keywords : []
-  if (!rootKeywords.includes('sha8al-command-center')) {
-    issues.push('root package.json must include the public platform keyword: sha8al-command-center')
+  if (!rootKeywords.includes('jyry-command-center')) {
+    issues.push('root package.json must include the public platform keyword: jyry-command-center')
   }
 
   if (rootPackage.private !== true) {
@@ -65,28 +65,28 @@ function main() {
 
   if (!mcpPackage.description || typeof mcpPackage.description !== 'string') {
     issues.push('mcp-server/package.json is missing a description')
-  } else if (!/sha8al-command-center/i.test(mcpPackage.description)) {
+  } else if (!/jyry-command-center/i.test(mcpPackage.description)) {
     issues.push(`MCP package description must lead with the public platform identity: ${mcpPackage.description}`)
   }
 
-  if (mcpPackage.name !== 'sha8al-command-center-mcp') {
+  if (mcpPackage.name !== 'jyry-command-center-mcp') {
     issues.push(`mcp-server/package.json must use the public MCP package id: ${mcpPackage.name}`)
   }
 
   const mcpKeywords = Array.isArray(mcpPackage.keywords) ? mcpPackage.keywords : []
-  if (!mcpKeywords.includes('sha8al-command-center')) {
-    issues.push('mcp-server/package.json must include the public platform keyword: sha8al-command-center')
+  if (!mcpKeywords.includes('jyry-command-center')) {
+    issues.push('mcp-server/package.json must include the public platform keyword: jyry-command-center')
   }
 
   const binNames = Object.keys(mcpPackage.bin || {})
   if (binNames.length === 0) {
     issues.push('mcp-server/package.json must expose at least one CLI binary')
-  } else if (!binNames.includes('sha8al-command-center')) {
+  } else if (!binNames.includes('jyry-command-center')) {
     issues.push(`mcp-server/package.json must expose the public CLI alias: ${binNames.join(', ')}`)
   }
 
-  if (!binNames.includes('talkstore')) {
-    issues.push('mcp-server/package.json must keep the TalkStore compatibility CLI alias during the transition window')
+  if (!binNames.includes('jyry')) {
+    issues.push('mcp-server/package.json must keep the JYRY compatibility CLI alias during the transition window')
   }
 
   if (rootPackage.license !== 'ISC') {

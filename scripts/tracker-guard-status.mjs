@@ -5,7 +5,7 @@ import { getTrackerWriteGuardError, resolveProjectPaths } from './lib/project-pa
 const paths = resolveProjectPaths()
 const guard = getTrackerWriteGuardError(paths.trackerPath)
 
-console.log('Sha8al Command Center — Tracker Guard Status')
+console.log('JYRY Command Center — Tracker Guard Status')
 console.log('='.repeat(48))
 console.log(`Consumer profile: ${paths.profileName}`)
 console.log(`Project root: ${paths.projectRoot}`)

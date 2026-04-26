@@ -1,5 +1,5 @@
 import { execFile } from 'child_process'
-import { TALKSTORE_ROOT } from './config'
+import { JYRY_ROOT } from './config'
 
 export type GitResult =
   | { status: 'success'; message: string; branch: string; filesChanged: number }
@@ -8,7 +8,7 @@ export type GitResult =
 
 function git(args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile('git', args, { cwd: TALKSTORE_ROOT, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+    execFile('git', args, { cwd: JYRY_ROOT, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
       if (err) reject(new Error(stderr || err.message))
       else resolve(stdout)
     })

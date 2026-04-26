@@ -10,9 +10,9 @@ function main() {
   const trackerPath = join(workspace, 'tracker.json')
   const originalTracker = {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
     },
     milestones: [],
     submission_checklist: { categories: [] },

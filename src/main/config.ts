@@ -3,9 +3,9 @@ import { basename, isAbsolute, join, resolve } from 'path'
 
 const COMMAND_CENTER_ROOT = resolve(__dirname, '../..')
 const PROFILES_ROOT = join(COMMAND_CENTER_ROOT, 'profiles')
-const SIBLING_TALKSTORE_ROOT = resolve(COMMAND_CENTER_ROOT, '..', 'talkstore')
+const SIBLING_JYRY_ROOT = resolve(COMMAND_CENTER_ROOT, '..', 'jyry')
 
-type ConsumerProfileId = 'generic' | 'talkstore'
+type ConsumerProfileId = 'generic' | 'jyry'
 
 interface ConsumerProfileDocEntry {
   default_path: string
@@ -81,37 +81,37 @@ function loadProfileManifest(profileId: ConsumerProfileId): ConsumerProfileManif
 function resolveProfileId(): ConsumerProfileId {
   const explicitProfile = readSetting(['COMMAND_CENTER_PROFILE'])
   if (explicitProfile) {
-    if (explicitProfile === 'generic' || explicitProfile === 'talkstore') {
+    if (explicitProfile === 'generic' || explicitProfile === 'jyry') {
       return explicitProfile
     }
 
     throw new Error(
-      `Unknown consumer profile "${explicitProfile}". Expected "generic" or "talkstore".`
+      `Unknown consumer profile "${explicitProfile}". Expected "generic" or "jyry".`
     )
   }
 
-  const legacyRoot = readSetting(['TALKSTORE_PROJECT_ROOT'])
-  if (legacyRoot) return 'talkstore'
+  const legacyRoot = readSetting(['JYRY_PROJECT_ROOT'])
+  if (legacyRoot) return 'jyry'
 
   const configuredTracker = readSetting(['COMMAND_CENTER_TRACKER_FILE', 'TRACKER_FILE'])
-  if (configuredTracker && basename(configuredTracker) === 'talkstore-tracker.json') {
-    return 'talkstore'
+  if (configuredTracker && basename(configuredTracker) === 'jyry-tracker.json') {
+    return 'jyry'
   }
 
   const configuredRoot = readSetting(['COMMAND_CENTER_PROJECT_ROOT', 'PROJECT_ROOT'])
   if (configuredRoot) {
     const resolvedRoot = resolve(configuredRoot)
     if (
-      resolvedRoot === SIBLING_TALKSTORE_ROOT ||
-      existsSync(join(resolvedRoot, 'talkstore-tracker.json'))
+      resolvedRoot === SIBLING_JYRY_ROOT ||
+      existsSync(join(resolvedRoot, 'jyry-tracker.json'))
     ) {
-      return 'talkstore'
+      return 'jyry'
     }
     return 'generic'
   }
 
-  if (existsSync(SIBLING_TALKSTORE_ROOT)) {
-    return 'talkstore'
+  if (existsSync(SIBLING_JYRY_ROOT)) {
+    return 'jyry'
   }
 
   return 'generic'
@@ -121,13 +121,13 @@ function resolveProjectRoot(profile: ConsumerProfileManifest): string {
   const configured = readSetting(profile.project_root.env_keys)
   if (configured) return resolve(configured)
 
-  if (profile.id === 'talkstore' && existsSync(SIBLING_TALKSTORE_ROOT)) {
-    return SIBLING_TALKSTORE_ROOT
+  if (profile.id === 'jyry' && existsSync(SIBLING_JYRY_ROOT)) {
+    return SIBLING_JYRY_ROOT
   }
 
   throw new Error(
     'Project root is not set. Configure COMMAND_CENTER_PROJECT_ROOT ' +
-    '(or TALKSTORE_PROJECT_ROOT for legacy compatibility).'
+    '(or JYRY_PROJECT_ROOT for legacy compatibility).'
   )
 }
 
@@ -190,7 +190,7 @@ function resolveOptionalDocPath(
 export const PROFILE_ID = resolveProfileId()
 export const PROFILE = loadProfileManifest(PROFILE_ID)
 export const PROJECT_ROOT = resolveProjectRoot(PROFILE)
-export const TALKSTORE_ROOT = PROJECT_ROOT
+export const JYRY_ROOT = PROJECT_ROOT
 export const TRACKER_FILE = resolveTrackerFile(PROJECT_ROOT, PROFILE)
 export const TRACKER_PATH = join(PROJECT_ROOT, TRACKER_FILE)
 

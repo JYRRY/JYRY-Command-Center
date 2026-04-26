@@ -6,7 +6,7 @@
 import { join } from 'path'
 import {
   DOCS_PATHS,
-  TALKSTORE_ROOT,
+  JYRY_ROOT,
   readFileSafe,
   type TrackerState,
   type Subtask,
@@ -16,15 +16,15 @@ import {
 // ─── Domain → Manifesto Section Mapping ─────────────────────────────────────
 
 const DOMAIN_MANIFESTO_SECTIONS: Record<string, string[]> = {
-  foundation: ['1) What Talkstore Is', '13) Tech Stack', '8) Product Principles'],
-  storefront: ['1) What Talkstore Is', '7) The Product Model', '10) Core Workflows', '8) Product Principles'],
-  product_ops: ['1) What Talkstore Is', '7) The Product Model', '10) Core Workflows', '8) Product Principles'],
-  commerce_intel: ['1) What Talkstore Is', '7) The Product Model', '8) Product Principles'],
-  launch_prep: ['1) What Talkstore Is', '12) Pricing + Packaging', '9) The Onboarding Scan', '8) Product Principles'],
-  review_buffer: ['1) What Talkstore Is', '8) Product Principles'],
-  v1_2: ['1) What Talkstore Is', '7) The Product Model', '8) Product Principles'],
-  v1_5: ['1) What Talkstore Is', '7) The Product Model', '8) Product Principles'],
-  distribution: ['1) What Talkstore Is', '6) Value Proposition'],
+  foundation: ['1) What JYRY Is', '13) Tech Stack', '8) Product Principles'],
+  storefront: ['1) What JYRY Is', '7) The Product Model', '10) Core Workflows', '8) Product Principles'],
+  product_ops: ['1) What JYRY Is', '7) The Product Model', '10) Core Workflows', '8) Product Principles'],
+  commerce_intel: ['1) What JYRY Is', '7) The Product Model', '8) Product Principles'],
+  launch_prep: ['1) What JYRY Is', '12) Pricing + Packaging', '9) The Onboarding Scan', '8) Product Principles'],
+  review_buffer: ['1) What JYRY Is', '8) Product Principles'],
+  v1_2: ['1) What JYRY Is', '7) The Product Model', '8) Product Principles'],
+  v1_5: ['1) What JYRY Is', '7) The Product Model', '8) Product Principles'],
+  distribution: ['1) What JYRY Is', '6) Value Proposition'],
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ export function buildTaskContext(
   // ── Builder prompt file ──
   if (options.includeBuilderPrompt !== false) {
     if (subtask.builder_prompt) {
-      const promptContent = readFileSafe(join(TALKSTORE_ROOT, subtask.builder_prompt))
+      const promptContent = readFileSafe(join(JYRY_ROOT, subtask.builder_prompt))
       if (promptContent) {
         sections.push('\n# Task Prompt')
         sections.push(promptContent)

@@ -11,7 +11,7 @@ import {
   writeTracker,
   findTask,
   autoUnblockDependents,
-  TALKSTORE_ROOT,
+  JYRY_ROOT,
   type TrackerState,
   type Subtask,
   type Milestone,
@@ -85,7 +85,7 @@ export const MILESTONE_MANIFESTO_SECTIONS: Record<string, string[]> = {
 
 /** Absolute path to the master manifesto (read-only, verbatim excerpts). */
 const MANIFESTO_PATH = join(
-  TALKSTORE_ROOT,
+  JYRY_ROOT,
   'Brainstorming & Pivot',
   'MASTER-MANIFESTO.md'
 )
@@ -3661,7 +3661,7 @@ function buildMilestoneAuditBundle(state: TrackerState, milestone: Milestone) {
   const priorNumMatch = priorMilestone ? priorMilestone.id.match(/^m(\d+)_/) : null
   const priorNum = priorNumMatch ? priorNumMatch[1] : null
   const priorRelPath = priorNum ? `docs/state/after-m${priorNum}-state.md` : ''
-  const priorAbsPath = priorRelPath ? join(TALKSTORE_ROOT, priorRelPath) : ''
+  const priorAbsPath = priorRelPath ? join(JYRY_ROOT, priorRelPath) : ''
   let priorContents: string | null = null
   let priorExists = false
   if (priorAbsPath && existsSync(priorAbsPath)) {

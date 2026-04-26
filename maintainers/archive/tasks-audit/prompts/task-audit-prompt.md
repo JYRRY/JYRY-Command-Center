@@ -1,4 +1,4 @@
-# Talkstore Task Audit Prompt
+# JYRY Task Audit Prompt
 
 **Instructions:** Copy everything below the line into Claude, GPT, Gemini, and Perplexity. Attach the two files mentioned. Collect all four outputs, then synthesize.
 
@@ -6,7 +6,7 @@
 
 ## PROMPT START
 
-I'm building a Shopify embedded app called Talkstore. I have two documents attached:
+I'm building a Shopify embedded app called JYRY. I have two documents attached:
 
 1. **manifesto.md** — The product vision, architecture, principles, and scope boundaries. This is the constitution. Every task must trace back to something in this document.
 2. **roadmap.md** — The current execution plan with ~165 checkbox tasks organized into milestones across a 20-week timeline.

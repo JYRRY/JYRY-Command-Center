@@ -6,15 +6,15 @@ Read the workflow doc at `.claude/rules/three-phase-workflow.md` section "Medium
 
 What you do:
 
-1. If `T<id>`: call `mcp__talkstore__get_task_context(task_id)` to read the enriched context.
+1. If `T<id>`: call `mcp__jyry__get_task_context(task_id)` to read the enriched context.
    If `M<N> <tier>`: iterate prepared tasks in dependency order. By default, run same-wave tasks in parallel via Agent subagents when `check_file_collisions` says they are safe to parallelize; otherwise serialize them.
 2. For each task:
    a. If `builder_prompt` is present on the task, open that markdown file and use it as the canonical build brief.
       If `builder_prompt` is absent, fall back to the enriched tracker prompt.
-   b. Call `mcp__talkstore__start_task(task_id)` to flip it to `in_progress`
+   b. Call `mcp__jyry__start_task(task_id)` to flip it to `in_progress`
    c. Write the code, run `npm run build && npm run typecheck && npm run lint`
    d. Verify the acceptance commands from the prompt pass
-   e. Call `mcp__talkstore__complete_task({task_id, summary})` to move to review
+   e. Call `mcp__jyry__complete_task({task_id, summary})` to move to review
    f. Spawn the `auditor` subagent via the Agent tool. It runs the 12-point checklist and calls `submit_audit`.
    g. The MCP server auto-approves if the milestone is `foundation` or `product_engines` AND all 12 checks pass. Otherwise the task stays in `review` with the audit report attached for operator.
 3. If any task fails its build or audit, stop and report to the operator. Don't continue the batch.

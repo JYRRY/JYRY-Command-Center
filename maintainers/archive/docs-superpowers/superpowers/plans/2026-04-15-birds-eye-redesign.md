@@ -139,13 +139,13 @@ Remove any imports that were only used by deleted components (e.g. `useEffect`, 
 
 - [ ] **Step 6: Build and verify**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center && npm run build`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center && npm run build`
 Expected: Clean build, no errors. The app shows two tabs — System (placeholder text) and Roadmap (unchanged).
 
 - [ ] **Step 7: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add src/renderer/views/BirdsEyeView.tsx
 git commit -m "refactor(birds-eye): delete domain tabs and diagram infrastructure, reduce to system+roadmap"
 ```
@@ -191,7 +191,7 @@ function SystemTab() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[10px] font-bold tracking-[0.22em] text-accent-light uppercase">Bird's Eye</div>
-          <h2 className="mt-1 text-xl font-semibold text-white">Talkstore Execute Surface</h2>
+          <h2 className="mt-1 text-xl font-semibold text-white">JYRY Execute Surface</h2>
         </div>
         <div className="flex items-center gap-3">
           <div className="rounded-lg border border-accent/30 bg-dark px-4 py-3 text-right">
@@ -384,13 +384,13 @@ Then the SVG inside a container div:
 
 - [ ] **Step 4: Build and verify**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center && npm run build`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center && npm run build`
 Expected: Clean build. The System tab shows the header and the funnel diagram SVG with hover interactions.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add src/renderer/views/BirdsEyeView.tsx
 git commit -m "feat(birds-eye): add SystemTab with funnel SVG diagram and hover interaction"
 ```
@@ -463,7 +463,7 @@ Check: grep for `ExecuteCta`, `SpecRow`, `BridgeCta` in the file. Delete any tha
 
 - [ ] **Step 4: Build and verify**
 
-Run: `cd /Users/luqman/Desktop/Projects/talkstore-command-center && npm run build`
+Run: `cd /Users/luqman/Desktop/Projects/jyry-command-center && npm run build`
 Expected: Clean build. Full System tab renders: header, funnel diagram, 7-card CTA strip with click-to-expand, missing bridge callout.
 
 - [ ] **Step 5: Verify line count reduction**
@@ -474,7 +474,7 @@ Expected: ~400-550 lines (down from ~1500+)
 - [ ] **Step 6: Commit**
 
 ```bash
-cd /Users/luqman/Desktop/Projects/talkstore-command-center
+cd /Users/luqman/Desktop/Projects/jyry-command-center
 git add src/renderer/views/BirdsEyeView.tsx
 git commit -m "feat(birds-eye): add CTA strip and missing bridge callout, complete redesign"
 ```

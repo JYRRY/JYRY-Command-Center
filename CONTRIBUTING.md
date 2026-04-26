@@ -1,8 +1,8 @@
-# Contributing to sha8al-command-center
+# Contributing to jyry-command-center
 
 Thanks for contributing to the Command Center platform.
-Public-facing docs should treat `sha8al-command-center` as the platform identity.
-`talkstore` remains a compatibility profile during the transition window for existing installs and workflows.
+Public-facing docs should treat `jyry-command-center` as the platform identity.
+`jyry` remains a compatibility profile during the transition window for existing installs and workflows.
 
 Please keep contributions focused, reviewable, and aligned with the existing profile model.
 If you are reporting a security issue, do not use a public issue or pull request. Follow [SECURITY.md](SECURITY.md) instead.
@@ -33,7 +33,7 @@ npm run tracker:guard:status
 Prefer dry runs before real writes:
 
 ```bash
-npm run tracker:parse:talkstore-tasks:dry-run
+npm run tracker:parse:jyry-tasks:dry-run
 ```
 
 ## Repo Structure
@@ -44,7 +44,7 @@ npm run tracker:parse:talkstore-tasks:dry-run
 - `mcp-server/` contains the MCP stdio server, CLI, tracker utilities, and TypeScript build.
 - `scripts/` contains bootstrap, parser, guard, and validation helpers.
 - `docs/` contains architecture, packaging, transition, and workflow documentation.
-- `playbooks/talkstore/` contains the TalkStore compatibility playbook mirror.
+- `playbooks/jyry/` contains the JYRY compatibility playbook mirror.
 - `examples/` contains the minimal external example project used for public-install validation.
 
 ## Running The App And MCP Builds
@@ -79,26 +79,26 @@ npm run check:validation
 - Prefer the `generic` profile plus `examples/minimal-command-center-project/` for fresh-install validation.
 - Run `npm run tracker:guard:status` first so you know exactly which profile, root, and tracker path the scripts will target.
 - Use the dry-run parser commands before any write command.
-- Do not point local validation at a live sibling TalkStore checkout unless you intentionally need compatibility coverage.
+- Do not point local validation at a live sibling JYRY checkout unless you intentionally need compatibility coverage.
 - Do not bypass the tracker write guard unless you explicitly mean to write to a real tracker. `COMMAND_CENTER_ALLOW_TRACKER_WRITES=true` is an override, not a normal workflow.
-- If a change affects compatibility inference, validate both the explicit public path and the TalkStore compatibility path.
+- If a change affects compatibility inference, validate both the explicit public path and the JYRY compatibility path.
 
 ## Docs Standards
 
-- Lead with the platform identity: `sha8al-command-center`.
-- Refer to TalkStore as a compatibility profile, not as the platform identity.
+- Lead with the platform identity: `jyry-command-center`.
+- Refer to JYRY as a compatibility profile, not as the platform identity.
 - State when a command, env var, filename, or CLI name is public-default versus compatibility-only.
-- Avoid instructions that require a sibling TalkStore checkout for generic installs.
+- Avoid instructions that require a sibling JYRY checkout for generic installs.
 - Keep docs explicit about profile selection, tracker filenames, and source document paths.
 - If the change is user-visible, add or update a release note under `docs/releases/`.
 
-## TalkStore Compatibility Rules
+## JYRY Compatibility Rules
 
-- Preserve current TalkStore behavior only where the compatibility window requires it.
+- Preserve current JYRY behavior only where the compatibility window requires it.
 - Label legacy env vars, filenames, and CLI names as compatibility aliases when they appear in docs.
-- Do not introduce new generic flows that depend on `TALKSTORE_PROJECT_ROOT`, `talkstore-tracker.json`, or a mirrored TalkStore playbook.
+- Do not introduce new generic flows that depend on `JYRY_PROJECT_ROOT`, `jyry-tracker.json`, or a mirrored JYRY playbook.
 - Do not remove or narrow compatibility aliases without documenting migration impact and rollback notes.
-- If a change can affect both generic and TalkStore installs, describe both outcomes in the pull request.
+- If a change can affect both generic and JYRY installs, describe both outcomes in the pull request.
 
 ## Pull Requests
 

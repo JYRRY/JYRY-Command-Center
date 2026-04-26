@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Sha8al Command Center — Markdown Parser + State File Generator
+ * JYRY Command Center — Markdown Parser + State File Generator
  * Phase 1, Part 1.2
  *
  * Reads project roadmap and optional checklist markdown sources and generates the resolved tracker file for the active profile.
@@ -9,7 +9,7 @@
  *
  * Usage:
  *   node scripts/parse-markdown.mjs --consumer-profile=generic --profile=generic --tasks-source=docs/roadmap.md
- *   node scripts/parse-markdown.mjs --consumer-profile=talkstore --profile=talkstore --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md --dry-run
+ *   node scripts/parse-markdown.mjs --consumer-profile=jyry --profile=jyry --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md --dry-run
  */
 
 import { readFileSync, existsSync } from 'fs'
@@ -48,8 +48,8 @@ function resolveMarkdownParserId(argv = process.argv.slice(2)) {
     process.env.COMMAND_CENTER_PROFILE ||
     null
 
-  if (!explicitProfile || explicitProfile === 'talkstore') {
-    return 'talkstore-markdown'
+  if (!explicitProfile || explicitProfile === 'jyry') {
+    return 'jyry-markdown'
   }
 
   if (explicitProfile === 'generic') {
@@ -58,7 +58,7 @@ function resolveMarkdownParserId(argv = process.argv.slice(2)) {
 
   throw new Error(
     `No markdown parser is registered for profile "${explicitProfile}". ` +
-    'Supported markdown parser profiles: generic, talkstore.'
+    'Supported markdown parser profiles: generic, jyry.'
   )
 }
 
@@ -67,7 +67,7 @@ function resolveConsumerProfileOverride(argv = process.argv.slice(2)) {
 }
 
 function toDisplayProjectName(projectRoot, consumerProfile) {
-  if (consumerProfile === 'talkstore') return 'Talkstore'
+  if (consumerProfile === 'jyry') return 'JYRY'
 
   const slug = basename(projectRoot)
   return slug
@@ -590,7 +590,7 @@ function main() {
       existingProject: existingTracker?.project || null,
     })
 
-    console.log('Sha8al Command Center — Markdown Parser')
+    console.log('JYRY Command Center — Markdown Parser')
     console.log('='.repeat(50))
     console.log(`Parser/source pairing: ${parserValidation.parserSourcePairing}`)
 

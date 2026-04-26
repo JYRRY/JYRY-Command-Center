@@ -16,7 +16,7 @@ const STARTER_DOCS = {
 `,
   'docs/manifesto.md': `# Project Manifesto
 
-This project uses Sha8al Command Center as a local tracker-driven workflow.
+This project uses JYRY Command Center as a local tracker-driven workflow.
 
 ## Principles
 

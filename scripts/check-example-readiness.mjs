@@ -40,14 +40,14 @@ function main() {
   requireFile('docs/manifesto.md')
 
   requireIncludes('README.md', [
-    'Sha8al Command Center',
-    'sha8al-command-center',
+    'JYRY Command Center',
+    'jyry-command-center',
     'public `generic` profile path first',
     'bootstrap, parser, tracker, and dashboard flow',
     'docs/roadmap.md',
     'tracker:parse:project-tasks',
-    'should not require `TALKSTORE_PROJECT_ROOT`',
-    'sibling TalkStore checkout',
+    'should not require `JYRY_PROJECT_ROOT`',
+    'sibling JYRY checkout',
   ])
 
   requireIncludes('docs/roadmap.md', [
@@ -60,14 +60,14 @@ function main() {
   requireIncludes('docs/submission-checklist.md', [
     'COMMAND_CENTER_PROFILE=generic',
     'Confirm bootstrap writes config for this project root.',
-    'Confirm no TalkStore repo checkout is required.',
+    'Confirm no JYRY repo checkout is required.',
     'Confirm backup behavior is documented.',
   ])
 
   requireIncludes('docs/manifesto.md', [
     'public `generic` profile path first',
     'Validate parser and profile selection before any write.',
-    'Live TalkStore repo dependency',
+    'Live JYRY repo dependency',
   ])
 
   if (issues.length > 0) {

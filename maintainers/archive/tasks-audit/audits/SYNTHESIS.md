@@ -1,4 +1,4 @@
-# Talkstore Task Audit — Synthesis Report
+# JYRY Task Audit — Synthesis Report
 
 **Synthesizer:** Claude (Opus)
 **Date:** March 16, 2026
@@ -17,7 +17,7 @@
 | 1 | GDPR mandatory webhooks (`customers/data_request`, `customers/redact`, `shop/redact`) with real deletion behavior | §14, §15 |
 | 2 | Safe mode: agent stops and asks for guidance on unexpected state during execution | §15 |
 | 3 | `APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT` webhook handler | §14 |
-| 4 | Cumulative impact view ("What has Talkstore done for my store") | §8.7 |
+| 4 | Cumulative impact view ("What has JYRY done for my store") | §8.7 |
 | 5 | Batch confirmation: ask before modifying >5 products | §8.4 |
 | 6 | Token/context budget management (truncation, chunking, cost control) | §12 |
 
@@ -102,8 +102,8 @@
 **Domain:** launch_prep
 **Goal:** A live waitlist page captures emails and explains the product clearly.
 
-- [ ] Secure primary domain (`talkstore.ai` or `talkstore.app` or `usetalkstore.com`) and point DNS
-- [ ] Build and deploy single-page landing page: headline, 3 value props, "how it works," waitlist CTA, Talkstore brand palette
+- [ ] Secure primary domain (`jyry.ai` or `jyry.app` or `usejyry.com`) and point DNS
+- [ ] Build and deploy single-page landing page: headline, 3 value props, "how it works," waitlist CTA, JYRY brand palette
 - [ ] Implement waitlist email capture → `waitlist` table or third-party list (Loops/Buttondown)
 - [ ] Set up privacy-friendly analytics (Plausible or Umami) for page views, CTA clicks, submissions
 - [ ] Configure Open Graph / social meta tags for link sharing
@@ -174,7 +174,7 @@
 - [ ] Build LLM generation pipeline: base template + theme tokens + merchant request → Opus generates customized .liquid file with schema + CSS + optional JS
 - [ ] Build Liquid syntax validator (structural validation, unclosed tags, malformed logic)
 - [ ] Build JSON schema validator (ensures `{% schema %}` block parses and has valid settings)
-- [ ] Build CSS scoping enforcer: all generated CSS uses `talkstore-{section-name}-` prefix; check for class name collisions
+- [ ] Build CSS scoping enforcer: all generated CSS uses `jyry-{section-name}-` prefix; check for class name collisions
 - [ ] Build validation retry loop: if validation fails, feed error context back to Opus (max 2 retries) before failing gracefully
 - [ ] Test all 10 section types against Dawn theme — all must pass validation
 
@@ -216,7 +216,7 @@
 - [ ] Implement Data Completeness Index (DCI) scoring: Identity 15% + Physical 15% + Description 20% + Taxonomy 15% + Variants 10% + Media 10% + Feed Readiness 15% = 0-100
 - [ ] Build store-wide aggregate DCI score from scanned products
 - [ ] Build enrichment planner (Sonnet): map missing attributes, label values as certain/inferred/unresolved, generate enrichment proposal
-- [ ] Build metafield write pipeline: use Shopify built-in category metafields first, `talkstore.*` namespace for additional structured data; never overwrite existing metafields from other apps without asking
+- [ ] Build metafield write pipeline: use Shopify built-in category metafields first, `jyry.*` namespace for additional structured data; never overwrite existing metafields from other apps without asking
 - [ ] Build description rewrite pipeline: marketing fluff → factual + structured format via Opus, executed via `productUpdate` mutation
 - [ ] Implement before/after snapshot: every product change stores prior state in `audit_log.before_state`
 - [ ] Implement batch processing: handle up to 25 products per task in a single LLM call (not 25 separate calls)
@@ -273,7 +273,7 @@
 
 - [ ] Build History tab UI: list all past actions from audit_log with action type, timestamp, description, domain
 - [ ] Connect undo: storefront undo unpublishes/deletes duplicate theme; product ops undo reverts metafields/descriptions from `before_state`
-- [ ] Build cumulative impact view: "Talkstore has done X for your store" — sections generated, products enriched, DCI improvement (manifesto §8.7)
+- [ ] Build cumulative impact view: "JYRY has done X for your store" — sections generated, products enriched, DCI improvement (manifesto §8.7)
 - [ ] Register `APP_UNINSTALLED` webhook: delete all shop data, cancel billing, remove created theme assets — true deletion, not just flagging inactive
 - [ ] Register `THEMES_PUBLISH` webhook: refresh theme context cache
 - [ ] Register `SHOP_UPDATE` webhook: refresh store context (currency, locale)
@@ -356,7 +356,7 @@
 
 - [ ] Create `notifications` table and in-app notification UI (badge + list in sidebar)
 - [ ] Implement `PRODUCTS_CREATE` webhook: auto-score new products with DCI, queue notification with recommended enrichment
-- [ ] Implement `PRODUCTS_UPDATE` webhook: detect if Talkstore enrichment was overwritten by third-party app, notify merchant
+- [ ] Implement `PRODUCTS_UPDATE` webhook: detect if JYRY enrichment was overwritten by third-party app, notify merchant
 - [ ] Build weekly digest notification: new products added + DCI scores, stock changes, top seller performance changes — with recommended actions
 - [ ] Build anomaly detection: flag week-over-week changes >20% in revenue, conversion, or order volume; create notification with context and recommended action
 - [ ] Build "What should I fix this week?" command: analyze current store state and prioritize top 3-5 actions by impact
@@ -380,7 +380,7 @@
 
 **DECISION 1: Page-Level SEO (meta titles/descriptions)**
 - Option A: **Keep in V1.5** (supported by: LLM 1, LLM 2) — It's a natural extension of Product Ops and relatively low-effort. Merchants will ask for it.
-- Option B: **Remove entirely** (supported by: LLM 3) — Manifesto says Talkstore is "not an SEO tool." Including it risks scope creep and mixed positioning.
+- Option B: **Remove entirely** (supported by: LLM 3) — Manifesto says JYRY is "not an SEO tool." Including it risks scope creep and mixed positioning.
 - Stakes: **Low** — Easy to add later if cut. Easy to deprioritize if kept. Not a core wedge feature either way.
 
 **DECISION 2: Success-Metric Instrumentation**

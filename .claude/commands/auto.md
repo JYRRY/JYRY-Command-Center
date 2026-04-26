@@ -12,10 +12,10 @@ Read the workflow doc at `.claude/rules/three-phase-workflow.md` for underlying 
 
 Repeat until a stop condition triggers:
 
-1. Call `mcp__talkstore__get_next_actionable_tasks({milestone_id})` — all unblocked tasks, any tier.
+1. Call `mcp__jyry__get_next_actionable_tasks({milestone_id})` — all unblocked tasks, any tier.
 2. If empty → STOP (milestone complete OR fully blocked on pair/human tasks). Report to operator.
 3. Check stop conditions BEFORE executing (details below).
-4. Call `mcp__talkstore__check_file_collisions({task_ids})` across the wave's tasks to confirm parallel safety.
+4. Call `mcp__jyry__check_file_collisions({task_ids})` across the wave's tasks to confirm parallel safety.
 5. Execute each unblocked task by tier:
    - **Small tasks** → follow `.claude/commands/sweep.md`. Small tasks skip the auditor; their acceptance commands ARE the audit.
    - **Medium tasks** → follow `.claude/commands/build.md`. Must already be prepared (`prepared: true`). If not prepared, STOP and tell operator to run `/prepare M<N> medium` first.

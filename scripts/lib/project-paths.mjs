@@ -61,18 +61,18 @@ export function getTrackerWriteGuardError(targetPath) {
   const configuredAllowance = parseBooleanSetting(
     readSetting(['COMMAND_CENTER_ALLOW_TRACKER_WRITES', 'ALLOW_TRACKER_WRITES'])
   )
-  const liveTalkstoreTrackerPath = join(
-    resolve(COMMAND_CENTER_ROOT, '..', 'talkstore'),
-    'talkstore-tracker.json'
+  const liveJYRYTrackerPath = join(
+    resolve(COMMAND_CENTER_ROOT, '..', 'jyry'),
+    'jyry-tracker.json'
   )
-  const writesBlockedByDefault = resolve(targetPath) === resolve(liveTalkstoreTrackerPath)
+  const writesBlockedByDefault = resolve(targetPath) === resolve(liveJYRYTrackerPath)
   const writesAllowed = configuredAllowance ?? !writesBlockedByDefault
 
   if (writesAllowed) return null
 
   return configuredAllowance === false
     ? `Tracker writes are disabled by configuration for ${targetPath}.`
-    : `Writes to ${targetPath} are blocked by default to protect the live TalkStore tracker. Set COMMAND_CENTER_ALLOW_TRACKER_WRITES=true to override intentionally.`
+    : `Writes to ${targetPath} are blocked by default to protect the live JYRY tracker. Set COMMAND_CENTER_ALLOW_TRACKER_WRITES=true to override intentionally.`
 
 }
 

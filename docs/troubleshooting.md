@@ -1,4 +1,4 @@
-# Sha8al Command Center Troubleshooting
+# JYRY Command Center Troubleshooting
 
 ## Bootstrap wrote the wrong project root
 
@@ -18,21 +18,21 @@
 - Check `COMMAND_CENTER_TRACKER_FILE` in `.env`.
 - Run `npm run tracker:guard:status`.
 - For public installs, the expected default is `command-center-tracker.json`.
-- For TalkStore compatibility installs, `talkstore-tracker.json` remains valid and may be preferred when it already exists.
+- For JYRY compatibility installs, `jyry-tracker.json` remains valid and may be preferred when it already exists.
 
 ## The parser fails with a parser/profile mismatch
 
 - In `scripts/parse-markdown.mjs`, `--profile` means parser profile, not consumer profile.
-- The markdown parser supports both `generic` and `talkstore` parser profiles. Use the package aliases instead of swapping flags manually.
+- The markdown parser supports both `generic` and `jyry` parser profiles. Use the package aliases instead of swapping flags manually.
 - For public installs, keep `COMMAND_CENTER_PROFILE=generic` and use the public alias names unchanged.
 - Use the public parser alias for public installs: `npm run tracker:parse:project-tasks`.
-- Use the compatibility aliases only when you intentionally want the TalkStore compatibility wrapper names: `npm run tracker:parse:talkstore-tasks` and `npm run tracker:parse:talkstore-roadmap`.
+- Use the compatibility aliases only when you intentionally want the JYRY compatibility wrapper names: `npm run tracker:parse:jyry-tasks` and `npm run tracker:parse:jyry-roadmap`.
 - ACI flows remain explicit: `npm run tracker:parse:aci-roadmap` and `npm run tracker:seed:aci`.
 - If a public tracker was created before the generic parser cleanup, rerun `npm run tracker:parse:project-tasks:dry-run` and then `npm run tracker:parse:project-tasks` to restamp it with `generic-markdown:generic`.
 
 ## Script writes are blocked
 
-If `tracker:guard:status` resolves the live sibling TalkStore tracker, script-side writes are blocked by default.
+If `tracker:guard:status` resolves the live sibling JYRY tracker, script-side writes are blocked by default.
 
 - Dry-run first.
 - Only set `COMMAND_CENTER_ALLOW_TRACKER_WRITES=true` when you intentionally want a compatibility write.
@@ -49,6 +49,6 @@ If `tracker:guard:status` resolves the live sibling TalkStore tracker, script-si
 
 ## CLI naming is confusing
 
-- `sha8al-command-center` is the public CLI alias.
-- `talkstore` is the compatibility alias.
-- During the transition window, both names can coexist without implying that TalkStore is the platform identity.
+- `jyry-command-center` is the public CLI alias.
+- `jyry` is the compatibility alias.
+- During the transition window, both names can coexist without implying that JYRY is the platform identity.

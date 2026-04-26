@@ -1,6 +1,6 @@
-# Sha8al Command Center Profiles
+# JYRY Command Center Profiles
 
-Sha8al Command Center uses a profile system so the same app, MCP server, and
+JYRY Command Center uses a profile system so the same app, MCP server, and
 scripts can work across different project conventions without changing the
 platform identity.
 
@@ -27,27 +27,27 @@ Defaults:
 - roadmap doc `docs/roadmap.md`
 - checklist doc `docs/submission-checklist.md`
 - manifesto doc `docs/manifesto.md`
-- public CLI alias `sha8al-command-center`
+- public CLI alias `jyry-command-center`
 
 Parser contract:
 - public markdown commands use parser profile `generic`
 - public tracker generation requires `docs/roadmap.md`
 - tracker metadata is stamped as `generic-markdown:generic`
 
-### `talkstore`
+### `jyry`
 
-The compatibility profile for existing TalkStore setups.
+The compatibility profile for existing JYRY setups.
 
 Compatibility surfaces:
-- `TALKSTORE_PROJECT_ROOT`
-- `talkstore-tracker.json`
-- `talkstore` CLI alias
-- `tracker:parse:talkstore-*` package aliases
-- `playbooks/talkstore/`
+- `JYRY_PROJECT_ROOT`
+- `jyry-tracker.json`
+- `jyry` CLI alias
+- `tracker:parse:jyry-*` package aliases
+- `playbooks/jyry/`
 
 Parser contract:
-- TalkStore markdown commands use parser profile `talkstore`
-- tracker metadata is stamped as `talkstore-markdown:talkstore`
+- JYRY markdown commands use parser profile `jyry`
+- tracker metadata is stamped as `jyry-markdown:jyry`
 
 ## Resolution Order
 
@@ -100,9 +100,9 @@ For a fresh external project:
 - inspect the result with `npm run tracker:guard:status`
 - dry-run the parser before writing
 
-For an existing TalkStore setup:
+For an existing JYRY setup:
 - keep the current wiring in place
-- select `COMMAND_CENTER_PROFILE=talkstore` only when you intentionally want
+- select `COMMAND_CENTER_PROFILE=jyry` only when you intentionally want
   the compatibility path
 
 ## Related Docs

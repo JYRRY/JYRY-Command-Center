@@ -1,4 +1,4 @@
-# Talkstore — Task Audit Report
+# JYRY — Task Audit Report
 
 **Auditor:** Claude (Opus)
 **Date:** March 16, 2026
@@ -23,7 +23,7 @@
 | M8 | `APP_SUBSCRIPTIONS_APPROACHING_CAPPED_AMOUNT` webhook handler | §14 Webhooks table | Medium — billing UX |
 | M9 | Capped amount handling UX (notify merchant before hitting usage cap) | §14 Webhooks | Medium |
 | M10 | Measurable impact tracking — before/after metrics surfaced to merchant after every action (not just stored in audit log) | §8.7 Measurable Impact Tracking | Medium — differentiator |
-| M11 | "What has Talkstore done for my store?" cumulative impact view | §8.7: "The merchant can always see what Talkstore has done for their store and the cumulative impact" | Medium |
+| M11 | "What has JYRY done for my store?" cumulative impact view | §8.7: "The merchant can always see what JYRY has done for their store and the cumulative impact" | Medium |
 | M12 | Explicit scope request transparency when new capabilities need additional permissions | §8.3 Permission Discipline | Low — V2 concern |
 | M13 | Theme publish flow — merchant explicitly clicks publish; agent never auto-publishes | §8.4, §15 "Never publish automatically" — roadmap implies but never tasks the publish confirmation gate | Medium — safety |
 | M14 | Batch operations: 25 products enriched in one LLM call (not 25 separate calls) — roadmap mentions batch processing but doesn't task the actual LLM batching implementation | §12 Margin Protection Levers | Medium — cost |
@@ -124,7 +124,7 @@
 - [ ] Build LLM customization pipeline: base template + merchant's theme tokens + merchant's request → Opus generates customized section
 - [ ] Build Liquid syntax validator (structural validation, unclosed tags, malformed logic)
 - [ ] Build JSON schema validator (ensures `{% schema %}` block parses and has valid settings)
-- [ ] Build CSS scoping enforcer: all generated CSS uses `talkstore-{section-name}-` prefix; check for class name collisions against existing theme
+- [ ] Build CSS scoping enforcer: all generated CSS uses `jyry-{section-name}-` prefix; check for class name collisions against existing theme
 - [ ] Build retry loop: if validation fails, retry with error context (max 2 retries)
 - [ ] Test all 10 section types against Dawn theme — all must pass validation
 
@@ -167,7 +167,7 @@
 - [ ] Build product data reader: pull full product data via GraphQL (title, description HTML, all metafields, variants, product_type, vendor, tags, images, category)
 - [ ] Implement Data Completeness Index (DCI) scoring algorithm: Identity 15% + Physical 15% + Description 20% + Taxonomy 15% + Variants 10% + Media 10% + Feed Readiness 15% = 0-100
 - [ ] Build store-wide aggregate DCI score (average across scanned products)
-- [ ] Build metafield enrichment pipeline: infer and populate material, dimensions, weight, product category using Sonnet. Use `talkstore.*` namespace for custom data, Shopify built-in category metafields where they exist
+- [ ] Build metafield enrichment pipeline: infer and populate material, dimensions, weight, product category using Sonnet. Use `jyry.*` namespace for custom data, Shopify built-in category metafields where they exist
 - [ ] Build description rewrite pipeline: marketing fluff → factual + persuasive, structured, AI-parseable format via Opus
 - [ ] Implement before/after snapshot: every product change stores prior state in `audit_log.before_state`
 - [ ] Implement batch processing: handle up to 25 products per task in a single LLM call with batch context (not 25 separate calls)
@@ -228,7 +228,7 @@
 - [ ] Build onboarding scan pipeline: (1) read active theme via REST API → file tree, section count, OS 2.0 status, brand tokens; (2) sample 25 products via GraphQL → DCI score each, identify top gaps; (3) query last 30 days orders → revenue summary, top products, dead stock; (4) generate diagnostic report via Sonnet; (5) deliver report with 3 specific recommended actions and "You have 3 free tasks. Which first?"
 - [ ] Build History tab UI: list all past actions from audit_log with action type, timestamp, description, and domain
 - [ ] Connect undo functionality: clicking "Undo" on a storefront action unpublishes/deletes duplicate theme; clicking "Undo" on a product ops action reverts metafields/descriptions from `before_state`
-- [ ] Build cumulative impact view: "Talkstore has done X for your store" — total sections generated, products enriched, DCI improvement (manifesto §8.7)
+- [ ] Build cumulative impact view: "JYRY has done X for your store" — total sections generated, products enriched, DCI improvement (manifesto §8.7)
 
 ### WEEK 10b — Polish + App Store Submission
 **Domain:** launch_prep
@@ -245,7 +245,7 @@
 - [ ] Write App Store listing: name, tagline, description, key features, pricing
 - [ ] Capture 5-8 screenshots of core flows (onboarding scan, section generation, enrichment, commerce intel)
 - [ ] Record 60-90 second demo video showing the full "wow" flow (screen recording with voiceover or text overlay)
-- [ ] Create privacy policy (Termly or iubenda template, customized for Talkstore's data handling)
+- [ ] Create privacy policy (Termly or iubenda template, customized for JYRY's data handling)
 - [ ] Create terms of service
 - [ ] Run Shopify App Review QA checklist: verify scopes match usage, Polaris compliance, responsive layout, <3s load time, no hardcoded store references, session tokens validated
 - [ ] Submit to Shopify App Store
@@ -308,7 +308,7 @@
 
 - [ ] Implement webhook handlers for `PRODUCTS_CREATE` and `PRODUCTS_UPDATE`
 - [ ] Build new product auto-scan: when merchant adds a product, auto-score with DCI and queue in-app notification with recommended enrichment
-- [ ] Build data drift detection: when a product is updated externally (another app or manual edit), check if Talkstore enrichment was overwritten and notify merchant
+- [ ] Build data drift detection: when a product is updated externally (another app or manual edit), check if JYRY enrichment was overwritten and notify merchant
 - [ ] Build weekly digest notification: "This week: 4 new products (DCI avg: 28), 2 went out of stock, top seller conversion dropped 12%" — with recommended actions
 - [ ] Build anomaly detection: flag week-over-week changes >20% in revenue, conversion, or order volume. Trigger in-app notification with context and recommended action.
 - [ ] Build "What should I fix this week?" command: agent analyzes current store state and prioritizes top 3-5 actions by impact
@@ -325,7 +325,7 @@
 - [ ] Build page-level SEO generation: meta title and meta description for product and collection pages via Product Ops
 - [ ] Build export functionality: enrichment reports, feed validation reports, and health scores downloadable as CSV
 - [ ] Research Sidekick App Extension developer preview docs. Prototype exposing catalog health data and section generation capability to Sidekick.
-- [ ] Document Sidekick integration plan: which Talkstore capabilities to expose, data schema, authentication flow
+- [ ] Document Sidekick integration plan: which JYRY capabilities to expose, data schema, authentication flow
 
 ---
 
@@ -335,8 +335,8 @@
 **Domain:** launch_prep
 **Goal:** Landing page live, collecting emails. Analytics tracking.
 
-- [ ] Secure domain (`talkstore.ai` or `talkstore.app` or `usetalkstore.com`)
-- [ ] Build and deploy landing page (single page, Next.js or plain HTML): headline, 3 value props, how it works, waitlist email capture, Talkstore brand palette
+- [ ] Secure domain (`jyry.ai` or `jyry.app` or `usejyry.com`)
+- [ ] Build and deploy landing page (single page, Next.js or plain HTML): headline, 3 value props, how it works, waitlist email capture, JYRY brand palette
 - [ ] Set up email capture → stored in `waitlist` table (email, source, signed_up_at) or third-party list (Loops/Buttondown)
 - [ ] Set up privacy-friendly analytics (Plausible or Umami)
 - [ ] Configure Open Graph / social meta tags for link sharing
@@ -392,7 +392,7 @@
 | A9 | Conservative defaults: ask before batch >5 products | §8.4 Merchant Control |
 | A10 | Safe mode: stop on unexpected state during execution | §15 Rollback |
 | A11 | Theme publish confirmation gate (agent never auto-publishes) | §8.4, §15 |
-| A12 | Cumulative impact view ("What has Talkstore done for my store") | §8.7 Measurable Impact Tracking |
+| A12 | Cumulative impact view ("What has JYRY done for my store") | §8.7 Measurable Impact Tracking |
 | A13 | Declined billing charge handling | §12 Billing (implied) |
 | A14 | Batch LLM calls for enrichment (25 products per call, not 25 calls) | §12 Margin Protection |
 | A15 | LLM timeout/failure user-facing error messages | §8.5 Reliability Over Cleverness |

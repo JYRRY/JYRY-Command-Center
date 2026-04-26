@@ -1,48 +1,48 @@
-# Sha8al Command Center Validation Matrix
+# JYRY Command Center Validation Matrix
 
-This document defines the exact validation set for the public transition to Sha8al Command Center (`sha8al-command-center`) while preserving TalkStore as a compatibility profile.
+This document defines the exact validation set for the public transition to JYRY Command Center (`jyry-command-center`) while preserving JYRY as a compatibility profile.
 
 It is implementation-ready planning only.
 Do not execute the cutover from this document alone.
 
 ## Validation Principles
 
-- validate current TalkStore compatibility and fresh external installs in parallel
+- validate current JYRY compatibility and fresh external installs in parallel
 - validate runtime, MCP, and script resolution against the same profile contract
-- keep live TalkStore validation read-only or dry-run-only until a later execution phase explicitly says otherwise
+- keep live JYRY validation read-only or dry-run-only until a later execution phase explicitly says otherwise
 - require rollback evidence before any default switch, package rename, or heuristic removal
 
 ## Matrix Overview
 
 | Area | Scenario | Profile | Expected result |
 | --- | --- | --- | --- |
-| Compatibility | Existing live TalkStore setup | `talkstore` | Still works unchanged during the compatibility window |
-| Fresh install | Clean external project bootstrap | `generic` | Works with no TalkStore-specific env vars, filenames, or sibling repo assumptions |
+| Compatibility | Existing live JYRY setup | `jyry` | Still works unchanged during the compatibility window |
+| Fresh install | Clean external project bootstrap | `generic` | Works with no JYRY-specific env vars, filenames, or sibling repo assumptions |
 | Resolution | Explicit public profile selection | `generic` | Runtime, MCP, and scripts all resolve `generic` consistently |
-| Resolution | Explicit TalkStore profile selection | `talkstore` | Runtime, MCP, and scripts all resolve `talkstore` consistently |
-| Resolution | Compatibility inference path | `talkstore` | Only activates during the compatibility window and never overrides explicit profile selection |
+| Resolution | Explicit JYRY profile selection | `jyry` | Runtime, MCP, and scripts all resolve `jyry` consistently |
+| Resolution | Compatibility inference path | `jyry` | Only activates during the compatibility window and never overrides explicit profile selection |
 | Safety | Parser/profile mismatch | any | Fails clearly before write |
 | Safety | Tracker backup path | any write-capable script | Backup is created before mutation when content changes |
 | Release | Publish-readiness gate | mixed | Public package/docs/install path are coherent and rollback-ready |
 
 ## Exact Validation Checks
 
-## 1. Current TalkStore Compatibility Still Working
+## 1. Current JYRY Compatibility Still Working
 
 Required checks:
 
 `runtime config compatibility`
-- with the current live TalkStore setup, runtime resolves the same project root it resolves today
-- runtime still accepts `TALKSTORE_PROJECT_ROOT` during the compatibility window
-- runtime still accepts `talkstore-tracker.json` during the compatibility window
+- with the current live JYRY setup, runtime resolves the same project root it resolves today
+- runtime still accepts `JYRY_PROJECT_ROOT` during the compatibility window
+- runtime still accepts `jyry-tracker.json` during the compatibility window
 
 `MCP compatibility`
 - MCP resolves the same tracker target as runtime
-- the `talkstore` CLI alias still works during the compatibility window
-- current TalkStore-facing help and invocation flow still function until naming cutover is explicitly executed
+- the `jyry` CLI alias still works during the compatibility window
+- current JYRY-facing help and invocation flow still function until naming cutover is explicitly executed
 
 `script compatibility`
-- TalkStore parser commands still work in dry-run mode
+- JYRY parser commands still work in dry-run mode
 - script-side compatibility rules remain bounded to the documented compatibility window
 
 Evidence required:
@@ -55,8 +55,8 @@ Required checks:
 
 `bootstrap`
 - clean project bootstrap works with explicit public profile selection
-- no sibling `../talkstore` checkout is required
-- no `TALKSTORE_PROJECT_ROOT` env var is required
+- no sibling `../jyry` checkout is required
+- no `JYRY_PROJECT_ROOT` env var is required
 
 `tracker`
 - the default created tracker filename is `command-center-tracker.json`
@@ -64,12 +64,12 @@ Required checks:
 
 `docs`
 - default external docs resolve from the public profile contract
-- tasks, checklist, and manifesto docs are found without TalkStore-specific assumptions
+- tasks, checklist, and manifesto docs are found without JYRY-specific assumptions
 
 Evidence required:
 - clean-install walkthrough
 - generated config sample
-- successful parser dry-run and write in a non-TalkStore example
+- successful parser dry-run and write in a non-JYRY example
 
 ## 3. Profile Resolution Correctness
 
@@ -85,7 +85,7 @@ Required checks:
 
 `compatibility guardrails`
 - compatibility inference only activates when no explicit profile is present
-- `generic` never silently downgrades to `talkstore` because of unrelated filesystem coincidence
+- `generic` never silently downgrades to `jyry` because of unrelated filesystem coincidence
 
 Evidence required:
 - one table of equivalent inputs and resolved profiles across runtime/MCP/scripts
@@ -161,7 +161,7 @@ Required checks:
 - rollback notes exist for changing default profile resolution behavior
 
 `compatibility rollback`
-- rollback notes exist for preserving or reinstating TalkStore aliases if a cutover step fails
+- rollback notes exist for preserving or reinstating JYRY aliases if a cutover step fails
 
 Evidence required:
 - one rollback checklist per cutover phase
@@ -193,7 +193,7 @@ Evidence required:
 ## Command Expectations By Phase
 
 Before any cutover execution:
-- live TalkStore checks stay read-only or dry-run-only
+- live JYRY checks stay read-only or dry-run-only
 - temp fixtures are used for real writes and backup proofs
 - no package rename commands are executed
 - no runtime or MCP cutover commands are executed

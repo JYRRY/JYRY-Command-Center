@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs'
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 
 export interface CanonicalAgent {
   id: string
@@ -14,7 +13,7 @@ export interface CanonicalAgent {
   session_action_count: number
 }
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+// __dirname is provided by electron-vite's CJS bundle for the main process.
 const CANONICAL_AGENT_ROSTER_PATH = resolve(
   __dirname,
   '..',

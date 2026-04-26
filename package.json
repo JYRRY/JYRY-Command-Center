@@ -1,9 +1,9 @@
 {
-  "name": "sha8al-command-center",
+  "name": "jyry-command-center",
   "version": "1.0.0",
   "private": true,
-  "productName": "Sha8al Command Center",
-  "description": "Sha8al Command Center (sha8al-command-center) platform repo for tracker-driven project orchestration, with TalkStore compatibility support",
+  "productName": "JYRY Command Center",
+  "description": "JYRY Command Center (jyry-command-center) platform repo for tracker-driven project orchestration, with JYRY compatibility support",
   "main": "./out/main/index.js",
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",
@@ -26,10 +26,10 @@
     "tracker:parse:project-tasks:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=generic --profile=generic --tasks-source=docs/roadmap.md --dry-run",
     "tracker:parse:legacy-roadmap": "node scripts/parse-markdown.mjs --consumer-profile=generic --profile=generic --tasks-source=docs/roadmap.md",
     "tracker:parse:legacy-roadmap:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=generic --profile=generic --tasks-source=docs/roadmap.md --dry-run",
-    "tracker:parse:talkstore-tasks": "node scripts/parse-markdown.mjs --consumer-profile=talkstore --profile=talkstore --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md",
-    "tracker:parse:talkstore-tasks:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=talkstore --profile=talkstore --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md --dry-run",
-    "tracker:parse:talkstore-roadmap": "node scripts/parse-markdown.mjs --consumer-profile=talkstore --profile=talkstore --tasks-source=docs/roadmap.md --checklist-source=docs/submission-checklist.md",
-    "tracker:parse:talkstore-roadmap:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=talkstore --profile=talkstore --tasks-source=docs/roadmap.md --checklist-source=docs/submission-checklist.md --dry-run",
+    "tracker:parse:jyry-tasks": "node scripts/parse-markdown.mjs --consumer-profile=jyry --profile=jyry --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md",
+    "tracker:parse:jyry-tasks:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=jyry --profile=jyry --tasks-source=docs/tasks.md --checklist-source=docs/submission-checklist.md --dry-run",
+    "tracker:parse:jyry-roadmap": "node scripts/parse-markdown.mjs --consumer-profile=jyry --profile=jyry --tasks-source=docs/roadmap.md --checklist-source=docs/submission-checklist.md",
+    "tracker:parse:jyry-roadmap:dry-run": "node scripts/parse-markdown.mjs --consumer-profile=jyry --profile=jyry --tasks-source=docs/roadmap.md --checklist-source=docs/submission-checklist.md --dry-run",
     "tracker:parse:aci-roadmap": "node scripts/parse-aci-roadmap.mjs --profile=aci --aci-roadmap-source=\"Brainstorming & Pivot/ROADMAP.md\"",
     "tracker:parse:aci-roadmap:dry-run": "node scripts/parse-aci-roadmap.mjs --profile=aci --aci-roadmap-source=\"Brainstorming & Pivot/ROADMAP.md\" --dry-run",
     "tracker:seed:aci": "node scripts/seed-aci-checklist.mjs --profile=aci",
@@ -39,14 +39,14 @@
     "preview": "electron-vite preview"
   },
   "keywords": [
-    "sha8al-command-center",
-    "sha8al",
+    "jyry-command-center",
+    "jyry",
     "command-center",
     "electron",
     "mcp",
     "tracker",
     "project-orchestration",
-    "talkstore-compatibility"
+    "jyry-compatibility"
   ],
   "author": "",
   "license": "ISC",

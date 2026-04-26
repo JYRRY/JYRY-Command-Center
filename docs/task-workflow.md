@@ -1,6 +1,6 @@
 # Task Workflow — Milestone Command Surface
 
-This document describes the current command surface used to operate Sha8al Command Center. The workflow is milestone-driven, wave-based, and tier-aware. It is not the older task-by-task lifecycle that treated single-task transitions as the primary operator flow.
+This document describes the current command surface used to operate JYRY Command Center. The workflow is milestone-driven, wave-based, and tier-aware. It is not the older task-by-task lifecycle that treated single-task transitions as the primary operator flow.
 
 For the public `generic` profile, task tiers begin with parser-side sizing from `docs/roadmap.md`, then later preparation or dependency-analysis passes can refine the plan.
 

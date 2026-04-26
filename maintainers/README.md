@@ -14,7 +14,7 @@ Public-facing documentation stays in:
 - `README.md`
 - `docs/`
 - `examples/`
-- `playbooks/talkstore/`
+- `playbooks/jyry/`
 
 ## Archive
 

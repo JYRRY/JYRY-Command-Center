@@ -65,7 +65,7 @@ function makeExternalProjectFixture(root) {
     [
       '# THE BUILD ROADMAP',
       '',
-      '## WEEK 1 - TalkStore Compatibility',
+      '## WEEK 1 - JYRY Compatibility',
       '- [ ] Preserve the legacy task source path',
       '',
     ].join('\n')
@@ -97,18 +97,18 @@ function makeExternalProjectFixture(root) {
       '',
     ].join('\n')
   )
-  writeJson(join(root, 'talkstore-tracker.json'), {
+  writeJson(join(root, 'jyry-tracker.json'), {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
     },
   })
   writeJson(join(root, 'command-center-tracker.json'), {
     project: {
-      parser_profile: 'talkstore',
-      parser_id: 'talkstore-markdown',
-      parser_source_pairing: 'talkstore-markdown:talkstore',
+      parser_profile: 'jyry',
+      parser_id: 'jyry-markdown',
+      parser_source_pairing: 'jyry-markdown:jyry',
       tasks_source: 'docs/roadmap.md',
       checklist_source: 'docs/submission-checklist.md',
       manifesto_source: 'docs/manifesto.md',
@@ -124,15 +124,15 @@ function makeExternalProjectFixture(root) {
 async function main() {
   const workspace = tempDir()
   const externalProject = join(workspace, 'external-example')
-  const siblingTalkstore = join(workspace, 'talkstore')
+  const siblingJYRY = join(workspace, 'jyry')
   ensureDir(externalProject)
-  ensureDir(siblingTalkstore)
+  ensureDir(siblingJYRY)
   makeExternalProjectFixture(externalProject)
 
   const explicitEnv = {
     COMMAND_CENTER_PROFILE: 'generic',
     COMMAND_CENTER_PROJECT_ROOT: externalProject,
-    TALKSTORE_PROJECT_ROOT: siblingTalkstore,
+    JYRY_PROJECT_ROOT: siblingJYRY,
     COMMAND_CENTER_TRACKER_FILE: 'command-center-tracker.json',
     COMMAND_CENTER_TASKS_DOC: 'docs/roadmap.md',
     COMMAND_CENTER_MANIFESTO_DOC: 'docs/manifesto.md',
@@ -154,7 +154,7 @@ async function main() {
   const aciPaths = await withTempEnv(
     {
       ...explicitEnv,
-      COMMAND_CENTER_TRACKER_FILE: 'talkstore-tracker.json',
+      COMMAND_CENTER_TRACKER_FILE: 'jyry-tracker.json',
     },
     async () =>
       resolveParserProjectPaths({
@@ -190,37 +190,37 @@ async function main() {
   assert(genericPaths.manifestoPath === join(externalProject, 'docs/manifesto.md'), 'parser should resolve the manifesto override')
 
   assert(aciPaths.projectRoot === externalProject, 'ACI parser should resolve the explicit project root')
-  assert(aciPaths.trackerFile === 'talkstore-tracker.json', 'ACI parser should keep the explicit legacy tracker filename when configured')
+  assert(aciPaths.trackerFile === 'jyry-tracker.json', 'ACI parser should keep the explicit legacy tracker filename when configured')
   assert(aciPaths.aciRoadmapPath === join(externalProject, 'Brainstorming & Pivot/ROADMAP.md'), 'ACI parser should resolve the roadmap override')
 
   const legacyEnv = {
-    TALKSTORE_PROJECT_ROOT: externalProject,
+    JYRY_PROJECT_ROOT: externalProject,
   }
 
   const legacyRuntime = await withTempEnv(legacyEnv, async () => compileRuntimeConfig())
   const legacyMcp = await loadMcpTrackerSnapshot(legacyEnv, 'legacy')
   const legacyProjectPaths = await withTempEnv(legacyEnv, async () => resolveProjectPaths())
-  const legacyTalkstore = await withTempEnv(legacyEnv, async () =>
+  const legacyJYRY = await withTempEnv(legacyEnv, async () =>
     resolveParserProjectPaths({
-      parserId: 'talkstore-markdown',
+      parserId: 'jyry-markdown',
       argv: [
-        '--profile=talkstore',
+        '--profile=jyry',
         '--tasks-source=docs/tasks.md',
         '--checklist-source=docs/submission-checklist.md',
       ],
     })
   )
 
-  assert(legacyRuntime.PROFILE_ID === 'talkstore', 'legacy runtime should still resolve the talkstore compatibility profile')
-  assert(legacyRuntime.PROJECT_ROOT === externalProject, 'legacy project root should still resolve from TALKSTORE_PROJECT_ROOT')
-  assert(legacyRuntime.TRACKER_FILE === 'talkstore-tracker.json', 'legacy tracker filename should prefer the TalkStore tracker when present')
-  assert(legacyMcp.PROFILE_ID === 'talkstore', 'legacy MCP should still resolve the talkstore compatibility profile')
-  assert(legacyMcp.PROJECT_ROOT === externalProject, 'legacy MCP project root should still resolve from TALKSTORE_PROJECT_ROOT')
-  assert(legacyMcp.TRACKER_FILE === 'talkstore-tracker.json', 'legacy MCP tracker filename should prefer the TalkStore tracker when present')
-  assert(legacyProjectPaths.profileName === 'talkstore', 'legacy script resolution should still resolve the talkstore compatibility profile')
-  assert(legacyTalkstore.consumerProfile === 'talkstore', 'legacy parser should still inherit the talkstore compatibility profile')
-  assert(legacyTalkstore.projectRoot === externalProject, 'legacy parser project root should still resolve from TALKSTORE_PROJECT_ROOT')
-  assert(legacyTalkstore.trackerFile === 'talkstore-tracker.json', 'legacy parser tracker filename should prefer the TalkStore tracker when present')
+  assert(legacyRuntime.PROFILE_ID === 'jyry', 'legacy runtime should still resolve the jyry compatibility profile')
+  assert(legacyRuntime.PROJECT_ROOT === externalProject, 'legacy project root should still resolve from JYRY_PROJECT_ROOT')
+  assert(legacyRuntime.TRACKER_FILE === 'jyry-tracker.json', 'legacy tracker filename should prefer the JYRY tracker when present')
+  assert(legacyMcp.PROFILE_ID === 'jyry', 'legacy MCP should still resolve the jyry compatibility profile')
+  assert(legacyMcp.PROJECT_ROOT === externalProject, 'legacy MCP project root should still resolve from JYRY_PROJECT_ROOT')
+  assert(legacyMcp.TRACKER_FILE === 'jyry-tracker.json', 'legacy MCP tracker filename should prefer the JYRY tracker when present')
+  assert(legacyProjectPaths.profileName === 'jyry', 'legacy script resolution should still resolve the jyry compatibility profile')
+  assert(legacyJYRY.consumerProfile === 'jyry', 'legacy parser should still inherit the jyry compatibility profile')
+  assert(legacyJYRY.projectRoot === externalProject, 'legacy parser project root should still resolve from JYRY_PROJECT_ROOT')
+  assert(legacyJYRY.trackerFile === 'jyry-tracker.json', 'legacy parser tracker filename should prefer the JYRY tracker when present')
 
   console.log('profile resolution checks passed')
   console.log(`workspace: ${workspace}`)

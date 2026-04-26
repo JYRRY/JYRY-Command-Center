@@ -11,7 +11,7 @@
 When you click "Run" on a pipeline step (or "Run Task" in single-dispatch mode), the Command Center:
 
 1. Assembles the prompt (already works)
-2. Appends a **reporting protocol** telling the agent to write status updates back to `talkstore-tracker.json`
+2. Appends a **reporting protocol** telling the agent to write status updates back to `jyry-tracker.json`
 3. Writes the prompt to a temp file
 4. Writes a Warp Launch Configuration YAML
 5. Opens it via `warp://launch/<config>` — a new tab appears in your existing Warp window
@@ -54,7 +54,7 @@ Command Center (Electron)                    Warp (existing window)
 **What:** Add a new function `buildReportingProtocol()` that generates the reporting instructions section. Append it to the assembled prompt in `assemblePrompt()`.
 
 **The reporting protocol text must include:**
-- The absolute path to `talkstore-tracker.json` (from `TRACKER_PATH` in config)
+- The absolute path to `jyry-tracker.json` (from `TRACKER_PATH` in config)
 - The subtask ID to update
 - The milestone ID (so the agent can find it in the JSON)
 - The pipeline step name (if in pipeline mode)
@@ -75,10 +75,10 @@ Command Center (Electron)                    Warp (existing window)
 
 # REPORTING PROTOCOL
 
-You are being tracked by the Talkstore Command Center. As you work, update
+You are being tracked by the JYRY Command Center. As you work, update
 the tracker file so the Command Center reflects your progress in real-time.
 
-**Tracker file:** /Users/luqman/Desktop/Projects/talkstore/talkstore-tracker.json
+**Tracker file:** /Users/luqman/Desktop/Projects/jyry/jyry-tracker.json
 **Your subtask:** scaffold_auth_chat_shell_004
 **Milestone:** scaffold_auth_chat_shell
 **Pipeline step:** builder
@@ -144,7 +144,7 @@ interface LaunchOptions {
   subtaskId: string
   stepName: 'explorer' | 'planner' | 'builder' | null  // null = single dispatch
   promptText: string
-  workingDirectory: string  // TALKSTORE_ROOT
+  workingDirectory: string  // JYRY_ROOT
   allowedTools: string[]
 }
 

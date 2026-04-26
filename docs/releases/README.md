@@ -27,7 +27,7 @@ Every release note should keep the following sections, even if some are `None`:
 - Breaking changes
 - Compatibility changes
 - Public install or packaging changes
-- TalkStore-specific notes
+- JYRY-specific notes
 - Rollback notes
 
 Start from [`_template.md`](_template.md).

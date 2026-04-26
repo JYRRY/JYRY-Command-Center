@@ -20,15 +20,15 @@ body:
       label: Target profile under test
       options:
         - generic
-        - talkstore
+        - jyry
         - aci
         - cross-profile or migration case
     validations:
       required: true
   - type: dropdown
-    id: talkstore_compatibility
+    id: jyry_compatibility
     attributes:
-      label: Is TalkStore compatibility involved?
+      label: Is JYRY compatibility involved?
       options:
         - "Yes"
         - "No"
@@ -41,11 +41,11 @@ body:
       label: Compatibility surface involved
       description: Select every alias or compatibility path that applies.
       options:
-        - label: TALKSTORE_PROJECT_ROOT
-        - label: talkstore-tracker.json
-        - label: talkstore CLI alias
-        - label: sibling ../talkstore fallback
-        - label: mirrored TalkStore playbook
+        - label: JYRY_PROJECT_ROOT
+        - label: jyry-tracker.json
+        - label: jyry CLI alias
+        - label: sibling ../jyry fallback
+        - label: mirrored JYRY playbook
         - label: other compatibility surface
   - type: textarea
     id: environment
@@ -80,4 +80,4 @@ body:
     id: impact
     attributes:
       label: Migration or rollout impact
-      description: Explain whether this blocks fresh installs, TalkStore compatibility, or both.
+      description: Explain whether this blocks fresh installs, JYRY compatibility, or both.

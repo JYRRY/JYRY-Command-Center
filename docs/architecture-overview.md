@@ -1,6 +1,6 @@
-# Sha8al Command Center Architecture Overview
+# JYRY Command Center Architecture Overview
 
-Sha8al Command Center (`sha8al-command-center`) is a tracker-driven desktop and MCP platform.
+JYRY Command Center (`jyry-command-center`) is a tracker-driven desktop and MCP platform.
 
 ## Core Surfaces
 
@@ -13,7 +13,7 @@ Sha8al Command Center (`sha8al-command-center`) is a tracker-driven desktop and 
 
 - Runtime, MCP, scripts, and bootstrap all resolve the active consumer profile from the same manifest shape.
 - `generic` is the public fresh-install path.
-- `talkstore` is the compatibility profile for existing TalkStore wiring.
+- `jyry` is the compatibility profile for existing JYRY wiring.
 - Parser/profile validation and backup-before-write happen in the script layer before tracker mutation.
 
 ## Key Docs
