@@ -5,7 +5,7 @@
 
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
-import { getCanonicalAgent, resolveCanonicalAgentId } from './canonical-agents.js'
+import { getCanonicalAgent, getOperatorName, OPERATOR_AGENT_ID, resolveCanonicalAgentId } from './canonical-agents.js'
 import {
   readTracker,
   writeTracker,
@@ -329,7 +329,7 @@ export const TOOL_DEFINITIONS = [
     name: 'approve_task',
     description:
       'OPERATOR ONLY — Approve a task that is in "review" status and move it to "done". ' +
-      'Only the operator (Luqman) should call this after reviewing the agent\'s work.',
+      'Only the operator should call this after reviewing the agent\'s work.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -1739,11 +1739,11 @@ function handleApproveTask(taskId: string, feedback?: string) {
   task.status = 'done'
   task.done = true
   task.completed_at = new Date().toISOString()
-  task.completed_by = 'Luqman'
+  task.completed_by = getOperatorName(state.agents)
 
   state.agent_log.push({
     id: `log_${Date.now()}`,
-    agent_id: 'luqman',
+    agent_id: OPERATOR_AGENT_ID,
     action: 'task_approved',
     target_type: 'subtask',
     target_id: taskId,
@@ -1768,7 +1768,7 @@ function handleApproveTask(taskId: string, feedback?: string) {
     extras.push(...unblockedMessages.map((m) => `  • ${m}`))
   }
 
-  touchAgent(state, 'luqman')
+  touchAgent(state, OPERATOR_AGENT_ID)
   writeTracker(state)
 
   return {
@@ -1806,7 +1806,7 @@ function handleRejectTask(taskId: string, feedback: string) {
 
   state.agent_log.push({
     id: `log_${Date.now()}`,
-    agent_id: 'luqman',
+    agent_id: OPERATOR_AGENT_ID,
     action: 'revision_requested',
     target_type: 'subtask',
     target_id: taskId,
@@ -1815,7 +1815,7 @@ function handleRejectTask(taskId: string, feedback: string) {
     tags: ['revision', 'review', 'operator', `rev-${revisionNumber}`],
   })
 
-  touchAgent(state, 'luqman')
+  touchAgent(state, OPERATOR_AGENT_ID)
   writeTracker(state)
 
   return {
@@ -2421,7 +2421,7 @@ function handleResetTask(taskId: string) {
 
   state.agent_log.push({
     id: `log_${Date.now()}`,
-    agent_id: 'luqman',
+    agent_id: OPERATOR_AGENT_ID,
     action: 'task_reset',
     target_type: 'subtask',
     target_id: taskId,
@@ -2430,7 +2430,7 @@ function handleResetTask(taskId: string) {
     tags: ['reset', 'operator'],
   })
 
-  touchAgent(state, 'luqman')
+  touchAgent(state, OPERATOR_AGENT_ID)
   writeTracker(state)
 
   return {

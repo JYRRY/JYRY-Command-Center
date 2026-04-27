@@ -11,7 +11,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { useStore, selectCurrentWeek } from '../store'
+import { useStore, selectCurrentWeek, selectOperatorName, isOperatorReference } from '../store'
 import type { Subtask } from '../../main/parser'
 import { ContextBar } from '../components/taskboard/ContextBar'
 import { FilterBar, type FilterType } from '../components/taskboard/FilterBar'
@@ -46,6 +46,7 @@ export function TaskBoard() {
   const setActiveTab = useStore((s) => s.setActiveTab)
   const selectedMilestoneId = useStore((s) => s.selectedMilestoneId)
   const setSelectedMilestoneId = useStore((s) => s.setSelectedMilestoneId)
+  const operatorName = selectOperatorName(tracker)
 
   // Sort milestones for consistent ordering across the component
   const stableSortedMilestones = useMemo(() => {
@@ -96,9 +97,9 @@ export function TaskBoard() {
   const filteredSubtasks = milestone.subtasks.filter((s) => {
     switch (filter) {
       case 'my_tasks':
-        return s.assignee === 'Luqman'
+        return isOperatorReference(s.assignee, operatorName)
       case 'agent_tasks':
-        return s.assignee !== null && s.assignee !== 'Luqman'
+        return s.assignee !== null && !isOperatorReference(s.assignee, operatorName)
       case 'blocked':
         return s.status === 'blocked'
       default:
@@ -109,8 +110,10 @@ export function TaskBoard() {
   // Filter counts (computed from all subtasks, not filtered ones)
   const filterCounts: Record<FilterType, number> = {
     all: milestone.subtasks.length,
-    my_tasks: milestone.subtasks.filter((s) => s.assignee === 'Luqman').length,
-    agent_tasks: milestone.subtasks.filter((s) => s.assignee !== null && s.assignee !== 'Luqman').length,
+    my_tasks: milestone.subtasks.filter((s) => isOperatorReference(s.assignee, operatorName)).length,
+    agent_tasks: milestone.subtasks.filter(
+      (s) => s.assignee !== null && !isOperatorReference(s.assignee, operatorName)
+    ).length,
     blocked: milestone.subtasks.filter((s) => s.status === 'blocked').length,
   }
 
@@ -177,7 +180,7 @@ export function TaskBoard() {
 
       if (targetColumn === 'done') {
         task.completed_at = new Date().toISOString()
-        task.completed_by = task.assignee || 'Luqman'
+        task.completed_by = task.assignee || operatorName
         task.blocked_by = null
         task.blocked_reason = null
       } else if (targetColumn === 'blocked') {

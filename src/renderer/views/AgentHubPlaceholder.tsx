@@ -247,7 +247,7 @@ function AgentCard({ agent }: { agent: Agent }) {
   const icon = SUB_AGENT_ROLE_ICONS[agent.id] || null
 
   return (
-    <div className={`flex items-center gap-3 rounded-lg px-3 py-2.5 border transition-colors ${
+    <div className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 border transition-colors ${
       isSubAgent
         ? 'bg-surface/60 border-border/60 hover:bg-surface hover:border-border'
         : 'bg-surface border-border'
@@ -262,14 +262,17 @@ function AgentCard({ agent }: { agent: Agent }) {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           {icon && (
-            <span className="text-[10px]">{icon}</span>
+            <span className="text-[10px] flex-shrink-0">{icon}</span>
           )}
-          <span className={`text-white font-medium ${isSubAgent ? 'text-[11px]' : 'text-xs'}`}>
+          <span
+            className={`text-white font-medium truncate ${isSubAgent ? 'text-[11px]' : 'text-xs'}`}
+            title={role || agent.name}
+          >
             {role || agent.name}
           </span>
-          <span className={`text-[9px] font-semibold tracking-wider ${active ? 'text-on-track' : 'text-muted'}`}>
+          <span className={`text-[9px] font-semibold tracking-wider flex-shrink-0 ${active ? 'text-on-track' : 'text-muted'}`}>
             {active ? 'ACTIVE' : 'IDLE'}
           </span>
         </div>
@@ -289,15 +292,15 @@ function AgentCard({ agent }: { agent: Agent }) {
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <span
-          className="text-[9px] px-2 py-0.5 rounded font-semibold tracking-wider"
+          className="text-[9px] px-1.5 py-0.5 rounded font-semibold tracking-wider whitespace-nowrap"
           style={{ color: agent.color, backgroundColor: agent.color + '1a' }}
           title={agent.permissions?.length ? `Permissions: ${agent.permissions.join(', ')}` : undefined}
         >
           {agent.type === 'human'
             ? 'OPERATOR'
             : agent.type === 'orchestrator'
-              ? 'ORCHESTRATOR'
-              : 'SUB-AGENT'}
+              ? 'ORCH'
+              : 'SUB'}
         </span>
       </div>
     </div>
@@ -514,7 +517,7 @@ function ActivityFeed({ tracker }: { tracker: TrackerState }) {
 
     // Apply filter
     if (activeFilter === 'manual') {
-      entries = entries.filter(e => e.agent_id === 'luqman' || e.agent_id === 'human')
+      entries = entries.filter(e => e.agent_id === 'operator' || e.agent_id === 'luqman' || e.agent_id === 'human')
     } else if (activeFilter === 'system') {
       entries = entries.filter(e => e.tags.some(t => t.toLowerCase() === 'alert' || t.toLowerCase() === 'system'))
     } else if (activeFilter !== 'all') {

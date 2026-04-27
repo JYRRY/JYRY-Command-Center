@@ -60,6 +60,13 @@ contextBridge.exposeInMainWorld('api', {
     > => ipcRenderer.invoke('github:listRepos'),
   },
 
+  settings: {
+    get: (): Promise<{ operatorName: string | null }> => ipcRenderer.invoke('settings:get'),
+    set: (
+      next: Partial<{ operatorName: string | null }>
+    ): Promise<{ operatorName: string | null }> => ipcRenderer.invoke('settings:set', next),
+  },
+
   // Git operations
   git: {
     commitAndPush: (): Promise<

@@ -3,9 +3,10 @@ import path from 'path'
 import fs from 'fs'
 
 import { clearToken, getStoredToken, hasToken, setToken } from './auth'
-import { mergeCanonicalAgentRoster } from './canonical-agents'
+import { mergeCanonicalAgentRoster, OPERATOR_AGENT_ID } from './canonical-agents'
 import { commitAndPush } from './git'
 import { listRepos, validateToken, type GitHubRepoSummary } from './github'
+import { readSettings, writeSettings, type AppSettings } from './settings'
 import {
   cloneAndConfigureWorkspace,
   configureWorkspace,
@@ -20,14 +21,28 @@ let fileWatcher: fs.FSWatcher | null = null
 let watchedTrackerPath: string | null = null
 let lastWriteTime = 0
 
+function migrateLegacyOperatorReferences(parsed: any): void {
+  if (Array.isArray(parsed?.agent_log)) {
+    for (const entry of parsed.agent_log) {
+      if (entry && entry.agent_id === 'luqman') {
+        entry.agent_id = OPERATOR_AGENT_ID
+      }
+    }
+  }
+}
+
 function readTrackerFile(trackerPath: string | null): string | null {
   if (!trackerPath) return null
 
   try {
     const raw = fs.readFileSync(trackerPath, 'utf-8')
     const parsed = JSON.parse(raw)
+    migrateLegacyOperatorReferences(parsed)
     if (Array.isArray(parsed.agents)) {
-      parsed.agents = mergeCanonicalAgentRoster(parsed.agents)
+      const settings = readSettings()
+      parsed.agents = mergeCanonicalAgentRoster(parsed.agents, {
+        operatorNameOverride: settings.operatorName,
+      })
     }
     return JSON.stringify(parsed, null, 2)
   } catch {
@@ -207,6 +222,19 @@ ipcMain.handle('workspace:generateTracker', async () => {
 ipcMain.handle('git:commit-and-push', async () => {
   return commitAndPush()
 })
+
+// ─── Settings IPC ────────────────────────────────────────────────────────────
+
+ipcMain.handle('settings:get', async (): Promise<AppSettings> => {
+  return readSettings()
+})
+
+ipcMain.handle(
+  'settings:set',
+  async (_event, next: Partial<AppSettings>): Promise<AppSettings> => {
+    return writeSettings(next || {})
+  }
+)
 
 // ─── GitHub IPC ──────────────────────────────────────────────────────────────
 

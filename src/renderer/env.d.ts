@@ -66,6 +66,15 @@ interface GitHubAPI {
   >
 }
 
+interface AppSettingsShape {
+  operatorName: string | null
+}
+
+interface SettingsAPI {
+  get(): Promise<AppSettingsShape>
+  set(next: Partial<AppSettingsShape>): Promise<AppSettingsShape>
+}
+
 type GitResult =
   | { status: 'success'; message: string; branch: string; filesChanged: number }
   | { status: 'nothing' }
@@ -82,5 +91,6 @@ interface Window {
     workspace: WorkspaceAPI
     git: GitAPI
     github: GitHubAPI
+    settings: SettingsAPI
   }
 }

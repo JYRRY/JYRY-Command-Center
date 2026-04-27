@@ -25,7 +25,16 @@ const CANONICAL_AGENT_ROSTER_PATH = resolve(
 
 const LEGACY_AGENT_ID_ALIASES = new Map<string, string>([
   ['claude_chat', 'claude_code'],
+  ['luqman', 'operator'],
 ])
+
+export const OPERATOR_AGENT_ID = 'operator'
+
+export function getOperatorName(agents: CanonicalAgent[] | null | undefined): string {
+  if (!Array.isArray(agents)) return 'JYRY'
+  const agent = agents.find((a) => a.id === OPERATOR_AGENT_ID)
+  return agent?.name?.trim() || 'JYRY'
+}
 
 export function resolveCanonicalAgentId(agentId: string): string {
   return LEGACY_AGENT_ID_ALIASES.get(agentId) ?? agentId

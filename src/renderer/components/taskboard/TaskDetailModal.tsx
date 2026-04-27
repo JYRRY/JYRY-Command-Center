@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useStore } from '../../store'
+import { useStore, selectOperatorName } from '../../store'
 import type { Subtask, Agent, AgentLogEntry } from '../../../main/parser'
 
 type TabId = 'details' | 'history'
@@ -53,6 +53,7 @@ export function TaskDetailModal({
 }: TaskDetailModalProps) {
   const tracker = useStore((s) => s.tracker)
   const updateTracker = useStore((s) => s.updateTracker)
+  const operatorName = selectOperatorName(tracker)
 
   const [activeTab, setActiveTab] = useState<TabId>('details')
 
@@ -129,7 +130,7 @@ export function TaskDetailModal({
 
       if (status === 'done' && !task.completed_at) {
         task.completed_at = new Date().toISOString()
-        task.completed_by = assignee || 'Luqman'
+        task.completed_by = assignee || operatorName
       }
       if (status !== 'done') {
         task.completed_at = null
@@ -199,7 +200,7 @@ export function TaskDetailModal({
                 </span>
               </div>
               <h3 className="text-sm text-white font-semibold leading-snug">{subtask.label}</h3>
-              <div className="flex items-center gap-1.5 mt-1">
+              <div className="flex items-center gap-2 mt-1.5">
                 <p className="text-[10px] text-muted font-mono">{subtask.id}</p>
                 <button
                   onClick={() => {
@@ -207,18 +208,28 @@ export function TaskDetailModal({
                     setCopied(true)
                     setTimeout(() => setCopied(false), 1500)
                   }}
-                  className="text-muted hover:text-white transition-colors"
+                  className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold tracking-wider cursor-pointer transition-colors ${
+                    copied
+                      ? 'bg-on-track/15 text-on-track border border-on-track/40'
+                      : 'bg-white/5 text-muted border border-white/15 hover:bg-white/10 hover:text-white'
+                  }`}
                   title="Copy task code"
                 >
                   {copied ? (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3.5 8.5 6.5 11.5 12.5 4.5" />
-                    </svg>
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3.5 8.5 6.5 11.5 12.5 4.5" />
+                      </svg>
+                      Copied!
+                    </>
                   ) : (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
-                      <path d="M10.5 5.5V3.5a1.5 1.5 0 0 0-1.5-1.5H3.5A1.5 1.5 0 0 0 2 3.5V9a1.5 1.5 0 0 0 1.5 1.5h2" />
-                    </svg>
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
+                        <path d="M10.5 5.5V3.5a1.5 1.5 0 0 0-1.5-1.5H3.5A1.5 1.5 0 0 0 2 3.5V9a1.5 1.5 0 0 0 1.5 1.5h2" />
+                      </svg>
+                      Copy ID
+                    </>
                   )}
                 </button>
               </div>
@@ -414,10 +425,12 @@ function DetailsTab({
             className="w-full bg-surface border border-border rounded px-3 py-2 text-xs text-white font-mono appearance-none cursor-pointer hover:border-accent/50 transition-colors"
           >
             <option value="">Unassigned</option>
-            <option value="Luqman">Luqman</option>
-            {agents.map((a) => (
-              <option key={a.id} value={a.name}>{a.name}</option>
-            ))}
+            <option value={operatorName}>{operatorName}</option>
+            {agents
+              .filter((a) => a.id !== 'operator')
+              .map((a) => (
+                <option key={a.id} value={a.name}>{a.name}</option>
+              ))}
           </select>
         </div>
         <div>

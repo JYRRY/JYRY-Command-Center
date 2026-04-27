@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore, initStore } from './store'
 import { TabBar } from './components/TabBar'
 import { StatusBar } from './components/StatusBar'
+import { SettingsModal } from './components/SettingsModal'
 import { SwimLaneView } from './views/SwimLaneView'
 import { TaskBoard } from './views/TaskBoard'
 import { AgentHubPlaceholder } from './views/AgentHubPlaceholder'
@@ -9,8 +10,40 @@ import { CalendarView } from './views/CalendarView'
 import { QAView } from './views/QAView'
 import { OnboardingView } from './views/OnboardingView'
 
+function HomeButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold tracking-[0.18em] uppercase text-muted hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+      style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      title="Return to JYRY Command Center home"
+    >
+      <span className="text-accent">⌘</span>
+      <span>JYRY</span>
+    </button>
+  )
+}
+
+function SettingsButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted/20 transition-colors text-muted hover:text-primary-text cursor-pointer"
+      title="Settings"
+      style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </button>
+  )
+}
+
 export default function App() {
   const { loading, activeTab, tracker, theme } = useStore()
+  const setTracker = useStore((s) => s.setTracker)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     initStore().catch(err => console.error('Failed to initialize store:', err))
@@ -44,9 +77,11 @@ export default function App() {
         style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
       >
         <div className="flex items-center gap-3 w-full px-4" style={{ paddingLeft: '80px' }}>
+          <HomeButton onClick={() => setTracker(null)} />
           <TabBar />
           <div className="flex-1" />
           <StatusBar />
+          <SettingsButton onClick={() => setSettingsOpen(true)} />
         </div>
       </div>
 
@@ -58,6 +93,8 @@ export default function App() {
         {activeTab === 'calendar' && <CalendarView />}
         {activeTab === 'qa' && <QAView />}
       </div>
+
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }

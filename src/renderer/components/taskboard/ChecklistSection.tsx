@@ -1,4 +1,4 @@
-import { useStore } from '../../store'
+import { useStore, selectOperatorName } from '../../store'
 import type { ChecklistCategory, ChecklistItem } from '../../../main/parser'
 import { useState } from 'react'
 
@@ -9,6 +9,7 @@ interface ChecklistSectionProps {
 export function ChecklistSection({ milestoneId }: ChecklistSectionProps) {
   const tracker = useStore((s) => s.tracker)
   const updateTracker = useStore((s) => s.updateTracker)
+  const operatorName = selectOperatorName(tracker)
   const [collapsed, setCollapsed] = useState(true)
 
   if (!tracker) return null
@@ -41,7 +42,7 @@ export function ChecklistSection({ milestoneId }: ChecklistSectionProps) {
       item.done = !item.done
       if (item.done) {
         item.completed_at = new Date().toISOString()
-        item.completed_by = 'Luqman'
+        item.completed_by = operatorName
       } else {
         item.completed_at = null
         item.completed_by = null
