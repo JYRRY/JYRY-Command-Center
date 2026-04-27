@@ -27,6 +27,9 @@ export function OnboardingView() {
   const projectRoot = workspaceStatus?.projectRoot
   const roadmapExists = Boolean(workspaceStatus?.roadmapExists)
   const trackerExists = Boolean(workspaceStatus?.trackerExists)
+  const canResume = Boolean(projectRoot && trackerExists)
+
+  const projectLabel = projectRoot ? projectRoot.split('/').filter(Boolean).pop() || projectRoot : null
 
   return (
     <div className="min-h-screen bg-dark text-white flex items-start justify-center px-6 overflow-y-auto py-10 scroll-left">
@@ -42,6 +45,27 @@ export function OnboardingView() {
             <code className="text-accent font-mono">docs/roadmap.md</code> exists.
           </p>
         </div>
+
+        {canResume && (
+          <div className="mb-6 rounded-xl border border-accent/40 bg-accent/10 p-5 flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-accent uppercase mb-1">
+                Current project
+              </p>
+              <h2 className="text-base font-semibold truncate">{projectLabel}</h2>
+              <p className="text-xs font-mono text-muted truncate mt-0.5">{projectRoot}</p>
+            </div>
+            <button
+              className="flex-shrink-0 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+              onClick={() => withAction(async () => {
+                await loadTrackerFromWorkspace()
+              })}
+            >
+              {loading ? 'Loading…' : 'Return to project'}
+            </button>
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2 mb-4">
           <div className="rounded-xl border border-border bg-dark/60 p-5 flex flex-col">

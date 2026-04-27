@@ -290,6 +290,7 @@ export function TaskDetailModal({
               executionMode={executionMode}
               setExecutionMode={setExecutionMode}
               agents={agents}
+              operatorName={operatorName}
               dependentMilestones={dependentMilestones}
               siblings={siblings}
               milestoneTitle={milestoneTitle}
@@ -345,6 +346,7 @@ function DetailsTab({
   notes, setNotes,
   executionMode, setExecutionMode,
   agents,
+  operatorName,
   dependentMilestones,
   siblings,
   milestoneTitle,
@@ -366,6 +368,7 @@ function DetailsTab({
   executionMode: Subtask['execution_mode']
   setExecutionMode: (v: Subtask['execution_mode']) => void
   agents: Agent[]
+  operatorName: string
   dependentMilestones: { id: string; title: string; subtasks: Subtask[] }[]
   siblings: Subtask[]
   milestoneTitle: string
