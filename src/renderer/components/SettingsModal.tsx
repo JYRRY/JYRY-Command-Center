@@ -120,14 +120,14 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
           <section className="space-y-2">
             <label className="block text-[10px] font-bold tracking-wider text-muted">
-              NAVIGATION
+              JYRY COMMAND CENTER
             </label>
             <button
-              className="w-full text-left rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={returnHome}
               disabled={busy}
             >
-              ← Return to JYRY Command Center home
+              Return Home
             </button>
           </section>
 
