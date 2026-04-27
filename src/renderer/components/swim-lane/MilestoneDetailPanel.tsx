@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ChecklistCategory, Milestone, QAGroup, ReviewSession } from '../../../main/parser'
 import { useStore, selectCategoryProgress, selectMilestoneProgress } from '../../store'
 import {
@@ -75,6 +75,7 @@ export function MilestoneDetailPanel({ target, onClose }: PanelProps) {
 
 function MilestoneView({ milestone, onClose }: { milestone: Milestone; onClose: () => void }) {
   const tracker = useStore((s) => s.tracker)
+  const updateTracker = useStore((s) => s.updateTracker)
   const milestones = tracker?.milestones ?? []
   const { done, total, pct } = selectMilestoneProgress(milestone)
   const displayDomain = getDisplayDomainMeta(milestone)
@@ -87,6 +88,57 @@ function MilestoneView({ milestone, onClose }: { milestone: Milestone; onClose: 
         .filter(Boolean) as Milestone[],
     [milestone.dependencies, milestones],
   )
+
+  const [scheduleStart, setScheduleStart] = useState(milestone.planned_start ?? '')
+  const [scheduleEnd, setScheduleEnd] = useState(milestone.planned_end ?? '')
+  const [notesEditing, setNotesEditing] = useState(false)
+  const [notesDraft, setNotesDraft] = useState((milestone.notes ?? []).join('\n'))
+
+  useEffect(() => {
+    setScheduleStart(milestone.planned_start ?? '')
+    setScheduleEnd(milestone.planned_end ?? '')
+    setNotesEditing(false)
+    setNotesDraft((milestone.notes ?? []).join('\n'))
+  }, [milestone.id, milestone.planned_start, milestone.planned_end, milestone.notes])
+
+  const scheduleDirty =
+    (scheduleStart || '') !== (milestone.planned_start ?? '') ||
+    (scheduleEnd || '') !== (milestone.planned_end ?? '')
+  const scheduleInvalid =
+    !!scheduleStart && !!scheduleEnd && scheduleEnd < scheduleStart
+
+  function saveSchedule() {
+    if (scheduleInvalid) return
+    updateTracker((draft) => {
+      const m = draft.milestones.find((x) => x.id === milestone.id)
+      if (!m) return
+      m.planned_start = scheduleStart || null
+      m.planned_end = scheduleEnd || null
+    })
+  }
+
+  function resetSchedule() {
+    setScheduleStart(milestone.planned_start ?? '')
+    setScheduleEnd(milestone.planned_end ?? '')
+  }
+
+  function saveNotes() {
+    const lines = notesDraft
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+    updateTracker((draft) => {
+      const m = draft.milestones.find((x) => x.id === milestone.id)
+      if (!m) return
+      m.notes = lines
+    })
+    setNotesEditing(false)
+  }
+
+  function cancelNotes() {
+    setNotesDraft((milestone.notes ?? []).join('\n'))
+    setNotesEditing(false)
+  }
 
   // Drift/planned-date display removed post-pivot — the swimlane no longer
   // pretends to be a calendar. `actual_start` / `actual_end` remain visible
@@ -139,6 +191,50 @@ function MilestoneView({ milestone, onClose }: { milestone: Milestone; onClose: 
               </>
             )}
           </div>
+        </section>
+
+        <section>
+          <h4 className="text-[10px] font-bold tracking-wider text-muted mb-3">SCHEDULE</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-[9px] text-muted/70 block mb-1">Planned start</label>
+              <input
+                type="date"
+                value={scheduleStart}
+                onChange={(e) => setScheduleStart(e.target.value)}
+                className="w-full text-[11px] font-mono px-2 py-1.5 rounded border border-border bg-dark text-white focus:outline-none focus:border-accent"
+              />
+            </div>
+            <div>
+              <label className="text-[9px] text-muted/70 block mb-1">Planned end</label>
+              <input
+                type="date"
+                value={scheduleEnd}
+                onChange={(e) => setScheduleEnd(e.target.value)}
+                className="w-full text-[11px] font-mono px-2 py-1.5 rounded border border-border bg-dark text-white focus:outline-none focus:border-accent"
+              />
+            </div>
+          </div>
+          {scheduleInvalid && (
+            <p className="mt-2 text-[10px] text-red-300">Planned end must be on or after planned start.</p>
+          )}
+          {scheduleDirty && (
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={saveSchedule}
+                disabled={scheduleInvalid}
+                className="rounded-md bg-accent px-3 py-1.5 text-[11px] font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Save
+              </button>
+              <button
+                onClick={resetSchedule}
+                className="rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-white cursor-pointer transition-colors hover:bg-white/10"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
         </section>
 
         <section>
@@ -207,8 +303,42 @@ function MilestoneView({ milestone, onClose }: { milestone: Milestone; onClose: 
         )}
 
         <section>
-          <h4 className="text-[10px] font-bold tracking-wider text-muted mb-3">NOTES</h4>
-          {milestone.notes.length > 0 ? (
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-[10px] font-bold tracking-wider text-muted">NOTES</h4>
+            {!notesEditing && (
+              <button
+                onClick={() => setNotesEditing(true)}
+                className="text-[10px] font-semibold text-accent cursor-pointer hover:opacity-80"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          {notesEditing ? (
+            <div className="space-y-2">
+              <textarea
+                value={notesDraft}
+                onChange={(e) => setNotesDraft(e.target.value)}
+                rows={Math.max(4, notesDraft.split('\n').length + 1)}
+                className="w-full text-[11px] font-mono px-2.5 py-2 rounded-md border border-border bg-dark text-white/90 leading-relaxed focus:outline-none focus:border-accent resize-y"
+                placeholder="One note per line"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={saveNotes}
+                  className="rounded-md bg-accent px-3 py-1.5 text-[11px] font-semibold text-white cursor-pointer transition-opacity hover:opacity-90"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={cancelNotes}
+                  className="rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-white cursor-pointer transition-colors hover:bg-white/10"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : milestone.notes.length > 0 ? (
             <div className="space-y-1.5">
               {milestone.notes.map((note, index) => (
                 <div key={`${milestone.id}-note-${index}`} className="text-[11px] text-white/70 px-2.5 py-2 rounded-md bg-white/3 leading-relaxed">
