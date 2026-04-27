@@ -1,8 +1,7 @@
 import type { Milestone, QAGroup, ReviewSession } from '../main/parser'
 
-// AI Commerce Index Platform — 4-lane structure (pivot from JYRY chat-era 5 lanes).
-// See /Users/luqman/Desktop/Projects/jyry/Brainstorming & Pivot/ROADMAP.md
-// for the milestone → lane mapping.
+// AI Commerce Index Platform — 4-lane structure.
+// Milestone → lane mapping is sourced from the workspace's docs/roadmap.md.
 export type DisplayDomain =
   | 'foundation'
   | 'product_engines'

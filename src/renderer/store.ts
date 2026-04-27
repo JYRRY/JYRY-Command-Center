@@ -102,6 +102,29 @@ export function selectScheduleStatus(
   return 'on_track'
 }
 
+export const OPERATOR_AGENT_ID = 'operator'
+const LEGACY_OPERATOR_AGENT_IDS = new Set(['operator', 'luqman'])
+
+/** Resolve the operator agent's display name (default 'JYRY'). */
+export function selectOperatorName(tracker: TrackerState | null): string {
+  if (!tracker) return 'JYRY'
+  const agent = tracker.agents.find((a) => a.id === OPERATOR_AGENT_ID)
+  return agent?.name?.trim() || 'JYRY'
+}
+
+/** True if the given assignee/agent reference resolves to the operator. */
+export function isOperatorReference(
+  reference: string | null | undefined,
+  operatorName: string
+): boolean {
+  if (!reference) return false
+  const trimmed = reference.trim()
+  if (!trimmed) return false
+  if (trimmed === operatorName) return true
+  if (LEGACY_OPERATOR_AGENT_IDS.has(trimmed.toLowerCase())) return true
+  return trimmed === 'Luqman'
+}
+
 /** Per-milestone progress */
 export function selectMilestoneProgress(
   milestone: TrackerState['milestones'][number]

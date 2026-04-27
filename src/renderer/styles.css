@@ -96,3 +96,18 @@ html, body, #root {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/*
+ * Utility: render the vertical scrollbar on the left side instead of the right,
+ * with a small inset from the component's outer edge. The container flips to
+ * RTL so the scrollbar mounts on the left; the immediate child flips back to
+ * LTR so its content keeps normal reading direction.
+ */
+.scroll-left {
+  direction: rtl;
+  padding-left: 8px;
+}
+
+.scroll-left > * {
+  direction: ltr;
+}

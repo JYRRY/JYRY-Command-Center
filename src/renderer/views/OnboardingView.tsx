@@ -29,7 +29,7 @@ export function OnboardingView() {
   const trackerExists = Boolean(workspaceStatus?.trackerExists)
 
   return (
-    <div className="min-h-screen bg-dark text-white flex items-center justify-center px-6 overflow-y-auto py-10">
+    <div className="min-h-screen bg-dark text-white flex items-start justify-center px-6 overflow-y-auto py-10 scroll-left">
       <div className="w-full max-w-6xl rounded-2xl border border-border bg-panel/80 p-8">
         <div className="mb-8">
           <p className="text-xs font-mono tracking-[0.2em] text-accent uppercase mb-3">

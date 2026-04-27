@@ -1,5 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useStore, selectOperatorName, isOperatorReference } from '../../store'
 import type { Subtask } from '../../../main/parser'
 
 // AI Commerce Index Platform — 4-lane palette. Mirrors DOMAIN_COLOR_MAP in
@@ -59,6 +60,8 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ subtask, domain, onClick }: TaskCardProps) {
+  const tracker = useStore((s) => s.tracker)
+  const operatorName = selectOperatorName(tracker)
   const {
     attributes,
     listeners,
@@ -191,7 +194,7 @@ export function TaskCard({ subtask, domain, onClick }: TaskCardProps) {
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-muted font-medium">
             {subtask.assignee}
             {/* Pulsing dot for agent assignees */}
-            {subtask.assignee !== 'Luqman' && (
+            {!isOperatorReference(subtask.assignee, operatorName) && (
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-on-track ml-1 animate-pulse" />
             )}
           </span>
