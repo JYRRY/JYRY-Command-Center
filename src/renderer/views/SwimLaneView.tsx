@@ -83,6 +83,26 @@ function weekX(week: number): number {
   return (week - 1) * WEEK_W + WEEK_W / 2
 }
 
+// Map "today" relative to project.start_date onto the 12-week timeline.
+// Returns fractionalWeek for the line's exact X (e.g. 7.43 = week 7, ~3 days
+// into it) and integer week for the badge. visible=false hides the line when
+// today is before the project starts or past the 12-week window.
+function computeNowOffset(startDate: string | null | undefined): {
+  week: number
+  fractionalWeek: number
+  visible: boolean
+} {
+  if (!startDate) return { week: 1, fractionalWeek: 1, visible: false }
+  const start = new Date(startDate).getTime()
+  if (Number.isNaN(start)) return { week: 1, fractionalWeek: 1, visible: false }
+  const now = Date.now()
+  const daysElapsed = (now - start) / 86400000
+  const fractionalWeek = daysElapsed / 7 + 1
+  const week = Math.floor(daysElapsed / 7) + 1
+  const visible = fractionalWeek >= 1 && fractionalWeek <= TOTAL_WEEKS + 1
+  return { week, fractionalWeek, visible }
+}
+
 function getStoredNodeOffsets(): NodeOffsets {
   try {
     const raw = localStorage.getItem(OFFSETS_STORAGE_KEY)
@@ -229,12 +249,20 @@ export function SwimLaneView() {
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null)
   const [recentlyDraggedId, setRecentlyDraggedId] = useState<string | null>(null)
   const [containerH, setContainerH] = useState(0)
+  const [nowTick, setNowTick] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const phases = DISPLAY_PHASES
   const nodes = useMemo(() => (tracker ? buildSwimLaneNodes(tracker) : []), [tracker])
   const focusWeek = tracker ? resolveFocusWeek(tracker) : 1
   const selectedTargetKey = getTargetKey(panelTarget)
+  const now = useMemo(
+    () => computeNowOffset(tracker?.project.start_date),
+    // nowTick re-evaluates the helper every minute; tracker change re-evaluates
+    // the anchor when the project loads.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tracker?.project.start_date, nowTick],
+  )
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -260,6 +288,11 @@ export function SwimLaneView() {
     })
     observer.observe(containerRef.current)
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNowTick((n) => n + 1), 60_000)
+    return () => window.clearInterval(id)
   }, [])
 
   const handleNodeDragStart = useCallback((id: string, e: React.MouseEvent) => {
@@ -378,6 +411,41 @@ export function SwimLaneView() {
             />
           ))}
 
+          {now.visible && (
+            <>
+              <div
+                className="absolute pointer-events-none z-[2]"
+                style={{
+                  left: LABEL_W + (now.fractionalWeek - 1) * WEEK_W,
+                  top: HEADER_H,
+                  height: LANES.length * dynamicLaneH + CHECKLIST_H,
+                  borderLeft: '2px solid #585CF0',
+                  boxShadow: '0 0 8px rgba(88,92,240,0.5)',
+                }}
+              />
+              <div
+                className="absolute pointer-events-none z-[2] flex items-center"
+                style={{
+                  left: LABEL_W + (now.fractionalWeek - 1) * WEEK_W - 36,
+                  top: HEADER_H - 14,
+                  width: 72,
+                  justifyContent: 'center',
+                }}
+              >
+                <span
+                  className="rounded px-1.5 py-0.5 text-[8px] font-bold tracking-wider"
+                  style={{
+                    color: '#FFFFFF',
+                    backgroundColor: '#585CF0',
+                    boxShadow: '0 2px 6px rgba(88,92,240,0.5)',
+                  }}
+                >
+                  TODAY · W{now.week}
+                </span>
+              </div>
+            </>
+          )}
+
           {/*
             Swimlane header — dateless. We render one label per PHASE band
             (centered over its column range), not one label per week, because
@@ -399,10 +467,11 @@ export function SwimLaneView() {
                 return (
                   <div
                     key={phase.id}
-                    className="absolute inset-y-0 flex flex-col items-center justify-center text-center px-2"
+                    className="absolute flex flex-col items-center justify-center text-center px-2"
                     style={{
                       left: (phase.start_week - 1) * WEEK_W,
                       width: widthCols * WEEK_W,
+                      top: 6,
                     }}
                   >
                     <span
@@ -411,8 +480,27 @@ export function SwimLaneView() {
                     >
                       {phase.title.toUpperCase()}
                     </span>
-                    <span className="text-[7px] font-mono uppercase tracking-widest text-muted/40 mt-0.5">
-                      {phase.id.replace(/^phase_/, 'phase ')}
+                  </div>
+                )
+              })}
+              {Array.from({ length: TOTAL_WEEKS }).map((_, i) => {
+                const wNum = i + 1
+                const isCurrent = now.visible && wNum === now.week
+                return (
+                  <div
+                    key={`wlabel-${wNum}`}
+                    className="absolute text-center"
+                    style={{
+                      left: i * WEEK_W,
+                      width: WEEK_W,
+                      bottom: 4,
+                    }}
+                  >
+                    <span
+                      className="text-[8px] font-mono tracking-wider"
+                      style={{ color: isCurrent ? '#585CF0' : 'rgba(155,155,170,0.55)' }}
+                    >
+                      W{wNum}
                     </span>
                   </div>
                 )

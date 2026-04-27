@@ -36,7 +36,46 @@
     "tracker:seed:aci:dry-run": "node scripts/seed-aci-checklist.mjs --profile=aci --dry-run",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "preview": "electron-vite preview"
+    "preview": "electron-vite preview",
+    "pack:mac": "electron-vite build && electron-builder --mac",
+    "pack:mac:dir": "electron-vite build && electron-builder --mac --dir"
+  },
+  "build": {
+    "appId": "com.jyry.commandcenter",
+    "productName": "JYRY Command Center",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "identity": null
+    },
+    "dmg": {
+      "writeUpdateInfo": false
+    }
   },
   "keywords": [
     "jyry-command-center",
@@ -70,6 +109,7 @@
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
     "electron": "^41.0.0",
+    "electron-builder": "^25.1.8",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3"
   }
