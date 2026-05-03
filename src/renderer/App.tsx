@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useStore, initStore, type AccentColor } from './store'
+import i18n from './i18n'
 import { TabBar } from './components/TabBar'
 import { StatusBar } from './components/StatusBar'
 import { SettingsModal } from './components/SettingsModal'
@@ -91,10 +92,11 @@ export default function App() {
     applyAccent(accentColor, theme)
   }, [accentColor])
 
-  // Apply language direction
+  // Apply language direction + sync i18next
   useEffect(() => {
     document.documentElement.lang = language
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
+    i18n.changeLanguage(language)
   }, [language])
 
   if (loading) {
