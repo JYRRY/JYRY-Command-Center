@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useStore, initStore } from './store'
+import { useStore, initStore, type AccentColor } from './store'
 import { TabBar } from './components/TabBar'
 import { StatusBar } from './components/StatusBar'
 import { SettingsModal } from './components/SettingsModal'
@@ -8,7 +8,36 @@ import { TaskBoard } from './views/TaskBoard'
 import { AgentHubPlaceholder } from './views/AgentHubPlaceholder'
 import { CalendarView } from './views/CalendarView'
 import { QAView } from './views/QAView'
+import { BirdsEyeView } from './views/BirdsEyeView'
+import { ReviewDebugView } from './views/ReviewDebugView'
 import { OnboardingView } from './views/OnboardingView'
+
+// ─── Accent color presets ────────────────────────────────────────────────────
+
+const ACCENT_PRESETS: Record<AccentColor, { primary: string; secondary: string; darkBg?: string }> = {
+  indigo:     { primary: '#585CF0', secondary: '#8286FF' },
+  'black-ice': { primary: '#94A3B8', secondary: '#CBD5E1', darkBg: '#070B12' },
+  emerald:    { primary: '#10B981', secondary: '#34D399' },
+  amethyst:   { primary: '#A855F7', secondary: '#C084FC' },
+}
+
+function applyAccent(accent: AccentColor, theme: string) {
+  const preset = ACCENT_PRESETS[accent]
+  const root = document.documentElement
+  root.style.setProperty('--accent-primary', preset.primary)
+  root.style.setProperty('--accent-secondary', preset.secondary)
+  if (accent === 'black-ice') {
+    root.style.setProperty('--theme-dark', preset.darkBg ?? '#070B12')
+    root.style.setProperty('--theme-surface', '#0D1117')
+    root.style.setProperty('--theme-border', '#1C2333')
+  } else if (theme === 'dark') {
+    root.style.setProperty('--theme-dark', '#0A0A10')
+    root.style.setProperty('--theme-surface', '#111118')
+    root.style.setProperty('--theme-border', '#1a1a2e')
+  }
+}
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
 
 function HomeButton({ onClick }: { onClick: () => void }) {
   return (
@@ -40,8 +69,10 @@ function SettingsButton({ onClick }: { onClick: () => void }) {
   )
 }
 
+// ─── Main App ─────────────────────────────────────────────────────────────────
+
 export default function App() {
-  const { loading, activeTab, tracker, theme } = useStore()
+  const { loading, activeTab, tracker, theme, accentColor, language } = useStore()
   const setTracker = useStore((s) => s.setTracker)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
@@ -49,10 +80,22 @@ export default function App() {
     initStore().catch(err => console.error('Failed to initialize store:', err))
   }, [])
 
-  // Apply theme to root element
+  // Apply dark/light theme
   useEffect(() => {
     document.documentElement.dataset.theme = theme
+    applyAccent(accentColor, theme)
   }, [theme])
+
+  // Apply accent color
+  useEffect(() => {
+    applyAccent(accentColor, theme)
+  }, [accentColor])
+
+  // Apply language direction
+  useEffect(() => {
+    document.documentElement.lang = language
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
+  }, [language])
 
   if (loading) {
     return (
@@ -92,6 +135,8 @@ export default function App() {
         {activeTab === 'agent-hub' && <AgentHubPlaceholder />}
         {activeTab === 'calendar' && <CalendarView />}
         {activeTab === 'qa' && <QAView />}
+        {activeTab === 'birds-eye' && <BirdsEyeView />}
+        {activeTab === 'review-debug' && <ReviewDebugView />}
       </div>
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />

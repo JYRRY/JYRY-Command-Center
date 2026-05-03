@@ -4,8 +4,9 @@ import type { TrackerState } from '../main/parser'
 // Re-export the type so views can use it without reaching into main/
 export type { TrackerState }
 
-export type TabId = 'swim-lane' | 'task-board' | 'agent-hub' | 'calendar' | 'qa'
+export type TabId = 'swim-lane' | 'task-board' | 'agent-hub' | 'calendar' | 'qa' | 'birds-eye' | 'review-debug'
 export type Theme = 'dark' | 'light'
+export type AccentColor = 'indigo' | 'black-ice' | 'emerald' | 'amethyst'
 
 interface AppState {
   // Core data
@@ -19,6 +20,8 @@ interface AppState {
   activeTab: TabId
   selectedMilestoneId: string | null
   theme: Theme
+  accentColor: AccentColor
+  language: 'en' | 'ar' | 'de'
 
   // Actions
   setTracker: (data: TrackerState | null) => void
@@ -29,6 +32,8 @@ interface AppState {
   setError: (err: string | null) => void
   setSynced: (v: boolean) => void
   toggleTheme: () => void
+  setAccentColor: (accent: AccentColor) => void
+  setLanguage: (lang: 'en' | 'ar' | 'de') => void
 
   // Mutation helpers — mutate tracker and trigger auto write-back
   updateTracker: (updater: (draft: TrackerState) => void) => void
@@ -171,6 +176,22 @@ function getInitialTheme(): Theme {
   return 'dark'
 }
 
+function getInitialAccent(): AccentColor {
+  try {
+    const stored = localStorage.getItem('jyry-accent')
+    if (stored === 'indigo' || stored === 'black-ice' || stored === 'emerald' || stored === 'amethyst') return stored
+  } catch { /* ignore */ }
+  return 'indigo'
+}
+
+function getInitialLanguage(): 'en' | 'ar' | 'de' {
+  try {
+    const stored = localStorage.getItem('jyry-lang')
+    if (stored === 'en' || stored === 'ar' || stored === 'de') return stored
+  } catch { /* ignore */ }
+  return 'en'
+}
+
 export const useStore = create<AppState>()((set, get) => ({
   tracker: null,
   workspaceStatus: null,
@@ -180,6 +201,8 @@ export const useStore = create<AppState>()((set, get) => ({
   activeTab: 'swim-lane' as TabId,
   selectedMilestoneId: null,
   theme: getInitialTheme(),
+  accentColor: getInitialAccent(),
+  language: getInitialLanguage(),
 
   // setTracker: used for loading/external updates — does NOT write back
   setTracker: (data) => set({ tracker: data, error: null }),
@@ -193,6 +216,14 @@ export const useStore = create<AppState>()((set, get) => ({
     const next = get().theme === 'dark' ? 'light' : 'dark'
     try { localStorage.setItem('jyry-theme', next) } catch { /* ignore */ }
     set({ theme: next })
+  },
+  setAccentColor: (accent) => {
+    try { localStorage.setItem('jyry-accent', accent) } catch { /* ignore */ }
+    set({ accentColor: accent })
+  },
+  setLanguage: (lang) => {
+    try { localStorage.setItem('jyry-lang', lang) } catch { /* ignore */ }
+    set({ language: lang })
   },
 
   // updateTracker: used for app-initiated mutations — DOES write back

@@ -1,14 +1,31 @@
 import { useEffect, useState } from 'react'
-import { loadTrackerFromWorkspace, useStore } from '../store'
+import { loadTrackerFromWorkspace, useStore, type AccentColor } from '../store'
 
 interface SettingsModalProps {
   open: boolean
   onClose: () => void
 }
 
+const ACCENT_OPTIONS: { id: AccentColor; label: string; color: string }[] = [
+  { id: 'indigo',     label: 'Indigo',     color: '#585CF0' },
+  { id: 'black-ice',  label: 'Black Ice',  color: '#94A3B8' },
+  { id: 'emerald',    label: 'Emerald',    color: '#10B981' },
+  { id: 'amethyst',   label: 'Amethyst',   color: '#A855F7' },
+]
+
+const LANG_OPTIONS: { id: 'en' | 'ar' | 'de'; label: string }[] = [
+  { id: 'en', label: 'EN' },
+  { id: 'ar', label: 'AR' },
+  { id: 'de', label: 'DE' },
+]
+
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const setTracker = useStore((s) => s.setTracker)
   const setWorkspaceStatus = useStore((s) => s.setWorkspaceStatus)
+  const accentColor = useStore((s) => s.accentColor)
+  const setAccentColor = useStore((s) => s.setAccentColor)
+  const language = useStore((s) => s.language)
+  const setLanguage = useStore((s) => s.setLanguage)
 
   const [operatorName, setOperatorName] = useState('')
   const [savingName, setSavingName] = useState(false)
@@ -228,13 +245,58 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             </button>
           </section>
 
-          <section className="rounded-md border border-dashed border-border px-4 py-3">
-            <p className="text-[10px] font-bold tracking-wider text-muted mb-1">
-              COMING SOON
-            </p>
-            <p className="text-xs text-muted leading-5">
-              Language switcher, theme color presets, and more controls will appear
-              here as new settings ship.
+          <section className="space-y-3">
+            <label className="block text-[10px] font-bold tracking-wider text-muted">
+              ACCENT COLOR
+            </label>
+            <div className="flex items-center gap-3">
+              {ACCENT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  title={opt.label}
+                  onClick={() => setAccentColor(opt.id)}
+                  className="flex flex-col items-center gap-1.5 cursor-pointer group"
+                >
+                  <span
+                    className="block w-7 h-7 rounded-full transition-all"
+                    style={{
+                      background: opt.color,
+                      boxShadow: accentColor === opt.id
+                        ? `0 0 0 2px var(--theme-dark), 0 0 0 4px ${opt.color}`
+                        : 'none',
+                      opacity: accentColor === opt.id ? 1 : 0.55,
+                    }}
+                  />
+                  <span className="text-[9px] font-mono text-muted group-hover:text-white transition-colors">
+                    {opt.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <label className="block text-[10px] font-bold tracking-wider text-muted">
+              LANGUAGE
+            </label>
+            <div className="flex items-center gap-2">
+              {LANG_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setLanguage(opt.id)}
+                  className="rounded-md px-4 py-1.5 text-xs font-bold cursor-pointer transition-all"
+                  style={{
+                    background: language === opt.id ? 'var(--accent-primary, #585CF0)' : 'transparent',
+                    color: language === opt.id ? '#fff' : 'var(--theme-muted)',
+                    border: `1px solid ${language === opt.id ? 'transparent' : 'var(--theme-border)'}`,
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted">
+              Arabic (AR) switches the interface to right-to-left layout.
             </p>
           </section>
 

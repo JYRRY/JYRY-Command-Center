@@ -4,8 +4,8 @@
   --color-dark: var(--theme-dark);
   --color-surface: var(--theme-surface);
   --color-border: var(--theme-border);
-  --color-accent: #585CF0;
-  --color-accent-light: #8286FF;
+  --color-accent: var(--accent-primary, #585CF0);
+  --color-accent-light: var(--accent-secondary, #8286FF);
   --color-muted: var(--theme-muted);
   --color-primary-text: var(--theme-primary-text);
 
@@ -19,6 +19,12 @@
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ─── Accent color defaults (Indigo) — overridden by JS via setProperty ─── */
+:root {
+  --accent-primary: #585CF0;
+  --accent-secondary: #8286FF;
 }
 
 /* Dark theme (default) */
