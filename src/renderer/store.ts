@@ -272,18 +272,49 @@ export async function loadTrackerFromWorkspace(): Promise<void> {
   const status = await window.api.workspace.getStatus()
   setWorkspaceStatus(status)
 
+  // Tracker not generated yet — try to generate it from roadmap.md
   if (!status.trackerExists) {
-    setTracker(null)
-    setSynced(false)
-    setError(null)
-    return
+    if (status.roadmapExists) {
+      const genResult = await window.api.workspace.generateTracker()
+      const freshStatus = genResult.status
+      setWorkspaceStatus(freshStatus)
+      if (!freshStatus.trackerExists) {
+        setTracker(null)
+        setSynced(false)
+        setError('Tracker could not be generated. Check that docs/roadmap.md is valid Markdown.')
+        return
+      }
+    } else {
+      setTracker(null)
+      setSynced(false)
+      setError(null)
+      return
+    }
   }
 
   const json = await window.api.tracker.read()
   if (!json) {
+    // File exists but is unreadable / corrupt — try regenerating from roadmap
+    if (status.roadmapExists) {
+      const genResult = await window.api.workspace.generateTracker()
+      setWorkspaceStatus(genResult.status)
+      const retry = await window.api.tracker.read()
+      if (!retry) {
+        setTracker(null)
+        setSynced(false)
+        setError('Tracker file is corrupt and could not be regenerated. Re-import your roadmap.md to reset it.')
+        return
+      }
+      const retryData = JSON.parse(retry) as TrackerState
+      retryData.project.current_week = selectCurrentWeek(retryData)
+      setTracker(retryData)
+      setSynced(true)
+      setError(null)
+      return
+    }
     setTracker(null)
     setSynced(false)
-    setError(null)
+    setError('Tracker file could not be read. Try re-importing your roadmap.md.')
     return
   }
 
