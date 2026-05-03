@@ -28,12 +28,18 @@ contextBridge.exposeInMainWorld('api', {
 
   workspace: {
     getStatus: (): Promise<WorkspaceStatus> => ipcRenderer.invoke('workspace:getStatus'),
-    chooseProjectFolder: (): Promise<{ canceled: boolean; status: WorkspaceStatus }> =>
-      ipcRenderer.invoke('workspace:chooseProjectFolder'),
+    chooseProjectFolder: (): Promise<
+      | { canceled: true; status: WorkspaceStatus }
+      | { canceled: false; status: WorkspaceStatus; error?: string }
+    > => ipcRenderer.invoke('workspace:chooseProjectFolder'),
     createStarterRoadmap: (): Promise<{ created: string[]; status: WorkspaceStatus }> =>
       ipcRenderer.invoke('workspace:createStarterRoadmap'),
     importRoadmap: (): Promise<{ canceled: boolean; imported?: string; status: WorkspaceStatus }> =>
       ipcRenderer.invoke('workspace:importRoadmap'),
+    createStarterManifesto: (): Promise<{ created: string[]; status: WorkspaceStatus }> =>
+      ipcRenderer.invoke('workspace:createStarterManifesto'),
+    importManifesto: (): Promise<{ canceled: boolean; imported?: string; status: WorkspaceStatus }> =>
+      ipcRenderer.invoke('workspace:importManifesto'),
     generateTracker: (): Promise<{
       state: unknown
       counts: { milestones: number; subtasks: number; categories: number; checklistItems: number }
@@ -61,10 +67,30 @@ contextBridge.exposeInMainWorld('api', {
   },
 
   settings: {
-    get: (): Promise<{ operatorName: string | null }> => ipcRenderer.invoke('settings:get'),
+    get: (): Promise<{
+      operatorName: string | null
+      githubCloneParentFolder: string | null
+    }> => ipcRenderer.invoke('settings:get'),
     set: (
-      next: Partial<{ operatorName: string | null }>
-    ): Promise<{ operatorName: string | null }> => ipcRenderer.invoke('settings:set', next),
+      next: Partial<{
+        operatorName: string | null
+        githubCloneParentFolder: string | null
+      }>
+    ): Promise<{
+      operatorName: string | null
+      githubCloneParentFolder: string | null
+    }> => ipcRenderer.invoke('settings:set', next),
+    getGithubCloneParentFolder: (): Promise<{ path: string; isDefault: boolean }> =>
+      ipcRenderer.invoke('settings:getGithubCloneParentFolder'),
+    pickGithubCloneParentFolder: (): Promise<{
+      canceled: boolean
+      path?: string
+      error?: string
+    }> => ipcRenderer.invoke('settings:pickGithubCloneParentFolder'),
+    setGithubCloneParentFolder: (
+      path: string | null
+    ): Promise<{ ok: boolean; path?: string | null; error?: string }> =>
+      ipcRenderer.invoke('settings:setGithubCloneParentFolder', path),
   },
 
   // Git operations

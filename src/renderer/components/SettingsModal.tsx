@@ -15,19 +15,26 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const [hasGithubToken, setHasGithubToken] = useState(false)
   const [busy, setBusy] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
+  const [cloneFolder, setCloneFolder] = useState<string>('')
+  const [cloneFolderIsDefault, setCloneFolderIsDefault] = useState(true)
+  const [pickingClone, setPickingClone] = useState(false)
 
   useEffect(() => {
     if (!open) return
     let cancelled = false
 
     setFeedback(null)
-    Promise.all([window.api.settings.get(), window.api.github.hasToken()]).then(
-      ([settings, tokenPresent]) => {
-        if (cancelled) return
-        setOperatorName(settings.operatorName ?? '')
-        setHasGithubToken(tokenPresent)
-      }
-    )
+    Promise.all([
+      window.api.settings.get(),
+      window.api.github.hasToken(),
+      window.api.settings.getGithubCloneParentFolder(),
+    ]).then(([settings, tokenPresent, clone]) => {
+      if (cancelled) return
+      setOperatorName(settings.operatorName ?? '')
+      setHasGithubToken(tokenPresent)
+      setCloneFolder(clone.path)
+      setCloneFolderIsDefault(clone.isDefault)
+    })
 
     return () => {
       cancelled = true
@@ -73,6 +80,44 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     onClose()
   }
 
+  async function changeCloneFolder() {
+    setPickingClone(true)
+    setFeedback(null)
+    try {
+      const result = await window.api.settings.pickGithubCloneParentFolder()
+      if (result.canceled) return
+      if (result.error) {
+        setFeedback(result.error)
+        return
+      }
+      if (result.path) {
+        setCloneFolder(result.path)
+        setCloneFolderIsDefault(false)
+        setFeedback('GitHub clone destination updated.')
+      }
+    } catch (err) {
+      setFeedback(err instanceof Error ? err.message : String(err))
+    } finally {
+      setPickingClone(false)
+    }
+  }
+
+  async function resetCloneFolder() {
+    setPickingClone(true)
+    setFeedback(null)
+    try {
+      await window.api.settings.setGithubCloneParentFolder(null)
+      const next = await window.api.settings.getGithubCloneParentFolder()
+      setCloneFolder(next.path)
+      setCloneFolderIsDefault(next.isDefault)
+      setFeedback('GitHub clone destination reset to default.')
+    } catch (err) {
+      setFeedback(err instanceof Error ? err.message : String(err))
+    } finally {
+      setPickingClone(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
       <div className="w-full max-w-lg rounded-2xl border border-border bg-panel text-white shadow-xl">
@@ -115,6 +160,40 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
               >
                 {savingName ? 'Saving…' : 'Save'}
               </button>
+            </div>
+          </section>
+
+          <section className="space-y-2">
+            <label className="block text-[10px] font-bold tracking-wider text-muted">
+              GITHUB CLONE DESTINATION
+            </label>
+            <p className="text-xs text-muted leading-5">
+              Parent folder where GitHub repos are cloned (set once). Cloned repos
+              go into <span className="font-mono text-accent">&lt;folder&gt;/&lt;repo-name&gt;</span>.
+            </p>
+            <div className="rounded-md border border-border bg-dark px-3 py-2 text-xs font-mono text-white/90 break-all">
+              {cloneFolder || '—'}
+              {cloneFolderIsDefault && (
+                <span className="ml-2 text-[10px] font-sans text-muted">(default)</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={changeCloneFolder}
+                disabled={pickingClone || busy}
+              >
+                {pickingClone ? 'Choosing…' : 'Change folder'}
+              </button>
+              {!cloneFolderIsDefault && (
+                <button
+                  className="rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                  onClick={resetCloneFolder}
+                  disabled={pickingClone || busy}
+                >
+                  Reset to default
+                </button>
+              )}
             </div>
           </section>
 

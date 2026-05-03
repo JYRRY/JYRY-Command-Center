@@ -26,10 +26,14 @@ export function OnboardingView() {
 
   const projectRoot = workspaceStatus?.projectRoot
   const roadmapExists = Boolean(workspaceStatus?.roadmapExists)
+  const manifestoExists = Boolean(workspaceStatus?.manifestoExists)
   const trackerExists = Boolean(workspaceStatus?.trackerExists)
   const canResume = Boolean(projectRoot && trackerExists)
 
   const projectLabel = projectRoot ? projectRoot.split('/').filter(Boolean).pop() || projectRoot : null
+
+  const primaryBtn =
+    'rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed'
 
   return (
     <div className="min-h-screen bg-dark text-white flex items-start justify-center px-6 overflow-y-auto py-10 scroll-left">
@@ -75,13 +79,17 @@ export function OnboardingView() {
             </p>
             <div>
               <button
-                className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-black cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={primaryBtn}
                 disabled={loading}
                 onClick={() => withAction(async () => {
                   const result = await window.api.workspace.chooseProjectFolder()
                   setWorkspaceStatus(result.status)
-                  setTracker(null)
                   if (result.canceled) return
+                  if ('error' in result && result.error) {
+                    setError(result.error)
+                    return
+                  }
+                  setTracker(null)
                   if (result.status.trackerExists) {
                     await loadTrackerFromWorkspace()
                   } else if (result.status.roadmapExists) {
@@ -105,7 +113,7 @@ export function OnboardingView() {
             </p>
             <div>
               <button
-                className="rounded-md border border-accent/60 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent cursor-pointer transition-colors hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={primaryBtn}
                 disabled={loading}
                 onClick={() => setGithubOpen(true)}
               >
@@ -116,53 +124,88 @@ export function OnboardingView() {
         </div>
 
         <div className="rounded-xl border border-border bg-dark/60 p-5 mb-8">
-          <h2 className="text-sm font-semibold mb-2">3. Add roadmap.md</h2>
+          <h2 className="text-sm font-semibold mb-1">3. Add roadmap.md & manifesto.md</h2>
           <p className="text-sm text-muted mb-4">
-            Use an existing roadmap or let the app scaffold a starter roadmap and manifesto.
+            Use existing files or let the app scaffold a starter set. The tracker is
+            generated and the dashboard opens automatically after you import or create
+            <code className="text-accent font-mono mx-1">roadmap.md</code>.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <button
-              className="rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
-              disabled={!projectRoot || loading}
-              onClick={() => withAction(async () => {
-                const result = await window.api.workspace.importRoadmap()
-                setWorkspaceStatus(result.status)
-                if (!result.canceled) {
-                  await activateWorkspace()
-                }
-              })}
-            >
-              Import roadmap.md
-            </button>
-            <button
-              className="rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white cursor-pointer transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5"
-              disabled={!projectRoot || loading}
-              onClick={() => withAction(async () => {
-                const result = await window.api.workspace.createStarterRoadmap()
-                setWorkspaceStatus(result.status)
-                await activateWorkspace()
-              })}
-            >
-              Create roadmap.md
-            </button>
-            <button
-              className="rounded-md border border-accent/60 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent cursor-pointer transition-colors hover:bg-accent/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent/10"
-              disabled={!projectRoot || !roadmapExists || trackerExists || loading}
-              onClick={() => withAction(async () => {
-                await activateWorkspace()
-              })}
-            >
-              Activate Command Center
-            </button>
+
+          <div className="flex flex-wrap gap-4 mb-5">
+            <StatusBadge label="docs/roadmap.md" present={roadmapExists} />
+            <StatusBadge label="docs/manifesto.md" present={manifestoExists} />
           </div>
+
+          <div className="space-y-3">
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.18em] text-muted uppercase mb-2">
+                roadmap.md
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  className={primaryBtn}
+                  disabled={!projectRoot || loading}
+                  onClick={() => withAction(async () => {
+                    const result = await window.api.workspace.importRoadmap()
+                    setWorkspaceStatus(result.status)
+                    if (!result.canceled) {
+                      await activateWorkspace()
+                    }
+                  })}
+                >
+                  Import roadmap.md
+                </button>
+                <button
+                  className={primaryBtn}
+                  disabled={!projectRoot || loading}
+                  onClick={() => withAction(async () => {
+                    const result = await window.api.workspace.createStarterRoadmap()
+                    setWorkspaceStatus(result.status)
+                    await activateWorkspace()
+                  })}
+                >
+                  Create roadmap.md
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.18em] text-muted uppercase mb-2">
+                manifesto.md <span className="text-muted/60">(optional)</span>
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  className={primaryBtn}
+                  disabled={!projectRoot || loading}
+                  onClick={() => withAction(async () => {
+                    const result = await window.api.workspace.importManifesto()
+                    setWorkspaceStatus(result.status)
+                  })}
+                >
+                  Import manifesto.md
+                </button>
+                <button
+                  className={primaryBtn}
+                  disabled={!projectRoot || loading}
+                  onClick={() => withAction(async () => {
+                    const result = await window.api.workspace.createStarterManifesto()
+                    setWorkspaceStatus(result.status)
+                  })}
+                >
+                  Create manifesto.md
+                </button>
+              </div>
+            </div>
+          </div>
+
           {!projectRoot && (
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-4 text-xs text-muted">
               Pick a local folder or connect to GitHub above to enable these actions.
             </p>
           )}
-          {roadmapExists && (
-            <p className="mt-3 text-xs text-emerald-300">
-              Roadmap detected. The next activation will populate the dashboard.
+          {projectRoot && roadmapExists && !trackerExists && (
+            <p className="mt-4 text-xs text-emerald-300">
+              Roadmap detected. The next import/create action will activate the dashboard.
             </p>
           )}
         </div>
@@ -174,20 +217,28 @@ export function OnboardingView() {
 ─────────────────────                  │ docs/roadmap.md exists?      │
                                        └──────────────────────────────┘
 1. local project folder ───┐                       │
-                           │                       │── yes ─► generate tracker ─► open dashboard
-2. github repo (PAT)      ─┼──► project folder  ───┤
-   (clone via Connect)     │                       │── no  ─► import OR create roadmap.md
-                           │                       │           (+ manifesto.md)
-3. scaffold from card 3 ──┘                        │              │
-   (after card 1 picks                             │              ▼
-    an empty folder)                               │         generate tracker
-                                                   │              │
-                                                   ▼              ▼
-                                                              open dashboard
+                           │                       │── yes ─► tracker auto-generates
+2. github repo (PAT)      ─┤    project folder  ───┤           ─► open dashboard
+   (clones to your saved   │                       │
+    parent folder, set in  │                       │── no  ─► Import OR Create roadmap.md
+    Settings → "GitHub     │                       │           on card 3 — tracker auto-
+    clone destination")    │                       │           generates ─► open dashboard
+                           │                       │
+3. scaffold from card 3 ──┘                        │
+   (only after you've                              ▼
+    picked a folder)                          open dashboard
 
-note: the roadmap file MUST be named roadmap.md (Markdown only).
-after "create roadmap.md" you can keep it local or push to GitHub from
-the existing commit-and-push button.`}
+manifesto.md (optional but recommended):
+  ✓ green check if found in docs/manifesto.md
+  ✗ red X if missing — use Import or Create manifesto.md on card 3
+  (feeds product context to agents during build/audit cycles)
+
+notes:
+- roadmap.md MUST be Markdown (.md). The file name must be exactly roadmap.md.
+- after any Import/Create on roadmap.md, the tracker auto-generates and the
+  dashboard opens immediately — no extra activation step.
+- after Create roadmap.md / manifesto.md you can keep them local or push to
+  GitHub from the existing commit-and-push button.`}
           </pre>
         </div>
 
@@ -199,6 +250,28 @@ the existing commit-and-push button.`}
       </div>
 
       <GitHubBrowserModal open={githubOpen} onClose={() => setGithubOpen(false)} />
+    </div>
+  )
+}
+
+function StatusBadge({ label, present }: { label: string; present: boolean }) {
+  const color = present ? '#22C55E' : '#EF4444'
+  const symbol = present ? '✓' : '✗'
+  return (
+    <div
+      className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5"
+      style={{
+        borderColor: color + '60',
+        backgroundColor: color + '12',
+      }}
+    >
+      <span
+        className="text-sm font-bold leading-none"
+        style={{ color }}
+      >
+        {symbol}
+      </span>
+      <span className="text-xs font-mono text-white/85">{label}</span>
     </div>
   )
 }

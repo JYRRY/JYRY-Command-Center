@@ -221,6 +221,27 @@ export function importRoadmap(projectRoot: string, sourcePath: string) {
   return { imported: targetPath, status: configureWorkspace(projectRoot) }
 }
 
+export function importManifesto(projectRoot: string, sourcePath: string) {
+  const targetPath = join(projectRoot, 'docs', 'manifesto.md')
+  mkdirSync(dirname(targetPath), { recursive: true })
+  copyFileSync(sourcePath, targetPath)
+  return { imported: targetPath, status: configureWorkspace(projectRoot) }
+}
+
+export function createStarterManifesto(projectRoot: string) {
+  const docsRoot = join(projectRoot, 'docs')
+  const manifestoPath = join(docsRoot, 'manifesto.md')
+  mkdirSync(docsRoot, { recursive: true })
+
+  const created: string[] = []
+  if (!existsSync(manifestoPath)) {
+    writeFileSync(manifestoPath, starterManifestoContent(), 'utf-8')
+    created.push('docs/manifesto.md')
+  }
+
+  return { created, status: configureWorkspace(projectRoot) }
+}
+
 export function generateTrackerForWorkspace(status: WorkspaceStatus) {
   if (!status.projectRoot || !status.roadmapPath || !status.trackerPath) {
     throw new Error('Workspace is not configured.')

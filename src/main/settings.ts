@@ -6,10 +6,12 @@ const SETTINGS_FILENAME = 'settings.json'
 
 export interface AppSettings {
   operatorName: string | null
+  githubCloneParentFolder: string | null
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   operatorName: null,
+  githubCloneParentFolder: null,
 }
 
 function settingsFilePath(): string {
@@ -27,6 +29,11 @@ export function readSettings(): AppSettings {
         typeof parsed?.operatorName === 'string' && parsed.operatorName.trim()
           ? parsed.operatorName.trim()
           : null,
+      githubCloneParentFolder:
+        typeof parsed?.githubCloneParentFolder === 'string' &&
+        parsed.githubCloneParentFolder.trim()
+          ? parsed.githubCloneParentFolder.trim()
+          : null,
     }
   } catch {
     return { ...DEFAULT_SETTINGS }
@@ -36,12 +43,27 @@ export function readSettings(): AppSettings {
 export function writeSettings(next: Partial<AppSettings>): AppSettings {
   const current = readSettings()
   const merged: AppSettings = { ...current, ...next }
-  if (merged.operatorName !== null) {
+  if (merged.operatorName !== null && merged.operatorName !== undefined) {
     merged.operatorName = merged.operatorName.trim() || null
+  }
+  if (
+    merged.githubCloneParentFolder !== null &&
+    merged.githubCloneParentFolder !== undefined
+  ) {
+    merged.githubCloneParentFolder = merged.githubCloneParentFolder.trim() || null
   }
 
   const path = settingsFilePath()
   mkdirSync(dirname(path), { recursive: true })
   writeFileSync(path, JSON.stringify(merged, null, 2), { encoding: 'utf-8', mode: 0o600 })
   return merged
+}
+
+export function getDefaultGithubCloneParentFolder(): string {
+  return join(app.getPath('documents'), 'JYRY-Projects')
+}
+
+export function getGithubCloneParentFolder(): string {
+  const settings = readSettings()
+  return settings.githubCloneParentFolder || getDefaultGithubCloneParentFolder()
 }

@@ -28,9 +28,14 @@ interface WorkspaceStatus {
 
 interface WorkspaceAPI {
   getStatus(): Promise<WorkspaceStatus>
-  chooseProjectFolder(): Promise<{ canceled: boolean; status: WorkspaceStatus }>
+  chooseProjectFolder(): Promise<
+    | { canceled: true; status: WorkspaceStatus }
+    | { canceled: false; status: WorkspaceStatus; error?: string }
+  >
   createStarterRoadmap(): Promise<{ created: string[]; status: WorkspaceStatus }>
   importRoadmap(): Promise<{ canceled: boolean; imported?: string; status: WorkspaceStatus }>
+  createStarterManifesto(): Promise<{ created: string[]; status: WorkspaceStatus }>
+  importManifesto(): Promise<{ canceled: boolean; imported?: string; status: WorkspaceStatus }>
   generateTracker(): Promise<{
     state: unknown
     counts: { milestones: number; subtasks: number; categories: number; checklistItems: number }
@@ -68,11 +73,21 @@ interface GitHubAPI {
 
 interface AppSettingsShape {
   operatorName: string | null
+  githubCloneParentFolder: string | null
 }
 
 interface SettingsAPI {
   get(): Promise<AppSettingsShape>
   set(next: Partial<AppSettingsShape>): Promise<AppSettingsShape>
+  getGithubCloneParentFolder(): Promise<{ path: string; isDefault: boolean }>
+  pickGithubCloneParentFolder(): Promise<{
+    canceled: boolean
+    path?: string
+    error?: string
+  }>
+  setGithubCloneParentFolder(
+    path: string | null
+  ): Promise<{ ok: boolean; path?: string | null; error?: string }>
 }
 
 type GitResult =
