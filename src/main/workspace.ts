@@ -199,6 +199,19 @@ export async function cloneAndConfigureWorkspace(
   const repoName = fullName.split('/').pop() || fullName
   const destPath = join(resolve(destParentDir), repoName)
 
+  if (existsSync(destPath)) {
+    const config: WorkspaceConfig = {
+      projectRoot: destPath,
+      profile: 'generic',
+      trackerFile: 'command-center-tracker.json',
+      roadmapPath: 'docs/roadmap.md',
+      manifestoPath: 'docs/manifesto.md',
+      sourceRepo: { fullName, cloneUrl },
+    }
+    saveWorkspaceConfig(config)
+    return { status: resolveConfigPaths(config), cloned: destPath }
+  }
+
   await cloneRepo({ cloneUrl, destDir: destPath, token: token ?? null })
 
   const config: WorkspaceConfig = {
