@@ -145,6 +145,11 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
     setWorkspaceStatus(result.status)
     if (result.status.trackerExists) {
       await loadTrackerFromWorkspace()
+    } else if (result.status.roadmapExists) {
+      setProgressLabel('Generating tracker…')
+      const generated = await window.api.workspace.generateTracker()
+      setWorkspaceStatus(generated.status)
+      await loadTrackerFromWorkspace()
     }
     setStage('done')
     setBusy(false)
