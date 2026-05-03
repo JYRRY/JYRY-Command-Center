@@ -1,12 +1,14 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname, join, resolve } from 'path'
 
+import { app } from 'electron'
 import { cloneRepo } from './git'
 import { parseAndGenerate } from './parser'
 import { isAppBundlePath } from './utils/path-guards'
 
-const COMMAND_CENTER_ROOT = resolve(__dirname, '../..')
-const WORKSPACE_CONFIG_PATH = join(COMMAND_CENTER_ROOT, '.command-center-workspace.json')
+function getWorkspaceConfigPath(): string {
+  return join(app.getPath('userData'), 'workspace.json')
+}
 
 export interface WorkspaceConfig {
   projectRoot: string
@@ -80,10 +82,11 @@ function resolveConfigPaths(config: WorkspaceConfig): WorkspaceStatus {
 }
 
 export function loadWorkspaceConfig(): WorkspaceConfig | null {
-  if (!existsSync(WORKSPACE_CONFIG_PATH)) return null
+  const configPath = getWorkspaceConfigPath()
+  if (!existsSync(configPath)) return null
 
   try {
-    const parsed = JSON.parse(readFileSync(WORKSPACE_CONFIG_PATH, 'utf-8'))
+    const parsed = JSON.parse(readFileSync(configPath, 'utf-8'))
     if (!parsed || typeof parsed !== 'object' || typeof parsed.projectRoot !== 'string') {
       return null
     }
@@ -116,8 +119,9 @@ export function loadWorkspaceConfig(): WorkspaceConfig | null {
 }
 
 export function saveWorkspaceConfig(config: WorkspaceConfig) {
-  mkdirSync(dirname(WORKSPACE_CONFIG_PATH), { recursive: true })
-  writeFileSync(WORKSPACE_CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8')
+  const configPath = getWorkspaceConfigPath()
+  mkdirSync(dirname(configPath), { recursive: true })
+  writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
 }
 
 export async function getWorkspaceStatus(): Promise<WorkspaceStatus> {
