@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useStore, selectOperatorName } from '../../store'
 import type { Subtask, Agent, AgentLogEntry } from '../../../main/parser'
+import { detectDependencies, type DependencySuggestion } from '../../utils/detectDependencies'
 
 type TabId = 'details' | 'history'
 
@@ -66,6 +67,8 @@ export function TaskDetailModal({
   const [notes, setNotes] = useState(subtask.notes || '')
   const [executionMode, setExecutionMode] = useState<Subtask['execution_mode']>(subtask.execution_mode || 'human')
   const [copied, setCopied] = useState(false)
+  const [depSuggestions, setDepSuggestions] = useState<DependencySuggestion[]>([])
+  const [showDeps, setShowDeps] = useState(false)
 
   // Issue #2: Sync local state when subtask prop changes (e.g. external MCP agent update)
   useEffect(() => {
@@ -296,6 +299,31 @@ export function TaskDetailModal({
               milestoneTitle={milestoneTitle}
               onSwitchToSwimLane={onSwitchToSwimLane}
               onClose={onClose}
+              subtask={subtask}
+              depSuggestions={depSuggestions}
+              showDeps={showDeps}
+              onDetectDeps={() => {
+                if (!tracker) return
+                const found = detectDependencies(tracker, subtask.id)
+                setDepSuggestions(found)
+                setShowDeps(true)
+              }}
+              onApplyDep={(toTaskId) => {
+                updateTracker((draft) => {
+                  for (const m of draft.milestones) {
+                    const t = m.subtasks.find((s) => s.id === subtask.id)
+                    if (t) {
+                      if (!t.depends_on) t.depends_on = []
+                      if (!t.depends_on.includes(toTaskId)) t.depends_on.push(toTaskId)
+                      break
+                    }
+                  }
+                })
+                setDepSuggestions((prev) => prev.filter((s) => s.toTaskId !== toTaskId))
+              }}
+              onDismissDep={(toTaskId) => {
+                setDepSuggestions((prev) => prev.filter((s) => s.toTaskId !== toTaskId))
+              }}
             />
           )}
 
@@ -374,7 +402,30 @@ function DetailsTab({
   milestoneTitle: string
   onSwitchToSwimLane?: () => void
   onClose: () => void
+  subtask: Subtask
+  depSuggestions: DependencySuggestion[]
+  showDeps: boolean
+  onDetectDeps: () => void
+  onApplyDep: (toTaskId: string) => void
+  onDismissDep: (toTaskId: string) => void
 }) {
+  const [copiedCmd, setCopiedCmd] = useState<string | null>(null)
+  const [showCmds, setShowCmds] = useState(false)
+
+  function copyCmd(cmd: string) {
+    navigator.clipboard.writeText(cmd).catch(() => {})
+    setCopiedCmd(cmd)
+    setTimeout(() => setCopiedCmd(null), 1500)
+  }
+
+  const mcpCommands: { label: string; cmd: string; show: boolean }[] = [
+    { label: 'Get context', cmd: `mcp get_task_context ${subtask.id}`, show: true },
+    { label: 'Claim task', cmd: `mcp claim_next_task`, show: subtask.status === 'todo' },
+    { label: 'Start task', cmd: `mcp start_task ${subtask.id}`, show: subtask.status === 'todo' },
+    { label: 'Complete task', cmd: `mcp complete_task ${subtask.id} --summary "..."`, show: subtask.status === 'in_progress' },
+    { label: 'Block task', cmd: `mcp block_task ${subtask.id} --reason "..."`, show: subtask.status !== 'blocked' },
+  ].filter((c) => c.show)
+
   return (
     <div className="space-y-4">
       {/* Row 1: Status + Priority */}
@@ -553,6 +604,74 @@ function DetailsTab({
           placeholder="Add notes, context, blockers..."
           className="w-full bg-surface border border-border rounded px-3 py-2 text-xs text-white font-mono placeholder:text-muted/50 focus:outline-none focus:border-accent/50 transition-colors resize-none"
         />
+      </div>
+
+      {/* MCP Commands */}
+      <div className="pt-2 border-t border-border">
+        <button
+          onClick={() => setShowCmds((v) => !v)}
+          className="flex items-center gap-2 text-[10px] text-muted font-bold tracking-wider mb-2 hover:text-white transition-colors cursor-pointer"
+        >
+          <span>MCP COMMANDS</span>
+          <span className="text-[8px]">{showCmds ? '▲' : '▼'}</span>
+        </button>
+        {showCmds && (
+          <div className="space-y-1.5">
+            {mcpCommands.map(({ label, cmd }) => (
+              <div key={cmd} className="flex items-center gap-2 bg-surface rounded px-3 py-1.5">
+                <span className="text-[10px] text-muted w-28 flex-shrink-0">{label}</span>
+                <code className="text-[10px] font-mono text-white/80 flex-1 truncate">{cmd}</code>
+                <button
+                  onClick={() => copyCmd(cmd)}
+                  className="flex-shrink-0 text-[9px] font-bold px-2 py-0.5 rounded border border-border hover:border-accent/50 text-muted hover:text-accent transition-colors cursor-pointer"
+                >
+                  {copiedCmd === cmd ? '✓' : 'Copy'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Auto-detect Dependencies */}
+      <div className="pt-2 border-t border-border">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] text-muted font-bold tracking-wider">DEPENDENCY DETECTION</span>
+          <button
+            onClick={onDetectDeps}
+            className="text-[10px] font-semibold text-accent hover:text-accent-light transition-colors cursor-pointer"
+          >
+            Auto-detect →
+          </button>
+        </div>
+        {showDeps && depSuggestions.length === 0 && (
+          <p className="text-[10px] text-muted">No dependency references found in task text.</p>
+        )}
+        {depSuggestions.map((s) => (
+          <div key={s.toTaskId} className="flex items-start gap-2 bg-surface rounded px-3 py-2 mb-1.5">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] text-white/85 leading-4">
+                May depend on <span className="font-mono text-accent">{s.toTaskId}</span>
+              </p>
+              <p className="text-[9px] text-muted truncate">{s.toTaskLabel}</p>
+              <p className="text-[9px] text-muted/60 mt-0.5">{s.reason}</p>
+            </div>
+            <div className="flex gap-1.5 flex-shrink-0">
+              <button
+                onClick={() => onApplyDep(s.toTaskId)}
+                className="text-[9px] font-bold px-2 py-0.5 rounded bg-accent/15 text-accent hover:bg-accent/25 transition-colors cursor-pointer"
+              >
+                Apply
+              </button>
+              <button
+                onClick={() => onDismissDep(s.toTaskId)}
+                className="text-[9px] font-bold px-2 py-0.5 rounded border border-border text-muted hover:text-white transition-colors cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Parent milestone */}
