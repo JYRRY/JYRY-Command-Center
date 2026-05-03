@@ -2,6 +2,8 @@ import { app } from 'electron'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname, join } from 'path'
 
+import { isAppBundlePath } from './utils/path-guards'
+
 const SETTINGS_FILENAME = 'settings.json'
 
 export interface AppSettings {
@@ -24,16 +26,17 @@ export function readSettings(): AppSettings {
 
   try {
     const parsed = JSON.parse(readFileSync(path, 'utf-8'))
+    const rawClone =
+      typeof parsed?.githubCloneParentFolder === 'string' &&
+      parsed.githubCloneParentFolder.trim()
+        ? parsed.githubCloneParentFolder.trim()
+        : null
     return {
       operatorName:
         typeof parsed?.operatorName === 'string' && parsed.operatorName.trim()
           ? parsed.operatorName.trim()
           : null,
-      githubCloneParentFolder:
-        typeof parsed?.githubCloneParentFolder === 'string' &&
-        parsed.githubCloneParentFolder.trim()
-          ? parsed.githubCloneParentFolder.trim()
-          : null,
+      githubCloneParentFolder: isAppBundlePath(rawClone) ? null : rawClone,
     }
   } catch {
     return { ...DEFAULT_SETTINGS }
@@ -65,5 +68,6 @@ export function getDefaultGithubCloneParentFolder(): string {
 
 export function getGithubCloneParentFolder(): string {
   const settings = readSettings()
-  return settings.githubCloneParentFolder || getDefaultGithubCloneParentFolder()
+  const candidate = settings.githubCloneParentFolder || getDefaultGithubCloneParentFolder()
+  return isAppBundlePath(candidate) ? getDefaultGithubCloneParentFolder() : candidate
 }

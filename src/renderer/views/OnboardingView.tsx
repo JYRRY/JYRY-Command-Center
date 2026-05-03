@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GitHubBrowserModal } from '../components/GitHubBrowserModal'
+import { SettingsModal } from '../components/SettingsModal'
 import { loadTrackerFromWorkspace, useStore } from '../store'
 
 async function activateWorkspace() {
@@ -11,6 +12,7 @@ async function activateWorkspace() {
 export function OnboardingView() {
   const { workspaceStatus, loading, error, setLoading, setError, setTracker, setWorkspaceStatus } = useStore()
   const [githubOpen, setGithubOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   async function withAction(action: () => Promise<void>) {
     setLoading(true)
@@ -38,16 +40,28 @@ export function OnboardingView() {
   return (
     <div className="min-h-screen bg-dark text-white flex items-start justify-center px-6 overflow-y-auto py-10 scroll-left">
       <div className="w-full max-w-6xl rounded-2xl border border-border bg-panel/80 p-8">
-        <div className="mb-8">
-          <p className="text-xs font-mono tracking-[0.2em] text-accent uppercase mb-3">
-            JYRY Command Center
-          </p>
-          <h1 className="text-3xl font-semibold mb-3">Activate this workspace with a roadmap</h1>
-          <p className="text-sm text-muted leading-6 max-w-2xl">
-            Pick a local folder, clone a project from GitHub, or scaffold a starter
-            roadmap — the tracker is generated automatically once{' '}
-            <code className="text-accent font-mono">docs/roadmap.md</code> exists.
-          </p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-mono tracking-[0.2em] text-accent uppercase mb-3">
+              JYRY Command Center
+            </p>
+            <h1 className="text-3xl font-semibold mb-3">Activate this workspace with a roadmap</h1>
+            <p className="text-sm text-muted leading-6 max-w-2xl">
+              Pick a local folder, clone a project from GitHub, or scaffold a starter
+              roadmap — the tracker is generated automatically once{' '}
+              <code className="text-accent font-mono">docs/roadmap.md</code> exists.
+            </p>
+          </div>
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-md border border-border bg-dark/60 hover:bg-white/5 text-muted hover:text-white transition-colors cursor-pointer"
+            title="Settings"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </button>
         </div>
 
         {canResume && (
@@ -250,6 +264,7 @@ notes:
       </div>
 
       <GitHubBrowserModal open={githubOpen} onClose={() => setGithubOpen(false)} />
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }
