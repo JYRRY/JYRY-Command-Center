@@ -4,8 +4,9 @@ import type { TrackerState } from '../main/parser'
 // Re-export the type so views can use it without reaching into main/
 export type { TrackerState }
 
-export type TabId = 'swim-lane' | 'task-board' | 'agent-hub' | 'calendar' | 'qa'
+export type TabId = 'swim-lane' | 'task-board' | 'agent-hub' | 'calendar' | 'qa' | 'birds-eye' | 'review-debug'
 export type Theme = 'dark' | 'light'
+export type AccentColor = 'indigo' | 'black-ice' | 'emerald' | 'amethyst'
 
 interface AppState {
   // Core data
@@ -19,6 +20,8 @@ interface AppState {
   activeTab: TabId
   selectedMilestoneId: string | null
   theme: Theme
+  accentColor: AccentColor
+  language: 'en' | 'ar' | 'de'
 
   // Actions
   setTracker: (data: TrackerState | null) => void
@@ -29,6 +32,8 @@ interface AppState {
   setError: (err: string | null) => void
   setSynced: (v: boolean) => void
   toggleTheme: () => void
+  setAccentColor: (accent: AccentColor) => void
+  setLanguage: (lang: 'en' | 'ar' | 'de') => void
 
   // Mutation helpers — mutate tracker and trigger auto write-back
   updateTracker: (updater: (draft: TrackerState) => void) => void
@@ -171,6 +176,22 @@ function getInitialTheme(): Theme {
   return 'dark'
 }
 
+function getInitialAccent(): AccentColor {
+  try {
+    const stored = localStorage.getItem('jyry-accent')
+    if (stored === 'indigo' || stored === 'black-ice' || stored === 'emerald' || stored === 'amethyst') return stored
+  } catch { /* ignore */ }
+  return 'indigo'
+}
+
+function getInitialLanguage(): 'en' | 'ar' | 'de' {
+  try {
+    const stored = localStorage.getItem('jyry-lang')
+    if (stored === 'en' || stored === 'ar' || stored === 'de') return stored
+  } catch { /* ignore */ }
+  return 'en'
+}
+
 export const useStore = create<AppState>()((set, get) => ({
   tracker: null,
   workspaceStatus: null,
@@ -180,6 +201,8 @@ export const useStore = create<AppState>()((set, get) => ({
   activeTab: 'swim-lane' as TabId,
   selectedMilestoneId: null,
   theme: getInitialTheme(),
+  accentColor: getInitialAccent(),
+  language: getInitialLanguage(),
 
   // setTracker: used for loading/external updates — does NOT write back
   setTracker: (data) => set({ tracker: data, error: null }),
@@ -193,6 +216,14 @@ export const useStore = create<AppState>()((set, get) => ({
     const next = get().theme === 'dark' ? 'light' : 'dark'
     try { localStorage.setItem('jyry-theme', next) } catch { /* ignore */ }
     set({ theme: next })
+  },
+  setAccentColor: (accent) => {
+    try { localStorage.setItem('jyry-accent', accent) } catch { /* ignore */ }
+    set({ accentColor: accent })
+  },
+  setLanguage: (lang) => {
+    try { localStorage.setItem('jyry-lang', lang) } catch { /* ignore */ }
+    set({ language: lang })
   },
 
   // updateTracker: used for app-initiated mutations — DOES write back
@@ -272,18 +303,49 @@ export async function loadTrackerFromWorkspace(): Promise<void> {
   const status = await window.api.workspace.getStatus()
   setWorkspaceStatus(status)
 
+  // Tracker not generated yet — try to generate it from roadmap.md
   if (!status.trackerExists) {
-    setTracker(null)
-    setSynced(false)
-    setError(null)
-    return
+    if (status.roadmapExists) {
+      const genResult = await window.api.workspace.generateTracker()
+      const freshStatus = genResult.status
+      setWorkspaceStatus(freshStatus)
+      if (!freshStatus.trackerExists) {
+        setTracker(null)
+        setSynced(false)
+        setError('Tracker could not be generated. Check that docs/roadmap.md is valid Markdown.')
+        return
+      }
+    } else {
+      setTracker(null)
+      setSynced(false)
+      setError(null)
+      return
+    }
   }
 
   const json = await window.api.tracker.read()
   if (!json) {
+    // File exists but is unreadable / corrupt — try regenerating from roadmap
+    if (status.roadmapExists) {
+      const genResult = await window.api.workspace.generateTracker()
+      setWorkspaceStatus(genResult.status)
+      const retry = await window.api.tracker.read()
+      if (!retry) {
+        setTracker(null)
+        setSynced(false)
+        setError('Tracker file is corrupt and could not be regenerated. Re-import your roadmap.md to reset it.')
+        return
+      }
+      const retryData = JSON.parse(retry) as TrackerState
+      retryData.project.current_week = selectCurrentWeek(retryData)
+      setTracker(retryData)
+      setSynced(true)
+      setError(null)
+      return
+    }
     setTracker(null)
     setSynced(false)
-    setError(null)
+    setError('Tracker file could not be read. Try re-importing your roadmap.md.')
     return
   }
 

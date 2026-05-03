@@ -1,19 +1,21 @@
 import { useMemo } from 'react'
-import { useStore } from '../store'
-
-type TabId = 'swim-lane' | 'task-board' | 'agent-hub' | 'calendar' | 'qa'
-
-const TABS: { id: TabId; icon: string; label: string }[] = [
-  { id: 'swim-lane', icon: '⬡', label: 'Swim Lane' },
-  { id: 'task-board', icon: '⊞', label: 'Task Board' },
-  { id: 'qa', icon: '◎', label: 'QA' },
-  { id: 'agent-hub', icon: '⚡', label: 'Agent Hub' },
-  { id: 'calendar', icon: '▦', label: 'Calendar' },
-]
+import { useTranslation } from 'react-i18next'
+import { useStore, type TabId } from '../store'
 
 export function TabBar() {
+  const { t } = useTranslation()
   const { activeTab, setActiveTab } = useStore()
   const tracker = useStore((s) => s.tracker)
+
+  const TABS: { id: TabId; icon: string; labelKey: string }[] = [
+    { id: 'swim-lane',    icon: '⬡', labelKey: 'nav.swimlane' },
+    { id: 'task-board',   icon: '⊞', labelKey: 'nav.taskboard' },
+    { id: 'qa',           icon: '◎', labelKey: 'nav.qa' },
+    { id: 'agent-hub',    icon: '⚡', labelKey: 'nav.agenthub' },
+    { id: 'calendar',     icon: '▦', labelKey: 'nav.calendar' },
+    { id: 'birds-eye',    icon: '◈', labelKey: 'nav.birdseye' },
+    { id: 'review-debug', icon: '✓', labelKey: 'nav.reviewdebug' },
+  ]
 
   const hasRecentActivity = useMemo(() => {
     const thirtyMinAgo = Date.now() - 30 * 60 * 1000
@@ -53,7 +55,7 @@ export function TabBar() {
             `}
           >
             <span className="text-sm">{tab.icon}</span>
-            {tab.label}
+            {t(tab.labelKey)}
             {tab.id === 'agent-hub' && hasRecentActivity && (
               <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent" />
             )}

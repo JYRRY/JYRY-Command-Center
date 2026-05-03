@@ -4,7 +4,6 @@ import type { Milestone, ReviewSession } from '../../main/parser'
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const PROJECT_START = new Date(2026, 2, 29) // Sunday, March 29, 2026
 const TOTAL_WEEKS = 12
 
 // AI Commerce Index Platform — 4-lane palette. Mirrors DOMAIN_COLOR_MAP in
@@ -41,8 +40,8 @@ interface CalendarTask {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function getWeekDays(weekIndex: number): Date[] {
-  const start = new Date(PROJECT_START)
+function getWeekDays(weekIndex: number, projectStart: Date): Date[] {
+  const start = new Date(projectStart)
   start.setDate(start.getDate() + weekIndex * 7)
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start)
@@ -142,11 +141,11 @@ function buildTaskMap(milestones: Milestone[], reviewSessions: ReviewSession[]):
   return map
 }
 
-/** Find which week index a given date falls in (0-based from PROJECT_START) */
-function getCurrentWeekIndex(): number {
+/** Find which week index a given date falls in (0-based from projectStart) */
+function getCurrentWeekIndex(projectStart: Date): number {
   const now = new Date()
   now.setHours(0, 0, 0, 0)
-  const diff = now.getTime() - PROJECT_START.getTime()
+  const diff = now.getTime() - projectStart.getTime()
   return Math.max(0, Math.min(TOTAL_WEEKS - 1, Math.floor(diff / (7 * 24 * 60 * 60 * 1000))))
 }
 
@@ -154,8 +153,11 @@ function getCurrentWeekIndex(): number {
 
 export function CalendarView() {
   const tracker = useStore((s) => s.tracker)
-  const [weekIndex, setWeekIndex] = useState(getCurrentWeekIndex)
-  const days = getWeekDays(weekIndex)
+  const projectStart = tracker?.project.start_date
+    ? new Date(tracker.project.start_date + 'T00:00:00Z')
+    : new Date()
+  const [weekIndex, setWeekIndex] = useState(() => getCurrentWeekIndex(projectStart))
+  const days = getWeekDays(weekIndex, projectStart)
 
   const taskMap = useMemo(() => {
     if (!tracker) return new Map<string, CalendarTask[]>()
@@ -198,7 +200,7 @@ export function CalendarView() {
             ← Prev
           </button>
           <button
-            onClick={() => setWeekIndex(getCurrentWeekIndex)}
+            onClick={() => setWeekIndex(getCurrentWeekIndex(projectStart))}
             className="px-2.5 py-1.5 rounded-md text-xs font-medium border border-border text-muted hover:text-white hover:bg-white/5 transition-colors"
           >
             Today

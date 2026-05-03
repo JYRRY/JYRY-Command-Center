@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useStore, selectTotalSubtasks, selectCurrentWeek, selectCurrentPhase, selectOverallProgress, selectScheduleStatus } from '../store'
 import type { TrackerState } from '../store'
 
@@ -95,6 +95,7 @@ function LeftColumn({ tracker, synced }: { tracker: TrackerState; synced: boolea
         total={total} status={status} blocked={blocked} nextMilestone={nextMilestone}
       />
       <TodaySummary tracker={tracker} />
+      <SecurityScanPanel tracker={tracker} />
     </div>
   )
 }
@@ -772,6 +773,146 @@ function Row({ label, value, mono, green, red }: {
     <div className="flex items-center justify-between">
       <span className="text-muted">{label}</span>
       <span className={`${mono ? 'font-mono' : ''} ${colorClass}`}>{value}</span>
+    </div>
+  )
+}
+
+// ─── Security Scan Panel ─────────────────────────────────────────────────────
+
+interface SecurityFinding {
+  severity: 'critical' | 'warning' | 'info'
+  message: string
+  target: string
+}
+
+function runSecurityScan(tracker: TrackerState): SecurityFinding[] {
+  const findings: SecurityFinding[] = []
+  const now = Date.now()
+  const sevenDays = 7 * 24 * 60 * 60 * 1000
+
+  const piiPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z]{2,}\b|\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/
+
+  for (const m of tracker.milestones) {
+    for (const s of m.subtasks) {
+      // Tasks in progress with no assignee
+      if (s.status === 'in_progress' && !s.assignee) {
+        findings.push({ severity: 'warning', message: 'In-progress task has no assignee', target: s.id })
+      }
+      // Tasks with no acceptance criteria
+      if ((s.acceptance_criteria ?? []).length === 0 && s.status !== 'done') {
+        findings.push({ severity: 'info', message: 'No acceptance criteria defined', target: s.id })
+      }
+      // Blocked > 7 days
+      if (s.status === 'blocked' && s.completed_at) {
+        const blockedSince = new Date(s.completed_at).getTime()
+        if (now - blockedSince > sevenDays) {
+          findings.push({ severity: 'warning', message: 'Task has been blocked for over 7 days', target: s.id })
+        }
+      }
+      // PII in notes
+      if (s.notes && piiPattern.test(s.notes)) {
+        findings.push({ severity: 'critical', message: 'Possible PII (email/phone) detected in task notes', target: s.id })
+      }
+    }
+
+    // Milestones past week 1 with no dependencies
+    if (m.week > 1 && m.dependencies.length === 0) {
+      findings.push({ severity: 'info', message: 'Milestone has no dependencies declared', target: m.id })
+    }
+  }
+
+  // Critical checklist items not done
+  for (const cat of tracker.submission_checklist.categories) {
+    if (cat.risk_level === 'critical') {
+      const undone = cat.items.filter((i) => !i.done)
+      if (undone.length > 0) {
+        findings.push({
+          severity: 'critical',
+          message: `${undone.length} critical checklist item(s) incomplete in "${cat.title}"`,
+          target: cat.id,
+        })
+      }
+    }
+  }
+
+  return findings
+}
+
+const SEVERITY_COLORS: Record<string, string> = {
+  critical: '#EF4444',
+  warning: '#F59E0B',
+  info: '#60A5FA',
+}
+
+function SecurityScanPanel({ tracker }: { tracker: TrackerState }) {
+  const [scanning, setScanning] = useState(false)
+  const [findings, setFindings] = useState<SecurityFinding[] | null>(null)
+  const [lastScan, setLastScan] = useState<string | null>(null)
+  const scanRef = useRef(false)
+
+  function handleScan() {
+    if (scanRef.current) return
+    scanRef.current = true
+    setScanning(true)
+    setTimeout(() => {
+      const results = runSecurityScan(tracker)
+      setFindings(results)
+      setLastScan(new Date().toLocaleTimeString())
+      setScanning(false)
+      scanRef.current = false
+    }, 600)
+  }
+
+  const critCount = findings?.filter((f) => f.severity === 'critical').length ?? 0
+  const warnCount = findings?.filter((f) => f.severity === 'warning').length ?? 0
+  const infoCount = findings?.filter((f) => f.severity === 'info').length ?? 0
+
+  return (
+    <div className="rounded-xl border border-border bg-surface/60 p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-bold tracking-wider text-muted">SECURITY SCAN</p>
+        {lastScan && (
+          <span className="text-[9px] font-mono text-muted/60">Last: {lastScan}</span>
+        )}
+      </div>
+
+      <button
+        onClick={handleScan}
+        disabled={scanning}
+        className="w-full rounded-md border border-border bg-dark/60 py-2 text-xs font-semibold text-white hover:border-accent/40 hover:text-accent transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait"
+      >
+        {scanning ? 'Scanning…' : 'Run Security Scan'}
+      </button>
+
+      {findings !== null && (
+        <div className="space-y-2">
+          {findings.length === 0 ? (
+            <p className="text-[10px] text-on-track font-mono">✓ No issues found — project looks clean.</p>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 text-[9px] font-mono">
+                {critCount > 0 && <span style={{ color: SEVERITY_COLORS.critical }}>{critCount} critical</span>}
+                {warnCount > 0 && <span style={{ color: SEVERITY_COLORS.warning }}>{warnCount} warning</span>}
+                {infoCount > 0 && <span style={{ color: SEVERITY_COLORS.info }}>{infoCount} info</span>}
+              </div>
+              <div className="space-y-1 max-h-48 overflow-y-auto">
+                {findings.map((f, i) => (
+                  <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded bg-dark/60">
+                    <span
+                      className="flex-shrink-0 w-1.5 h-1.5 rounded-full mt-1.5"
+                      style={{ backgroundColor: SEVERITY_COLORS[f.severity] }}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-white/85 leading-4">{f.message}</p>
+                      <p className="text-[9px] font-mono text-muted truncate">{f.target}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

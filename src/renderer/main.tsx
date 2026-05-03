@@ -10,6 +10,7 @@ import '@fontsource/jetbrains-mono/500.css'
 import '@fontsource/jetbrains-mono/600.css'
 import App from './App'
 import './styles.css'
+import './i18n'
 
 const root = createRoot(document.getElementById('root')!)
 root.render(

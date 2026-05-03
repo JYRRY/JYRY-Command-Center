@@ -218,9 +218,20 @@ export function OnboardingView() {
             </p>
           )}
           {projectRoot && roadmapExists && !trackerExists && (
-            <p className="mt-4 text-xs text-emerald-300">
-              Roadmap detected. The next import/create action will activate the dashboard.
-            </p>
+            <div className="mt-4 flex items-center gap-3">
+              <p className="text-xs text-emerald-300">
+                Roadmap detected — tracker not generated yet.
+              </p>
+              <button
+                className={primaryBtn}
+                disabled={loading}
+                onClick={() => withAction(async () => {
+                  await activateWorkspace()
+                })}
+              >
+                {loading ? 'Generating…' : 'Generate Tracker & Open'}
+              </button>
+            </div>
           )}
         </div>
 
