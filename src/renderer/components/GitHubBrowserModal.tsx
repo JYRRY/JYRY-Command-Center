@@ -35,6 +35,7 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
   const [repos, setRepos] = useState<GitHubRepoSummary[]>([])
   const [search, setSearch] = useState('')
   const [progressLabel, setProgressLabel] = useState('')
+  const [cloneDestination, setCloneDestination] = useState<string>('')
 
   useEffect(() => {
     if (!open) return
@@ -44,8 +45,12 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
     setBusy(true)
 
     ;(async () => {
-      const has = await window.api.github.hasToken()
+      const [has, dest] = await Promise.all([
+        window.api.github.hasToken(),
+        window.api.settings.getGithubCloneParentFolder(),
+      ])
       if (canceled) return
+      setCloneDestination(dest.path)
       if (has) {
         await loadRepos()
       } else {
@@ -98,6 +103,19 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
     setLogin(null)
     setStage('token')
     setBusy(false)
+  }
+
+  async function changeCloneDestination() {
+    setError(null)
+    const result = await window.api.settings.pickGithubCloneParentFolder()
+    if (result.canceled) return
+    if (result.error) {
+      setError(result.error)
+      return
+    }
+    if (result.path) {
+      setCloneDestination(result.path)
+    }
   }
 
   async function pickRepo(repo: GitHubRepoSummary) {
@@ -226,6 +244,25 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
                 </button>
               </div>
 
+              {cloneDestination && (
+                <div className="rounded-md border border-accent/30 bg-accent/5 px-3 py-2 flex items-center gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-bold tracking-wider text-accent uppercase mb-0.5">
+                      Clones go to
+                    </p>
+                    <p className="text-xs font-mono text-white/85 truncate">
+                      {cloneDestination}
+                    </p>
+                  </div>
+                  <button
+                    className="flex-shrink-0 text-xs text-accent underline cursor-pointer hover:opacity-80"
+                    onClick={changeCloneDestination}
+                  >
+                    Change
+                  </button>
+                </div>
+              )}
+
               <input
                 className="w-full rounded-md border border-border bg-dark px-3 py-2 text-sm"
                 placeholder="Search repositories…"
@@ -283,9 +320,11 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
           {stage === 'cloning' && (
             <div className="py-8 text-center">
               <p className="text-sm text-muted">{progressLabel}</p>
-              <p className="mt-2 text-xs text-muted">
-                You'll be asked to pick a destination folder.
-              </p>
+              {cloneDestination && (
+                <p className="mt-2 text-xs text-muted">
+                  Saving to <span className="font-mono text-accent">{cloneDestination}</span>
+                </p>
+              )}
             </div>
           )}
 

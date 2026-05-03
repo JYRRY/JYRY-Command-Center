@@ -6,15 +6,27 @@ import { clearToken, getStoredToken, hasToken, setToken } from './auth'
 import { mergeCanonicalAgentRoster, OPERATOR_AGENT_ID } from './canonical-agents'
 import { commitAndPush } from './git'
 import { listRepos, validateToken, type GitHubRepoSummary } from './github'
-import { readSettings, writeSettings, type AppSettings } from './settings'
+import {
+  getDefaultGithubCloneParentFolder,
+  getGithubCloneParentFolder,
+  readSettings,
+  writeSettings,
+  type AppSettings,
+} from './settings'
 import {
   cloneAndConfigureWorkspace,
   configureWorkspace,
+  createStarterManifesto,
   createStarterRoadmap,
   generateTrackerForWorkspace,
   getWorkspaceStatus,
+  importManifesto,
   importRoadmap,
 } from './workspace'
+
+function isAppBundlePath(p: string): boolean {
+  return /\.app(\/|$)/i.test(p)
+}
 
 let mainWindow: BrowserWindow | null = null
 let fileWatcher: fs.FSWatcher | null = null
@@ -173,7 +185,16 @@ ipcMain.handle('workspace:chooseProjectFolder', async () => {
     return { canceled: true, status: await getWorkspaceStatus() }
   }
 
-  const status = configureWorkspace(result.filePaths[0])
+  const chosen = result.filePaths[0]
+  if (isAppBundlePath(chosen)) {
+    return {
+      canceled: false,
+      error: 'Cannot use an application bundle (.app) as a project folder. Please pick a regular folder.',
+      status: await getWorkspaceStatus(),
+    }
+  }
+
+  const status = configureWorkspace(chosen)
   await restartFileWatcher()
   return { canceled: false, status }
 })
@@ -212,6 +233,40 @@ ipcMain.handle('workspace:importRoadmap', async () => {
   return { canceled: false, ...imported }
 })
 
+ipcMain.handle('workspace:importManifesto', async () => {
+  const status = await getWorkspaceStatus()
+  if (!status.projectRoot || !mainWindow) {
+    throw new Error('Choose a project folder before importing a manifesto.')
+  }
+
+  const result = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Markdown', extensions: ['md', 'markdown'] },
+      { name: 'All files', extensions: ['*'] },
+    ],
+  })
+
+  if (result.canceled || result.filePaths.length === 0) {
+    return { canceled: true, status }
+  }
+
+  const imported = importManifesto(status.projectRoot, result.filePaths[0])
+  await restartFileWatcher()
+  return { canceled: false, ...imported }
+})
+
+ipcMain.handle('workspace:createStarterManifesto', async () => {
+  const status = await getWorkspaceStatus()
+  if (!status.projectRoot) {
+    throw new Error('Choose a project folder before creating a manifesto.')
+  }
+
+  const result = createStarterManifesto(status.projectRoot)
+  await restartFileWatcher()
+  return result
+})
+
 ipcMain.handle('workspace:generateTracker', async () => {
   const status = await getWorkspaceStatus()
   const result = generateTrackerForWorkspace(status)
@@ -233,6 +288,59 @@ ipcMain.handle(
   'settings:set',
   async (_event, next: Partial<AppSettings>): Promise<AppSettings> => {
     return writeSettings(next || {})
+  }
+)
+
+ipcMain.handle(
+  'settings:getGithubCloneParentFolder',
+  async (): Promise<{ path: string; isDefault: boolean }> => {
+    const stored = readSettings().githubCloneParentFolder
+    const effective = stored || getDefaultGithubCloneParentFolder()
+    return { path: effective, isDefault: !stored }
+  }
+)
+
+ipcMain.handle(
+  'settings:pickGithubCloneParentFolder',
+  async (): Promise<{ canceled: boolean; path?: string; error?: string }> => {
+    if (!mainWindow) return { canceled: true }
+
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Choose where GitHub repos should be cloned',
+      properties: ['openDirectory', 'createDirectory'],
+    })
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { canceled: true }
+    }
+
+    const chosen = result.filePaths[0]
+    if (isAppBundlePath(chosen)) {
+      return {
+        canceled: false,
+        error: 'Cannot use an application bundle (.app) as a clone destination.',
+      }
+    }
+
+    writeSettings({ githubCloneParentFolder: chosen })
+    return { canceled: false, path: chosen }
+  }
+)
+
+ipcMain.handle(
+  'settings:setGithubCloneParentFolder',
+  async (
+    _event,
+    path: string | null
+  ): Promise<{ ok: boolean; path?: string | null; error?: string }> => {
+    if (path && isAppBundlePath(path)) {
+      return {
+        ok: false,
+        error: 'Cannot use an application bundle (.app) as a clone destination.',
+      }
+    }
+    const next = writeSettings({ githubCloneParentFolder: path })
+    return { ok: true, path: next.githubCloneParentFolder }
   }
 )
 
@@ -291,21 +399,34 @@ ipcMain.handle(
       return { canceled: true, status: await getWorkspaceStatus() }
     }
 
-    const dialogResult = await dialog.showOpenDialog(mainWindow, {
-      title: `Choose where to clone ${payload.fullName}`,
-      properties: ['openDirectory', 'createDirectory'],
-    })
+    const destParentDir = getGithubCloneParentFolder()
 
-    if (dialogResult.canceled || dialogResult.filePaths.length === 0) {
-      return { canceled: true, status: await getWorkspaceStatus() }
+    if (isAppBundlePath(destParentDir)) {
+      return {
+        canceled: false,
+        error: 'GitHub clone destination is an .app bundle. Update it from Settings.',
+        status: await getWorkspaceStatus(),
+      }
     }
 
-    const token = getStoredToken()
     try {
+      try {
+        fs.mkdirSync(destParentDir, { recursive: true })
+      } catch (err) {
+        return {
+          canceled: false,
+          error: `Could not create clone destination ${destParentDir}: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+          status: await getWorkspaceStatus(),
+        }
+      }
+
+      const token = getStoredToken()
       const result = await cloneAndConfigureWorkspace({
         fullName: payload.fullName,
         cloneUrl: payload.cloneUrl,
-        destParentDir: dialogResult.filePaths[0],
+        destParentDir,
         token,
       })
       await restartFileWatcher()
