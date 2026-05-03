@@ -268,6 +268,17 @@ export function GitHubBrowserModal({ open, onClose }: GitHubBrowserModalProps) {
                 </div>
               )}
 
+              <p className="text-[11px] text-muted leading-5">
+                Click any repository below to clone it
+                {cloneDestination ? (
+                  <>
+                    {' '}to{' '}
+                    <span className="font-mono text-accent">{cloneDestination}</span>
+                  </>
+                ) : null}
+                .
+              </p>
+
               <input
                 className="w-full rounded-md border border-border bg-dark px-3 py-2 text-sm"
                 placeholder="Search repositories…"

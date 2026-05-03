@@ -3,6 +3,7 @@ import { dirname, join, resolve } from 'path'
 
 import { cloneRepo } from './git'
 import { parseAndGenerate } from './parser'
+import { isAppBundlePath } from './utils/path-guards'
 
 const COMMAND_CENTER_ROOT = resolve(__dirname, '../..')
 const WORKSPACE_CONFIG_PATH = join(COMMAND_CENTER_ROOT, '.command-center-workspace.json')
@@ -84,6 +85,10 @@ export function loadWorkspaceConfig(): WorkspaceConfig | null {
   try {
     const parsed = JSON.parse(readFileSync(WORKSPACE_CONFIG_PATH, 'utf-8'))
     if (!parsed || typeof parsed !== 'object' || typeof parsed.projectRoot !== 'string') {
+      return null
+    }
+
+    if (isAppBundlePath(parsed.projectRoot)) {
       return null
     }
 
@@ -198,6 +203,12 @@ export async function cloneAndConfigureWorkspace(
   const { fullName, cloneUrl, destParentDir, token } = options
   const repoName = fullName.split('/').pop() || fullName
   const destPath = join(resolve(destParentDir), repoName)
+
+  if (isAppBundlePath(destParentDir) || isAppBundlePath(destPath)) {
+    throw new Error(
+      'Cannot clone into an .app bundle path. Reset your GitHub clone destination from Settings.'
+    )
+  }
 
   if (existsSync(destPath)) {
     const config: WorkspaceConfig = {

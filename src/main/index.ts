@@ -23,10 +23,7 @@ import {
   importManifesto,
   importRoadmap,
 } from './workspace'
-
-function isAppBundlePath(p: string): boolean {
-  return /\.app(\/|$)/i.test(p)
-}
+import { isAppBundlePath } from './utils/path-guards'
 
 let mainWindow: BrowserWindow | null = null
 let fileWatcher: fs.FSWatcher | null = null
